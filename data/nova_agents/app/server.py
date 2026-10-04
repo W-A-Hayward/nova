@@ -7,9 +7,12 @@ en mode STATIC, href() produit des liens relatifs vers des fichiers .html au lie
 import html
 import json
 import re
+import threading
+import time
 from pathlib import Path
 from urllib.parse import quote
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -623,10 +626,60 @@ def chat_page():
     return page((APP_DIR / "chat_page.html").read_text(encoding="utf-8"), "Chat NOVA", "chat")
 
 
+# Session de travail en mémoire du processus: la conversation et la dernière analyse d'ajout survivent aux changements
+# de page ou d'onglet (et une réponse en cours se termine même si on quitte la page), mais pas à l'arrêt du serveur.
+SESSION: dict = {"chat": [], "ingest": None, "saisie": {}}
+_session_lock = threading.Lock()
+
+
+class Saisie(BaseModel):
+    cle: str
+    valeur: str
+
+
+@app.get("/api/session/saisie")
+def session_saisie():
+    return SESSION["saisie"]
+
+
+@app.put("/api/session/saisie")
+def session_saisie_maj(m: Saisie):
+    """Texte tapé mais pas encore envoyé (question du chat, texte collé dans Ajouter)."""
+    if m.cle in ("chat_question", "ingest_texte"):
+        SESSION["saisie"][m.cle] = m.valeur[:200_000]
+    return {"ok": True}
+
+
+@app.get("/api/session/chat")
+def session_chat():
+    return SESSION["chat"]
+
+
+@app.delete("/api/session/chat")
+def session_chat_effacer():
+    with _session_lock:
+        SESSION["chat"] = [m for m in SESSION["chat"] if m.get("statut") == "en cours"]  # une réponse en cours n'est pas perdue
+    return SESSION["chat"]
+
+
 @app.post("/api/chat")
 def api_chat(q: Q):
+    with _session_lock:
+        SESSION["chat"].append({"role": "user", "texte": q.question})
+        msg = {"role": "assistant", "statut": "en cours", "question": q.question, "debut": time.time()}
+        SESSION["chat"].append(msg)
+    try:
+        j = _chat(q.question)
+    except Exception as ex:  # l'échec est conservé dans la conversation (ex.: Ollama arrêté)
+        msg.update(statut="erreur", message=f"{type(ex).__name__}: {ex}")
+        raise HTTPException(503, msg["message"])
+    msg.update(statut="ok", reponse=j)
+    return j
+
+
+def _chat(question: str) -> dict:
     from .chat_graph import ask  # importé ici: les pages statiques n'ont pas besoin de LangGraph/Ollama
-    r = ask(q.question)
+    r = ask(question)
     preuves = [{**p, "lien": href("source/" + p["fichier"], evidence.anchor(p["repere"]) if p.get("repere") else "") if p.get("fichier") else ""}
                for p in r["preuves"]]
     for sec in r["evolution"]:
@@ -662,7 +715,38 @@ async def api_ingest(fichier: UploadFile | None = File(None), texte: str = Form(
     if dest.exists() and dest.read_bytes() != data:
         dest = docs / f"{dest.stem}_{len(list(docs.glob(dest.stem + '*'))) + 1}{dest.suffix}"
     dest.write_bytes(data)
-    return ingest(corpus.read_bytes(dest.name, data), dest.name, fichier_doc=f"docs/{dest.name}")
+    SESSION["ingest"] = {"statut": "en cours", "nom": dest.name, "debut": time.time()}
+    try:  # l'analyse est longue: dans un thread, pour que la page puisse interroger l'état pendant ce temps
+        out = await run_in_threadpool(ingest, corpus.read_bytes(dest.name, data), dest.name, f"docs/{dest.name}")
+    except Exception as ex:
+        SESSION["ingest"] = {"statut": "erreur", "nom": dest.name, "message": f"{type(ex).__name__}: {ex}"}
+        raise HTTPException(503, SESSION["ingest"]["message"])
+    SESSION["ingest"] = {"statut": "ok", "nom": dest.name, "resultat": out, "brouillon_texte": None, "enregistrement": None}
+    return out
+
+
+class SessionIngest(BaseModel):
+    brouillon_texte: str | None = None
+
+
+@app.get("/api/session/ingest")
+def session_ingest():
+    return SESSION["ingest"]
+
+
+@app.put("/api/session/ingest")
+def session_ingest_maj(m: SessionIngest):
+    """Conserve les corrections faites au brouillon avant enregistrement."""
+    if SESSION["ingest"] and SESSION["ingest"].get("statut") == "ok":
+        SESSION["ingest"]["brouillon_texte"] = m.brouillon_texte
+    return {"ok": True}
+
+
+@app.delete("/api/session/ingest")
+def session_ingest_effacer():
+    if not (SESSION["ingest"] and SESSION["ingest"].get("statut") == "en cours"):
+        SESSION["ingest"] = None
+    return SESSION["ingest"]
 
 
 class Brouillon(BaseModel):
@@ -681,8 +765,11 @@ def api_updates(b: Brouillon):
     slug = re.sub(r"[^a-z0-9]+", "_", verify_norm(u["document"].get("titre", "maj")))[:40].strip("_") or "maj"
     path = updates.UPDATES / f"{u['id']}_{slug}.json"
     path.write_text(json.dumps(u, ensure_ascii=False, indent=2), encoding="utf-8")
-    return {"enregistre": f"data/updates/{path.name}", "avertissements": controle["_avertissements"],
-            "changements_retenus": len(controle["changements"]), "lien": href("mise-a-jour")}
+    res = {"enregistre": f"data/updates/{path.name}", "avertissements": controle["_avertissements"],
+           "changements_retenus": len(controle["changements"]), "lien": href("mise-a-jour")}
+    if SESSION["ingest"] and SESSION["ingest"].get("statut") == "ok":
+        SESSION["ingest"]["enregistrement"] = res
+    return res
 
 
 def verify_norm(s: str) -> str:
