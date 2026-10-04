@@ -28,6 +28,7 @@ Variables:
 - `prompts.py`: tous les prompts (système / utilisateur séparés, exemple fictif, format JSON).
 - `verify.py`: vérification déterministe (citations, entités, garde-fous) + agent vérificateur LLM.
 - `chat_graph.py`: route → experts en parallèle (JSON vérifié, 1 révision) → synthèse ⟲ contrôle → finalisation.
+- `impact.py`: analyse d'impact en code d'un document reçu (phrases signal -> sujet -> comparaison à l'état actuel -> actions touchées et recommandées -> brouillon de mise à jour).
 - `ingest_graph.py`: extraction ancrée (citation exacte) → diff → experts touchés (vérifiés) → rapport assemblé par le code → ajout « à valider ».
 - `llm.py`: seul point de contact avec Ollama; garde de contexte et JSON validé.
 

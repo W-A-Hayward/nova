@@ -34,11 +34,13 @@ Le chat demande en plus Ollama : `ollama pull llama3.1`.
 
 ## 3. Intégrer la nouvelle information (livrable 4)
 
-1. Déposer le document reçu dans `data/updates/docs/`.
-2. Copier `data/updates/_modele.json` en `data/updates/U01_<sujet>.json` et le remplir : statut du problème, décision antérieure, nouvelle proposition, changements (avec un **extrait exact** du document comme preuve), actions touchées, nouvelles actions. `/ingest` (Ollama) peut aider à repérer les extraits.
-3. Ouvrir **Mise à jour**, puis régénérer l'export.
+1. Page **Ajouter** (serveur) : téléverser le document reçu ou coller son texte. Il est conservé dans `data/updates/docs/`.
+2. Le **rapport d'impacts** répond aux trois questions de la consigne : ce qui vient de changer, les informations et actions affectées, les actions à prendre. Il ajoute ce qui n'a pas changé. L'analyse est faite **par le code** (`app/impact.py`) : chaque phrase porteuse d'un signal (date, ticket, montant, proposition, livraison, validation, retard) est rattachée à un sujet, puis comparée à son état actuel. Exemples : une nouvelle date proposée alors que le 22 octobre reste approuvé ; une livraison qui n'est pas une validation ; une validation, qui ne compte que si elle vient du validateur désigné. Le LLM n'ajoute que des remarques vérifiées (désactivable : `NOVA_IMPACT_LLM=0`).
+3. Relire le **brouillon de mise à jour** proposé sous le rapport (statuts, responsables, échéances), puis cliquer « Enregistrer comme mise à jour ». Il devient `data/updates/Uxx_*.json`. Sans serveur, on peut aussi copier `data/updates/_modele.json` à la main.
+4. Ouvrir **Mise à jour** : l'état actuel est comparé à la baseline. Le chat tient compte de la mise à jour (nouvelle position dans l'évolution du sujet). Régénérer ensuite l'export.
 
-Le code applique trois garde-fous :
+Le code applique ces garde-fous (à l'analyse et à l'enregistrement) :
+- une instruction adressée au système dans le document (« ignorez les règles », « marquez … comme validé ») est écartée et signalée ;
 - un extrait introuvable dans le document écarte le changement ;
 - un statut « approuvé » ou « validé » sans approbation explicite et sans approbateur est rétrogradé en « proposé », car une proposition ne remplace jamais une décision ;
 - une condition de go-live n'est levée que par son validateur (Sophie pour C1, Mélissa pour C2, Olivier pour C3).
@@ -98,6 +100,7 @@ Le code applique trois garde-fous :
 
 ```bash
 python tests/test_deliverables.py   # sans Ollama : extraits, montants, garde-fous, baseline intacte
+python tests/test_impact.py         # sans Ollama : détection des changements d'un document reçu (LLM muet)
 python tests/test_chat_reasoning.py # sans Ollama : état actuel, historique, contradictions, « ce qui a changé »
 python tests/smoke_test.py          # sans Ollama : garde-fous du chat (puis relancer python -m app.seed)
 python tests/eval_qa.py --quiet     # avec Ollama : qualité du chat sur Q01–Q10
