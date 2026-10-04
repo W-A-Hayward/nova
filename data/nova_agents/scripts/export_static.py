@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Export HTML autonome: export/index.html s'ouvre dans un navigateur, sans Python, sans Ollama, sans serveur.
 
-Rend les pages /brief, /memoire, /reponses, /mise-a-jour, /sources, /recherche, /guide et une page par fichier source,
+Rend les pages /brief, /memoire, /reponses, /mise-a-jour, /sources (avec la recherche), /guide et une page par fichier source,
 et copie les fichiers originaux dans export/raw/ (captures PNG, PDF, xlsx...). Le chat et l'ingestion restent côté serveur.
 Usage: python scripts/export_static.py [dossier_de_sortie]
 """
@@ -23,7 +23,6 @@ PAGES = {
     "reponses": server.reponses_page,
     "mise-a-jour": lambda: server.maj_page(0),
     "sources": server.sources_page,
-    "recherche": server.recherche_page,
     "guide": server.guide_page,
 }
 
