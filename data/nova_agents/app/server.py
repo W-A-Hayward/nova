@@ -295,12 +295,14 @@ def brief_page():
 <div class="brief-section"><h3>5. SITUATION FACTURES</h3>
 {fac_html}<p>Facture total: {facture_total:,} $ | Paye: {paye:,} $</p></div>
 
-<div class="brief-section"><h3>6. PRIORITES</h3>
-<table><tr><th>Item</th><th>Responsable</th><th>Statut</th><th>Echéance</th></tr>
-<tr><td>SEC-210</td><td>Sophie</td><td>EN VALIDATION</td><td>Avant 22 oct</td></tr>
-<tr><td>ACC-303</td><td>Melissa</td><td>OUVERT</td><td>Avant 22 oct</td></tr>
-<tr><td>OPS-601</td><td>Olivier</td><td>OUVERT</td><td>Avant 22 oct</td></tr>
-<tr><td style="background:#eef2f7">INT-101</td><td>Boreal</td><td>FERME</td><td>17 sept OK</td></tr></table></div>
+<div class="brief-section"><h3>6. PRIORITES IMMEDIATES</h3>
+<table style="width:100%;border-collapse:collapse;font-size:13px">
+<tr style="background:#eef2f7"><th style="text-align:left;padding:10px;border:1px solid #ddd">Element</th><th style="text-align:left;padding:10px;border:1px solid #ddd">Description</th><th style="text-align:left;padding:10px;border:1px solid #ddd">Responsable</th><th style="text-align:left;padding:10px;border:1px solid #ddd">Statut</th><th style="text-align:left;padding:10px;border:1px solid #ddd">Echéance</th></tr>
+<tr><td style="padding:10px;border:1px solid #ddd"><span class="todo">SEC-210</span></td><td style="padding:10px;border:1px solid #ddd">Validation de journalisation d'audit pour exports administrateur. Fix livré 19 sept, validation sécurité requise.</td><td style="padding:10px;border:1px solid #ddd">Sophie Lambert</td><td style="padding:10px;border:1px solid #ddd">EN VALIDATION</td><td style="padding:10px;border:1px solid #ddd">Avant 22 oct</td></tr>
+<tr><td style="padding:10px;border:1px solid #ddd"><span class="todo">ACC-303</span></td><td style="padding:10px;border:1px solid #ddd">Accessibilité clavier modale (WCAG). Bouton Enregistrer non accessible au clavier, bloquant avant production.</td><td style="padding:10px;border:1px solid #ddd">Melissa Gagnon</td><td style="padding:10px;border:1px solid #ddd">OUVERT</td><td style="padding:10px;border:1px solid #ddd">Avant 22 oct</td></tr>
+<tr><td style="padding:10px;border:1px solid #ddd"><span class="todo">OPS-601</span></td><td style="padding:10px;border:1px solid #ddd">Runbook complet avec rollback et validation post-déploiement. Olivier exige procédure exécutable, pas juste document.</td><td style="padding:10px;border:1px solid #ddd">Olivier Cote</td><td style="padding:10px;border:1px solid #ddd">OUVERT</td><td style="padding:10px;border:1px solid #ddd">Avant 22 oct</td></tr>
+<tr style="background:#f9f9f9"><td style="padding:10px;border:1px solid #ddd"><span class="ok">INT-101</span></td><td style="padding:10px;border:1px solid #ddd">Connecteur intégration interne. Validé et fermé 17 sept. Cause initiale du report résolue.</td><td style="padding:10px;border:1px solid #ddd">Boreal</td><td style="padding:10px;border:1px solid #ddd;color:#007a1f">FERME</td><td style="padding:10px;border:1px solid #ddd">17 sept OK</td></tr>
+</table></div>
 
 <p style="font-size:11px;margin-top:20px">Details: /memoire (timeline/decisions) | /reponses (Q01-Q10 sources)</p>"""
     return page(brief_html)
@@ -333,27 +335,31 @@ def memoire_page():
 <p><strong>Baseline:</strong> {e(memory_data['ref_date'])}</p>
 
 <h3>Chronologie (13 événements clés)</h3>
-<table>
-<tr><th>Date</th><th>Événement</th><th>Type</th><th>Source</th><th>Détail</th></tr>
-{chr(10).join(f"<tr><td>{e(d['date'])}</td><td>{e(d['event'])}</td><td>{e(d['type'])}</td><td>{e(d['source'])}</td><td>{e(d['detail'][:80])}</td></tr>" for d in memory_data['timeline'][:13])}
+<table style="width:100%;border-collapse:collapse">
+<tr style="background:#eef2f7"><th style="text-align:left;padding:8px;border:1px solid #ddd">Date</th><th style="text-align:left;padding:8px;border:1px solid #ddd">Événement</th><th style="text-align:left;padding:8px;border:1px solid #ddd">Type</th><th style="text-align:left;padding:8px;border:1px solid #ddd">Source</th><th style="text-align:left;padding:8px;border:1px solid #ddd">Détail</th></tr>
+{chr(10).join(f"<tr><td style='padding:8px;border:1px solid #ddd;white-space:nowrap'>{e(d['date'])}</td><td style='padding:8px;border:1px solid #ddd'>{e(d['event'])}</td><td style='padding:8px;border:1px solid #ddd'>{e(d['type'])}</td><td style='padding:8px;border:1px solid #ddd'>{e(d['source'])}</td><td style='padding:8px;border:1px solid #ddd;word-wrap:break-word'>{e(d['detail'])}</td></tr>" for d in memory_data['timeline'][:13])}
 </table>
 
 <h3>Décisions documentées (5)</h3>
-{chr(10).join(f"<div class='card'><strong>🔄 {d['field']}</strong><br><em>État antérieur:</em> <strong>{d['ancien']['valeur']}</strong> ({d['ancien']['source']})<br><em>État nouveau:</em> <strong>{d['nouveau']['valeur']}</strong> ({d['nouveau']['source']})<br><em>Résolution:</em> {d['resolution']}</div>" for d in memory_data['decisions'][:5])}
+{chr(10).join(f"<div class='card' style='word-wrap:break-word'><strong style='display:block;margin-bottom:8px'>🔄 {e(d['field'])}</strong><div style='font-size:13px'><em>État antérieur:</em> <strong>{e(d['ancien']['valeur'])}</strong> ({e(d['ancien']['source'])})<br><em>État nouveau:</em> <strong>{e(d['nouveau']['valeur'])}</strong> ({e(d['nouveau']['source'])})<br><em>Résolution:</em> {e(d['resolution'])}</div></div>" for d in memory_data['decisions'][:5])}
 
 <h3>Contradictions (résolues et non résolues)</h3>
 {contradictions_html}
 
 <h3>Actions en cours (4)</h3>
-<table>
-<tr><th>Action</th><th>Responsable</th><th>Échéance</th><th>Statut</th></tr>
-{chr(10).join(f"<tr><td>{e(a['action'][:40])}</td><td>{e(a['responsable'])}</td><td>{a.get('echéance', 'à confirmer')}</td><td><span class='todo'>{a['statut_courant']}</span></td></tr>" for a in memory_data['actions'][:4])}
+<table style="width:100%;border-collapse:collapse">
+<tr style="background:#eef2f7"><th style="text-align:left;padding:8px;border:1px solid #ddd">Action</th><th style="text-align:left;padding:8px;border:1px solid #ddd">Responsable</th><th style="text-align:left;padding:8px;border:1px solid #ddd">Échéance</th><th style="text-align:left;padding:8px;border:1px solid #ddd">Statut</th></tr>
+{chr(10).join(f"<tr><td style='padding:8px;border:1px solid #ddd;word-wrap:break-word'>{e(a['action'])}</td><td style='padding:8px;border:1px solid #ddd'>{e(a['responsable'])}</td><td style='padding:8px;border:1px solid #ddd'>{e(a.get('echéance', 'à confirmer'))}</td><td style='padding:8px;border:1px solid #ddd'><span class='todo'>{e(a['statut_courant'])}</span></td></tr>" for a in memory_data['actions'][:4])}
 </table>
 
 <style>
 :root {{
   --ok: #007a1f;
   --warn: #d97706;
+}}
+.card {{
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }}
 </style>
 
