@@ -73,7 +73,8 @@ def fake_text(prompt, system="", tag=""):
 
 
 llm.ask_json, llm.ask_text = fake_json, fake_text
-from app.chat_graph import ask  # noqa: E402
+from app.chat_graph import ask, label  # noqa: E402
+LAB = label(DEC, kb.claims_by_id())  # repère lisible affiché à l'utilisateur, ex. « M04 · ligne 23 »
 
 GOOD = {"texte": "Le comité de direction a approuvé le 22 octobre le 10 septembre (non automatique).", "preuves": [DEC]}
 HALLU = [{"texte": "Marc Gervais a signé l'approbation le 3 octobre.", "preuves": [DEC]},            # personne + date inventées
@@ -87,29 +88,31 @@ SC.update(expert={"hors_domaine": False, "affirmations": [GOOD] + HALLU, "inconn
                  f"Le comité de direction a approuvé le 22 octobre le 10 septembre [{DEC}], sans go automatique."], synth_calls=0)
 r = ask("Quelle est la date de mise en production approuvée?")
 print(r["reponse"])
-assert r["sujets"] == ["gouvernance"], r["sujets"]
-assert f"[{SRC}]" in r["reponse"] and "99 000" not in r["reponse"] and r["tentatives_synthese"] == 2
-assert "Marc" not in r["reponse"] and "SEC-210" not in r["reponse"]
-assert "Aucune échéance documentée" in r["reponse"] and "re-test" not in r["reponse"]   # « inconnu » inventé filtré
+c = r["reponse_courte"]  # la réponse elle-même (l'évolution, assemblée par le code, cite légitimement d'autres personnes)
+assert r["sujets"] == ["gouvernance"] and r["fils"] == ["F01"], (r["sujets"], r["fils"])
+assert f"[{LAB}]" in c and "99 000" not in c and r["tentatives_synthese"] == 2
+assert "Marc" not in c and "SEC-210" not in c
+assert "Aucune échéance documentée" in c and "re-test" not in c   # « inconnu » inventé filtré
+assert "Évolution et sources contradictoires" in r["reponse"] and "HISTORIQUE (remplacé)" in r["reponse"]
 assert sum(len(e["retirees"]) for e in r["experts"]) == 3 and r["preuves"][0]["source"] == SRC
 print("2) chat: hallucinations écartées, synthèse corrigée OK")
 
 # 3) abstention quand rien n'est vérifiable
 SC.update(expert={"hors_domaine": False, "affirmations": HALLU, "inconnu": []}, synth_calls=0)
 r = ask("Quel est le budget de la phase 2?")
-assert r["reponse"].startswith("Je ne trouve pas d'information vérifiable"), r["reponse"]
+assert r["reponse_courte"].startswith("Je ne trouve pas d'information vérifiable"), r["reponse"]
 print("3) abstention OK")
 
 # 4) repli déterministe quand la prose reste non vérifiable
 SC.update(expert={"hors_domaine": False, "affirmations": [GOOD], "inconnu": []}, synth=[f"Approuvé le 1er octobre par Julien [{DEC}]."], synth_calls=0)
 r = ask("Date approuvée?")
-assert "affichage direct des affirmations vérifiées" in r["reponse"] and "Julien" not in r["reponse"] and f"[{SRC}]" in r["reponse"], r["reponse"]
+assert "affichage de l'état actuel tranché" in r["reponse"] and "Julien" not in r["reponse_courte"] and f"[{LAB}]" in r["reponse"], r["reponse"]
 print("4) repli déterministe OK")
 
 # 5) l'agent vérificateur (LLM) peut rejeter ce que le code laisse passer
 SC.update(verdict="CONTREDIT", expert={"hors_domaine": False, "affirmations": [GOOD], "inconnu": []}, revision={"affirmations": [GOOD]}, synth_calls=0)
 r = ask("Date approuvée?")
-assert r["reponse"].startswith("Je ne trouve pas"), r["reponse"]
+assert r["reponse_courte"].startswith("Je ne trouve pas"), r["reponse"]
 SC["verdict"] = "SUPPORTE"
 print("5) agent vérificateur OK")
 
