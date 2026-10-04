@@ -370,17 +370,17 @@ def memoire_page():
 def reponses_page():
     """Q01–Q10 answers with sources."""
     answers = load_answers()
-    html_content = "<h2>Réponses aux 10 questions — Baseline 30 sept 2026</h2>"
+    html_content = "<h2>Réponses aux 10 questions — Baseline 30 sept 2026</h2><style>.answer-card { word-wrap: break-word; overflow-wrap: break-word; } .answer-card ul li { word-wrap: break-word; overflow-wrap: break-word; }</style>"
     for qid in ["Q01", "Q02", "Q03", "Q04", "Q05", "Q06", "Q07", "Q08", "Q09", "Q10"]:
         if qid in answers:
             q = answers[qid]
-            html_content += f"""<div class="card" style="border-left-color:#007a1f">
-<h3>{qid}: {e(q['question'][:80])}</h3>
-<p><strong>Réponse:</strong> {e(q['reponse'][:200])}</p>
+            html_content += f"""<div class="card answer-card" style="border-left-color:#007a1f">
+<h3>{qid}: {e(q['question'])}</h3>
+<p><strong>Réponse:</strong> {e(q['reponse'])}</p>
 <p><em>Nuance:</em> {e(q['nuance'])}</p>
 <details><summary>Preuves citées ({len(q['sources'])} sources)</summary>
 <ul>
-{chr(10).join(f"<li><strong>{s['fichier']}</strong> ({e(s['repere'])}): {e(s['detail'][:100])}</li>" for s in q['sources'])}
+{chr(10).join(f"<li><strong>{s['fichier']}</strong> ({e(s['repere'])}): {e(s['detail'])}</li>" for s in q['sources'])}
 </ul>
 </details>
 </div>"""
