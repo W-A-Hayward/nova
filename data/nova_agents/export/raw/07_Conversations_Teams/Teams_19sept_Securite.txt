@@ -1,0 +1,6 @@
+Canal : NOVA / Sécurité
+19 septembre 2026
+
+10:24 - Julien (Boréal) : SEC-210 devrait être good maintenant, le fix est déployé.
+10:31 - Sophie : Merci. On garde le ticket en validation jusqu'à notre re-test. « déployé » != « accepté » :)
+10:34 - Julien : yep, compris.

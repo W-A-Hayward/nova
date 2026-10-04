@@ -1,0 +1,16 @@
+TICKET PERF-501
+Titre : c'est lent
+Créé : 3 septembre 2026
+Demandeur : utilisateur pilote
+Statut : Fermé
+
+Description :
+C'est lent depuis ce matin. Des fois j'attends et ça finit par afficher.
+
+Pièce jointe : PERF-501_lenteur.png
+
+Commentaires :
+03 sept 15:10 - Support : 3 utilisateurs rapportent surtout la recherche de dossiers.
+04 sept 10:44 - Dév : /dossiers/search fait un scan complet quand aucun filtre de statut n'est fourni. 6 à 8 s sur le dataset de validation.
+06 sept 18:02 - Dév : index ajouté + requête modifiée.
+07 sept 09:12 - Support : moyenne observée 620 ms sur 50 essais. Aucun nouveau signalement. Fermé.

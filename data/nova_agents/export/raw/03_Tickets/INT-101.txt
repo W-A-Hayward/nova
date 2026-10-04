@@ -1,0 +1,20 @@
+TICKET INT-101
+Titre : Ça marche pas avec le connecteur
+Créé : 5 septembre 2026
+Demandeur : Marc Gervais
+Priorité : Haute
+Statut : Fermé
+
+Description initiale :
+Ça marche pas. On cherche un dossier existant et on a rien. Voir capture.
+
+Pièce jointe : INT-101_aucun_resultat.png
+
+Commentaires :
+05 sept 09:41 - Marc : C'était OK hier en DEV. Là en INT toutes les recherches par numéro retournent vide.
+05 sept 11:18 - Boréal : On voit des 401 sur l'appel vers le service interne. Le jeton de service semble expiré après le changement de secret.
+08 sept 16:02 - Marc : Le remplacement du secret est fait mais il reste des erreurs intermittentes. Ça met en risque le 15 octobre si on n'a pas de stabilité cette semaine.
+17 sept 14:23 - Boréal : Correctif déployé. 120 recherches rejouées, 120 réponses valides.
+17 sept 16:10 - Marc : Validé côté intégration. Je ferme.
+
+Résolution : rotation du secret + correction de la logique de renouvellement du jeton.
