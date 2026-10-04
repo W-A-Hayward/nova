@@ -1,0 +1,32 @@
+TRANSCRIPTION PARTIELLE - ATELIER ARCHITECTURE NOVA
+23 juillet 2026 - 09:00 à 09:47
+Participants : Élodie Caron (projet), Marc Gervais (architecture), Sophie Lambert (sécurité), Julien Moreau (Boréal)
+
+09:00 Élodie : Bonjour, merci. On a 45 minutes. Avant de commencer, Marc, ton micro coupe un peu.
+09:01 Marc : Oui, je change de casque... c'est mieux?
+09:01 Sophie : Oui.
+09:02 Élodie : L'objectif c'est surtout de fermer la question de la région d'hébergement. Julien nous a envoyé la v1 hier.
+09:03 Julien : Oui, la v1 est basée sur notre landing zone standard, donc East US pour l'instant. Ce n'est pas gravé dans le béton.
+09:05 Marc : Techniquement, le changement vers Canada Central est simple. Il faut juste le savoir maintenant avant qu'on commence à accumuler des ressources.
+09:06 Sophie : Pour moi, ce n'est pas juste une préférence. Les données de production NOVA doivent demeurer au Canada. Je veux qu'on le mette comme décision, pas comme note à revoir.
+09:08 Julien : Aucun problème. On peut basculer le design. Il faudra quelques jours pour recréer les ressources et valider les services disponibles.
+09:10 Élodie : Donc on tranche Canada Central?
+09:10 Marc : Oui.
+09:10 Sophie : Oui.
+09:11 Julien : Oui de notre côté.
+09:12 Élodie : Parfait. Je vais noter la décision et on fera un ADR. La v1 devient donc obsolète pour la localisation des données.
+09:14 Marc : Autre point, l'authentification. On reste SSO seulement, pas de comptes locaux?
+09:15 Sophie : SSO seulement en production.
+09:17 Julien : C'est déjà ce qui est prévu.
+09:20 Élodie : J'ai une question qui n'a rien à voir : quelqu'un sait si la salle 18B est réservée cet après-midi? J'ai un atelier qui vient de changer de local.
+09:21 Marc : Aucune idée.
+09:22 Sophie : Je pense que oui, mais à vérifier.
+09:24 Julien : Sur le stockage, on va utiliser du chiffrement géré côté plateforme. Je vous enverrai les paramètres.
+09:29 Marc : Pour le connecteur interne, j'attends encore le compte de service.
+09:31 Élodie : Est-ce que ça menace le 15 octobre?
+09:31 Marc : Pas à ce stade. C'est tôt. Mais je veux l'avoir avant août.
+09:36 Sophie : J'aimerais aussi qu'on journalise toutes les actions administrateur, surtout consultation et export.
+09:38 Julien : Oui, notre composant a un audit log. On vous montrera ça en validation.
+09:43 Élodie : Donc résumé : Canada Central, SSO uniquement, audit admin à valider. Le reste continue.
+09:46 Marc : Correct.
+09:47 Élodie : Merci tout le monde.

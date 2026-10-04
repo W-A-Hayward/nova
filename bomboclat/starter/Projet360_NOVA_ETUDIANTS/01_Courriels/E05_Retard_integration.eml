@@ -1,0 +1,22 @@
+Date: Tue, 08 Sep 2026 11:16:00 -0400
+From: Julien Moreau <julien.moreau@boreal.example>
+To: elodie.caron@demo.example, nicolas.perron@demo.example
+Subject: NOVA - risque sur la date du 15 octobre
+Message-ID: <e05_retard_integration@nova.demo.local>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+Bonjour,
+
+Le probl=C3=A8me du connecteur interne nous a fait perdre davantage de temps =
+que pr=C3=A9vu. Nous pouvons continuer =C3=A0 viser le 15 octobre, mais ce se=
+rait avec tr=C3=A8s peu de marge pour la stabilisation.
+
+Notre recommandation est de d=C3=A9placer la mise en production au **22 octob=
+re**.
+
+=C3=80 ce stade, il s'agit d'une proposition de notre part. =C3=80 vous de co=
+nfirmer la d=C3=A9cision de gouvernance.
+
+Julien

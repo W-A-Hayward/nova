@@ -1,0 +1,8 @@
+langgraph>=0.2
+langchain-ollama>=0.2
+langchain-core>=0.3
+fastapi>=0.110
+uvicorn>=0.29
+python-multipart>=0.0.9
+pypdf>=4.0
+openpyxl>=3.1

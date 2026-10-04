@@ -1,0 +1,16 @@
+TICKET ACC-301
+Titre : champs pas top lecteur écran
+Créé : 11 août 2026
+Demandeur : QA
+Priorité : Moyenne
+Statut : Fermé
+
+Description initiale :
+Il manque quelque chose sur le champ nom je pense. En visuel ça a l'air correct mais NVDA annonce juste « edit blank ».
+
+Pièce jointe : ACC-301_labels.png
+
+Commentaires :
+12 août - Mélissa : Le champ utilise uniquement le placeholder « Votre nom », aucun <label> associé.
+14 août - Boréal : Ajout du label programmatique et aria-describedby pour l'aide contextuelle.
+15 août - Mélissa : Validé avec NVDA et VoiceOver. Fermé.

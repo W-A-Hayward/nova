@@ -1,0 +1,18 @@
+Date: Sat, 19 Sep 2026 10:20:00 -0400
+From: Julien Moreau <julien.moreau@boreal.example>
+To: sophie.lambert@demo.example, nicolas.perron@demo.example
+Subject: SEC-210 - correctif =?utf-8?b?ZMOpcGxvecOp?=
+Message-ID: <e08_correctif_journalisation@nova.demo.local>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+Bonjour,
+
+Le correctif pour SEC-210 est d=C3=A9ploy=C3=A9 en validation depuis ce matin=
+. Nos tests automatis=C3=A9s passent et, pour nous, le probl=C3=A8me est corr=
+ig=C3=A9.
+
+Sophie, tu peux faire ton re-test quand ton =C3=A9quipe est disponible.
+
+Julien

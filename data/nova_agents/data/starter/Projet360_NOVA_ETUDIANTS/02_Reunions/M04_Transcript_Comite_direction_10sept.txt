@@ -1,0 +1,36 @@
+TRANSCRIPTION - COMITÉ DE DIRECTION NOVA
+10 septembre 2026 - 15:00 à 15:42
+Participants : Élodie Caron, Nicolas Perron, Marc Gervais, Sophie Lambert, Mélissa Gagnon, Olivier Côté, Camille Beaulieu, Julien Moreau (Boréal)
+
+15:00 Élodie : Merci. Je veux qu'on sorte d'ici avec une décision claire sur la date.
+15:02 Julien : Comme écrit mardi, le connecteur nous a coûté plus de temps que prévu. Notre recommandation est de déplacer le lancement du 15 au 22 octobre.
+15:03 Nicolas : On parle d'une semaine complète. Qu'est-ce que ça nous achète exactement?
+15:04 Julien : Stabilisation du connecteur, reprise des tests intégrés et une marge pour corriger les anomalies bloquantes.
+15:06 Marc : Je confirme que le connecteur est le chemin critique en ce moment. Le problème n'est pas juste un écran. Il touche les recherches et la synchronisation.
+15:08 Sophie : De mon côté, je ne veux pas compresser les tests sécurité pour sauver le 15. Le 22 me semble plus réaliste, sous réserve des validations.
+15:10 Mélissa : Même chose pour l'accessibilité. Je peux finir le cycle sans couper de scénarios.
+15:12 Olivier : Pour l'exploitation, une semaine de plus est utile, mais je veux un runbook final au moins quelques jours avant.
+15:15 Camille : La migration de données n'empêche pas le 15 pour l'instant. Le problème de doublons a été corrigé et le rejeu du 9 septembre a été validé sans doublon. DATA-401 est fermé.
+15:17 Nicolas : Est-ce qu'on a un impact contractuel à passer au 22?
+15:18 Élodie : Pas de pénalité identifiée. C'est une date interne de mise en production, le contrat court jusqu'à fin octobre.
+15:20 Julien : Pour nous, le 22 est tenable.
+15:22 Élodie : Je vais formuler la décision. La date cible de mise en production NOVA est déplacée du 15 octobre au **22 octobre 2026**. Est-ce que quelqu'un s'oppose?
+15:23 [silence]
+15:23 Sophie : Non.
+15:23 Marc : Non.
+15:24 Olivier : Non.
+15:24 Nicolas : D'accord.
+15:25 Élodie : Donc **approuvé**. Le 22 devient la date officielle. On doit mettre les plans et communications à jour.
+15:27 Nicolas : Juste pour être sûr, le 22 n'est pas un go automatique. Les critères de sécurité, accessibilité et exploitation restent.
+15:28 Sophie : Absolument.
+15:30 Julien : Compris.
+15:31 Mélissa : J'ai encore un café froid depuis ce matin, donc si quelqu'un connaît un miracle pour ça aussi...
+15:31 Camille : Là on dépasse le mandat du comité.
+15:32 [rires]
+15:34 Élodie : Autre sujet, les optimisations mobiles. Julien, vous avez envoyé une estimation?
+15:35 Julien : Oui, autour de 18 000 $. Ce serait mieux pour l'expérience sur petits écrans.
+15:36 Nicolas : Est-ce que c'est requis pour la phase 1?
+15:37 Élodie : Pas selon la portée actuelle. On va traiter ça séparément, aucune approbation aujourd'hui.
+15:38 Sophie : Merci de ne pas mélanger ça avec les corrections d'accessibilité obligatoires.
+15:40 Élodie : Très bon point. On ferme. Nouvelle date officielle : 22 octobre. Mobile : aucune décision de dépense.
+15:42 Fin.

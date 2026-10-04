@@ -1,0 +1,25 @@
+TICKET SEC-210
+Titre : Audit admin incomplet sur export
+Créé : 12 septembre 2026
+Demandeur : Sophie Lambert
+Priorité : Bloquante avant production
+Statut : EN VALIDATION
+
+Description :
+Les actions administratives sensibles doivent être traçables. Lors d'un export CSV, l'événement détaillé attendu n'apparaît pas dans le journal.
+
+Étapes :
+1. Se connecter avec un compte administrateur.
+2. Ouvrir un dossier.
+3. Exporter les données en CSV.
+4. Consulter le journal d'audit.
+
+Attendu : événement EXPORT_CSV avec utilisateur, horodatage et identifiant du dossier.
+Observé : une ligne EXPORT_CSV existe avec utilisateur et horodatage, mais l'objet (identifiant du dossier) et le résultat sont absents. La connexion, la consultation et la déconnexion sont présentes. Le défaut est une journalisation d'export incomplète, pas l'absence totale d'une ligne d'export.
+
+Pièce jointe : SEC-210_audit.png
+
+Commentaires :
+19 sept 10:22 - Boréal : Fix déployé sur l'environnement de validation. Pour nous c'est réglé.
+19 sept 14:05 - Sophie : Merci. Nous devons refaire notre scénario et confirmer nous-mêmes. Ne pas fermer avant validation sécurité.
+26 sept 15:40 - Sophie : Re-test planifié. Statut maintenu EN VALIDATION.

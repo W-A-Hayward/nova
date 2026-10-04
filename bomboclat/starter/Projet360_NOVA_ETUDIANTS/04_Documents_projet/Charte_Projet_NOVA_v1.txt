@@ -1,0 +1,20 @@
+CHARTE DE PROJET NOVA - VERSION 1
+Date : 7 juillet 2026
+
+Chargée de projet : Élodie Caron
+Fournisseur : Boréal Numérique
+Budget initial : 180 000 $ CAD
+Date cible de mise en production : 15 octobre 2026
+
+Objectif
+Remplacer le suivi dispersé par courriel et fichiers locaux par un portail centralisé de demandes opérationnelles.
+
+Portée phase 1
+- Authentification SSO
+- Création et suivi de demandes
+- Ajout de pièces jointes
+- Workflow de traitement
+- Tableau de suivi
+- Rapports standards
+
+Cette charte constitue le point de départ du projet et n'est pas mise à jour automatiquement après chaque décision de comité.

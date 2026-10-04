@@ -1,0 +1,19 @@
+TICKET DATA-401
+Titre : Doublons migration - lot MIG-09-02
+Créé : 2 septembre 2026
+Demandeur : Camille Beaulieu
+Priorité : Haute
+Statut : Fermé
+
+Contexte :
+Le même dossier peut être créé deux fois lorsque deux messages Kafka concernant le même événement sont consommés presque simultanément.
+
+Preuve : DATA-401_doublons.png
+
+Analyse :
+Les dossiers 8401 et 8402 ont le même demandeur, la même adresse courriel et des timestamps espacés d'une seconde. Le mécanisme d'idempotence utilisait l'ID technique du message plutôt que l'ID métier.
+
+Correction : clé d'idempotence basée sur external_request_id.
+
+Validation :
+9 septembre - lot de 15 000 événements rejoué, aucun doublon détecté. Ticket fermé.

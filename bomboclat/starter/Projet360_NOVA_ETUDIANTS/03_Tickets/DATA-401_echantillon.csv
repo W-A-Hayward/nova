@@ -1,0 +1,4 @@
+record_id,external_request_id,email,created_at
+8401,REQ-4451,alex.martin@example.org,2026-09-02T15:03:12
+8402,REQ-4451,alex.martin@example.org,2026-09-02T15:03:13
+8403,REQ-4452,sam.t@example.org,2026-09-02T15:04:01

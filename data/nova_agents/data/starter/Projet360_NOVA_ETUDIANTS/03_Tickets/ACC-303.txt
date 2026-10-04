@@ -1,0 +1,16 @@
+TICKET ACC-303
+Titre : tab dans popup
+Créé : 17 septembre 2026
+Demandeur : Mélissa Gagnon
+Priorité : Haute
+Statut : OUVERT
+
+Description initiale :
+Je peux ouvrir la popup au clavier mais après c'est bizarre. Tab ne va pas partout et j'ai dû prendre la souris pour sauver.
+
+Pièce jointe : ACC-303_focus.png
+
+Commentaires :
+17 sept 13:14 - Mélissa : Reproduit sur Chrome et Edge. Le focus reste entre le champ Nom et Commentaire; le bouton Enregistrer n'est jamais atteint avec Tab.
+18 sept 09:50 - Boréal : On a reproduit. Le composant modal intercepte le focus avec une liste d'éléments focusables incomplète.
+26 sept 11:03 - Mélissa : Toujours ouvert. Correctif annoncé pour la prochaine build.

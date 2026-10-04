@@ -1,0 +1,26 @@
+TRANSCRIPTION PARTIELLE - COMITÉ DE DIRECTION NOVA
+26 septembre 2026 - 10:00 à 10:34
+Participants : Nicolas Perron, Sophie Lambert, Mélissa Gagnon, Olivier Côté, Julien Moreau (Boréal)
+
+10:00 Nicolas : Je vais être bref. Je veux savoir ce qui peut encore empêcher le 22.
+10:01 Julien : Côté fournisseur, la build est stable. On a aussi livré le fix audit le 19.
+10:02 Sophie : Attention à la formulation. Vous avez livré un fix. Nous n'avons pas encore donné l'acceptation sécurité de SEC-210.
+10:03 Julien : Oui, compris.
+10:05 Mélissa : Il reste ACC-303. La modale ne permet toujours pas d'atteindre Enregistrer au clavier. Pour moi c'est un bloquant d'accessibilité avant production.
+10:07 Olivier : Le runbook est encore incomplet. Il manque le rollback. Je ne donnerai pas mon go exploitation tant que je n'ai pas une procédure exécutable.
+10:09 Nicolas : Donc trois conditions concrètes : validation sécurité de SEC-210, fermeture de ACC-303 et approbation du runbook incluant rollback. Exact?
+10:10 Sophie : Oui.
+10:10 Mélissa : Oui.
+10:10 Olivier : Oui.
+10:12 Julien : On vise le correctif ACC-303 dans la prochaine build. Pour le runbook je relance notre équipe ops.
+10:15 Nicolas : Le 22 reste notre cible, mais je veux que ce soit écrit noir sur blanc : c'est conditionnel à ces trois éléments.
+10:17 Sophie : Parfait.
+10:19 Olivier : En passant, quelqu'un a récupéré le câble HDMI de la salle 4? On en cherche un depuis hier.
+10:20 Mélissa : Pas moi.
+10:21 Nicolas : Je pense qu'on peut laisser ce risque hors du registre NOVA.
+10:21 [rires]
+10:24 Julien : Pour le mobile, on a déjà commencé à regarder quelques ajustements parce que ça aide aussi certains écrans.
+10:25 Nicolas : Regarder, oui. Facturer du CR-04, non. Il n'est pas approuvé.
+10:27 Julien : Compris.
+10:30 Nicolas : Très bien. Je publie le compte rendu : cible 22 octobre, trois conditions de go-live.
+10:34 Fin.

@@ -1,0 +1,20 @@
+PROJET NOVA - COMPTE RENDU DE DÉMARRAGE
+Date : 7 juillet 2026
+Participants : Élodie Caron, Nicolas Perron, Marc Gervais, Sophie Lambert, Camille Beaulieu, représentant Boréal
+
+Objectif
+Lancer officiellement le projet NOVA et confirmer la portée de la phase 1.
+
+Décisions
+- Élodie Caron agit comme chargée de projet.
+- Budget initial maximal : 180 000 $ CAD.
+- Cible de mise en production : 15 octobre 2026.
+- La phase 1 comprend SSO, création/suivi de demandes, pièces jointes, workflow, tableau de suivi et rapports standards.
+
+Actions
+- Boréal : fournir le premier schéma d'architecture.
+- Marc : confirmer les modalités du connecteur interne.
+- Sophie : préparer les exigences de sécurité.
+
+Note
+L'expérience mobile avancée n'a pas été discutée comme livrable distinct pendant cette rencontre.

@@ -1,0 +1,6 @@
+Canal : Projet NOVA / Général
+22 septembre 2026
+
+13:03 - Julien (Boréal) : Je pensais que le mobile était inclus dans le scope initial, au moins l'optimisation avancée.
+13:06 - Nicolas : La compatibilité de base oui. Le package d'optimisation CR-04 à 18k non. Il n'est pas approuvé.
+13:10 - Julien : Je vérifie avec mon équipe.

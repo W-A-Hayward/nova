@@ -1,0 +1,16 @@
+TICKET OPS-601
+Titre : runbook pas prêt
+Créé : 25 septembre 2026
+Demandeur : Olivier Côté
+Priorité : Haute
+Statut : OUVERT
+
+Description initiale :
+Le doc est pas prêt pour prod.
+
+Pièce jointe : OPS-601_runbook.png
+
+Commentaires :
+25 sept - Olivier : Il manque au minimum la procédure de rollback. La capture jointe identifie aussi une autre étape à compléter. J'ai besoin de quelque chose qu'une autre personne peut exécuter sans appeler l'équipe projet.
+26 sept - Nicolas : D'accord. Ceci fait partie des conditions de go-live du comité.
+29 sept - Olivier : Toujours pas reçu la version finale.
