@@ -1,11 +1,11 @@
-<h1>Chat NOVA</h1>
+<h1>Poser une question</h1>
 <p class="muted small">Questions libres. Ce module nécessite Ollama. Les réponses sont vérifiées affirmation par affirmation, et chaque preuve ouvre le fichier au bon repère.
 Pour les réponses de référence, voir <a href="/reponses">Réponses Q01–Q10</a>.</p>
 <style>
 #box{display:flex;flex-direction:column;height:72vh;border:1px solid var(--line);border-radius:8px;background:var(--card);overflow:hidden}
 #messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
 .msg{padding:10px 12px;border-radius:10px;max-width:85%;white-space:pre-wrap}
-.me{align-self:flex-end;background:var(--head);color:#fff}
+.me{align-self:flex-end;background:var(--acte);color:var(--surface)}
 .bot{align-self:flex-start;background:var(--bg);border:1px solid var(--line)}
 .meta{font-size:12px;margin-top:8px;padding-top:6px;border-top:1px solid var(--line);white-space:normal}
 .evo{white-space:normal;font-size:13px;margin-top:8px;padding-top:6px;border-top:1px solid var(--line)}
@@ -24,15 +24,17 @@ function add(text, me, j) {
   d.className = 'msg ' + (me ? 'me' : 'bot');
   let h = esc(text);
   if (j && j.evolution && j.evolution.length) {
-    const cls = r => ({'historique':'n-signal','écarté':'n-signal','signal':'n-signal','proposition':'n-proposition','décision':'n-décision',
-                      'retenu':'n-décision','validation':'n-validation','livraison':'n-livraison'}[r] || 'n-fait');
+    const cls = r => ({'historique':'r-passe','écarté':'r-passe','signal':'r-passe','proposition':'r-ouvert','livraison':'r-ouvert',
+                      'mise à jour':'r-ouvert','décision':'r-acte','retenu':'r-acte','validation':'r-acte'}[r] || '');
+    const lab = r => ({'historique':'historique, remplacé','écarté':'contredit, écarté','signal':'non fiable','livraison':'livraison (pas une validation)',
+                      'retenu':'retenu','mise à jour':'mise à jour, à valider'}[r] || r);
     h += '<div class=evo><b>Évolution et sources contradictoires</b> <span class="small muted">(du plus ancien au plus récent ; '
        + 'l\'état actuel est tranché par la date du fait et l\'autorité de la source)</span>';
     j.evolution.forEach(sec => {
       h += `<details ${j.evolution.length < 3 ? 'open' : ''}><summary>${esc(sec.titre)}</summary>`
          + (sec.actuel ? `<div class=actuel><b>État actuel :</b> ${esc(sec.actuel)}</div>` : '')
          + '<ol>' + sec.entrees.map(e => `<li class="${['historique','écarté','signal'].includes(e.role) ? 'passe' : ''}">`
-           + `${esc(e.date)}${e.heure ? ' ' + esc(e.heure) : ''} <span class="tag ${cls(e.role)}">${esc(e.label)}</span> `
+           + `${esc(e.date)}${e.heure ? ' ' + esc(e.heure) : ''} <span class="tag ${cls(e.role)}">${esc(lab(e.role))}</span> `
            + `${e.qui ? esc(e.qui) + ' : ' : ''}${esc(e.texte)} <a href="${esc(e.lien)}">${esc(e.source.court)}</a>`
            + (e.note ? `<div class=note>→ ${esc(e.note)}</div>` : '') + '</li>').join('') + '</ol></details>';
     });
