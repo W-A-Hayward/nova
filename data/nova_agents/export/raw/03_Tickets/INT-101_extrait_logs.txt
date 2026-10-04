@@ -1,0 +1,3 @@
+2026-09-05T11:15:03Z connector request GET /internal/cases/88401 -> 401 Unauthorized
+2026-09-05T11:15:03Z auth token exp=2026-09-04T23:00:00Z refresh_attempt=false
+2026-09-17T14:20:11Z connector request GET /internal/cases/88401 -> 200 OK 187ms

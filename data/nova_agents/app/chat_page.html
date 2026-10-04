@@ -1,201 +1,49 @@
-<h2>Chat NOVA</h2>
+<h1>Chat NOVA</h1>
+<p class="muted small">Questions libres. Ce module nécessite Ollama. Les réponses sont vérifiées affirmation par affirmation, et chaque preuve ouvre le fichier au bon repère.
+Pour les réponses de référence, voir <a href="/reponses">Réponses Q01–Q10</a>.</p>
 <style>
-#chat-container {
-  display: flex;
-  flex-direction: column;
-  height: 80vh;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: #fff;
-  overflow: hidden;
-}
-#messages {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.message {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 12px;
-  border-radius: 8px;
-  max-width: 80%;
-}
-.user-msg {
-  align-self: flex-end;
-  background: #183760;
-  color: white;
-  border-radius: 16px 16px 4px 16px;
-}
-.assistant-msg {
-  align-self: flex-start;
-  background: #f0f0f0;
-  border-radius: 16px 16px 16px 4px;
-}
-.msg-text {
-  word-wrap: break-word;
-}
-.msg-meta {
-  font-size: 11px;
-  opacity: 0.7;
-  margin-top: 6px;
-}
-.assistant-msg .msg-meta {
-  color: #666;
-}
-.user-msg .msg-meta {
-  color: rgba(255,255,255,0.8);
-}
-.msg-sources {
-  font-size: 11px;
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid rgba(0,0,0,0.1);
-  max-height: 120px;
-  overflow-y: auto;
-}
-.user-msg .msg-sources {
-  border-top-color: rgba(255,255,255,0.2);
-}
-#input-area {
-  display: flex;
-  gap: 8px;
-  padding: 12px;
-  border-top: 1px solid #ddd;
-  background: #fafafa;
-}
-#q {
-  flex: 1;
-  padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 20px;
-  font-size: 14px;
-}
-#q:focus {
-  outline: none;
-  border-color: #183760;
-  box-shadow: 0 0 0 2px rgba(24, 55, 96, 0.1);
-}
-#send-btn {
-  padding: 10px 20px;
-  background: #183760;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  font-weight: 500;
-}
-#send-btn:hover {
-  background: #0d1f3c;
-}
-#send-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+#box{display:flex;flex-direction:column;height:72vh;border:1px solid var(--line);border-radius:8px;background:var(--card);overflow:hidden}
+#messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.msg{padding:10px 12px;border-radius:10px;max-width:85%;white-space:pre-wrap}
+.me{align-self:flex-end;background:var(--head);color:#fff}
+.bot{align-self:flex-start;background:var(--bg);border:1px solid var(--line)}
+.meta{font-size:12px;margin-top:8px;padding-top:6px;border-top:1px solid var(--line);white-space:normal}
+#bar{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line)}
+#bar button{margin:0}
 </style>
-
-<div id="chat-container">
-  <div id="messages"></div>
-  <div id="input-area">
-    <input type="text" id="q" placeholder="Posez votre question...">
-    <button id="send-btn">Envoyer</button>
-  </div>
-</div>
-
+<div id=box><div id=messages></div>
+<div id=bar><input type=text id=q placeholder="ex. : Qu'est-ce qui bloque encore le go-live?"><button id=send>Envoyer</button></div></div>
 <script>
-const messagesDiv = document.getElementById('messages');
-const inputField = document.getElementById('q');
-const sendBtn = document.getElementById('send-btn');
-
-function addMessage(text, isUser, metadata) {
-  metadata = metadata || {};
-  const msgDiv = document.createElement('div');
-  msgDiv.className = 'message ' + (isUser ? 'user-msg' : 'assistant-msg');
-
-  let html = '<div class="msg-text">' + escapeHtml(text) + '</div>';
-
-  if (metadata.sujets) {
-    html += '<div class="msg-meta">Experts: ' + escapeHtml(metadata.sujets.join(', ')) + '</div>';
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function add(text, me, j) {
+  const d = document.createElement('div');
+  d.className = 'msg ' + (me ? 'me' : 'bot');
+  let h = esc(text);
+  if (j) {
+    if (j.preuves && j.preuves.length)
+      h += '<div class=meta><b>Preuves citées :</b><br>' + j.preuves.map(p =>
+        p.lien ? `<a href="${esc(p.lien)}">${esc(p.fichier)} : ${esc(p.repere)}</a>` : esc(p.source + ' ' + p.id)).join('<br>') + '</div>';
+    if (j.rejetees && j.rejetees.length)
+      h += '<div class="meta bad"><b>' + j.rejetees.length + ' affirmation(s) rejetée(s) par la vérification :</b><br>' +
+        j.rejetees.slice(0, 5).map(r => esc(r.texte) + ' (' + esc((r.problemes || []).join('; ')) + ')').join('<br>') + '</div>';
   }
-
-  if (metadata.sources && metadata.sources.length > 0) {
-    html += '<div class="msg-sources"><strong>Preuves citees:</strong>';
-    metadata.sources.forEach(s => {
-      html += '<div style="margin-top:4px;font-size:10px">[' + escapeHtml(s.source) + '] ' + escapeHtml(s.id) + '</div>';
-    });
-    html += '</div>';
-  }
-
-  if (metadata.rejected && metadata.rejected.length > 0) {
-    html += '<div class="msg-sources" style="border-top-color: #c00; color: #9b1c1c"><strong>Affirmations rejetees:</strong>';
-    metadata.rejected.slice(0, 3).forEach(r => {
-      html += '<div style="margin-top:4px;font-size:10px">[' + escapeHtml(r.sujet) + ']</div>';
-    });
-    if (metadata.rejected.length > 3) {
-      html += '<div style="margin-top:4px;font-size:10px">... et ' + (metadata.rejected.length - 3) + ' autres</div>';
-    }
-    html += '</div>';
-  }
-
-  msgDiv.innerHTML = html;
-  messagesDiv.appendChild(msgDiv);
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  d.innerHTML = h;
+  messages.appendChild(d);
+  messages.scrollTop = messages.scrollHeight;
 }
-
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
-
-async function sendMessage() {
-  const question = inputField.value.trim();
+async function go() {
+  const question = q.value.trim();
   if (!question) return;
-
-  addMessage(question, true);
-  inputField.value = '';
-  sendBtn.disabled = true;
-  sendBtn.textContent = 'Envoi...';
-
+  add(question, true); q.value = ''; send.disabled = true; send.textContent = '…';
   try {
-    const r = await fetch('/api/chat', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({question: question})
-    });
-
-    if (!r.ok) {
-      addMessage('Erreur serveur: ' + r.status + ' ' + r.statusText, false);
-      return;
-    }
-
+    const r = await fetch('/api/chat', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({question})});
+    if (!r.ok) { add('Erreur serveur ' + r.status + ' (Ollama est-il lancé?)', false); return; }
     const j = await r.json();
-    addMessage(j.reponse || '(pas de reponse)', false, {
-      sujets: j.sujets,
-      sources: j.preuves || [],
-      rejected: j.rejetees || []
-    });
-  } catch (err) {
-    addMessage('Erreur: ' + err.message, false);
-    console.error('Chat error:', err);
-  } finally {
-    sendBtn.disabled = false;
-    sendBtn.textContent = 'Envoyer';
-    inputField.focus();
-  }
+    add(j.reponse || '(pas de réponse)', false, j);
+  } catch (err) { add('Erreur : ' + err.message, false); }
+  finally { send.disabled = false; send.textContent = 'Envoyer'; q.focus(); }
 }
-
-sendBtn.addEventListener('click', sendMessage);
-inputField.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
-  }
-});
-
-addMessage('Bienvenue! Posez vos questions sur le projet NOVA.', false);
+send.onclick = go;
+q.addEventListener('keydown', ev => { if (ev.key === 'Enter') { ev.preventDefault(); go(); } });
+add('Posez une question sur NOVA (état au 30 septembre 2026, 09 h).', false);
 </script>

@@ -1,0 +1,27 @@
+{
+  "id": "U01",
+  "exercice": true,
+  "recu_le": "2026-10-01T14:10:00-04:00",
+  "document": {"fichier": "docs/EXERCICE_E13_Report_ACC303.eml", "titre": "[EXERCICE FICTIF] Julien Moreau (Boréal) : ACC-303 livré, proposition de report au 29 octobre"},
+  "resume": "Boréal annonce la livraison du correctif ACC-303 et propose de reporter le go-live au 29 octobre (runbook non terminé).",
+  "statut_probleme": "ACC-303 : correctif livré (build 2026.10.01), PAS encore re-testé par Mélissa Gagnon. Le ticket reste ouvert. Runbook : toujours incomplet selon Boréal.",
+  "decision_anterieure": "22 octobre 2026, approuvé par le comité le 10 sept (M04) et conditionnel à C1–C3 (M06, 26 sept).",
+  "nouvelle_proposition": "29 octobre 2026, proposé par Boréal. Aucune approbation : la décision revient au comité.",
+  "changements": [
+    {"champ": "date_mise_en_production", "baseline": "22 octobre 2026", "nouveau": "29 octobre 2026", "statut": "approuvé", "par": "Julien Moreau (Boréal)",
+     "preuve": "Nous proposons de déplacer la mise en production au 29 octobre."},
+    {"champ": "condition:C2", "baseline": "ACC-303 OUVERT, correctif annoncé", "nouveau": "Correctif ACC-303 livré dans la build 2026.10.01, re-test de Mélissa attendu", "statut": "validé", "par": "Julien Moreau (Boréal)",
+     "preuve": "Le correctif ACC-303 a été livré ce matin dans la build 2026.10.01."},
+    {"champ": "condition:C3", "baseline": "Runbook incomplet (étapes 4–5)", "nouveau": "Runbook toujours pas terminé selon Boréal", "statut": "fait",
+     "preuve": "notre équipe ops n'a pas fini le runbook"}
+  ],
+  "actions_touchees": [
+    {"id": "A2", "effet": "Correctif annoncé comme livré (build 2026.10.01). Action terminée côté Boréal, à confirmer par le re-test", "statut": "LIVRÉ (non validé)"},
+    {"id": "A3", "effet": "Le re-test clavier de Mélissa devient la prochaine étape", "statut": "À FAIRE"},
+    {"id": "A4", "effet": "Runbook toujours incomplet, ce qui motive la proposition de report", "statut": "OUVERT"}
+  ],
+  "nouvelles_actions": [
+    {"id": "A11", "action": "Inscrire la proposition de report au 29 octobre à l'ordre du jour du comité de direction. Ne rien communiquer comme décidé d'ici là",
+     "executant": "Nicolas Perron", "statut_resp": "proposé", "nature": "recommandation équipe", "echeance": "à confirmer : avant le 22 octobre"}
+  ]
+}

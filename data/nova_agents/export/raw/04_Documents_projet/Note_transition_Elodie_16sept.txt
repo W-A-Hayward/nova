@@ -1,0 +1,12 @@
+NOTE DE TRANSITION - NOVA
+16 septembre 2026
+
+À compter d'aujourd'hui, Nicolas Perron reprend le rôle de chargé de projet NOVA.
+
+À surveiller :
+- faire mettre à jour la date dans tous les plans (le comité a approuvé le 22 octobre);
+- ne pas considérer le mobile avancé comme approuvé;
+- suivre le connecteur jusqu'à fermeture formelle;
+- obtenir le go sécurité et exploitation avant production.
+
+Élodie

@@ -1,0 +1,16 @@
+TICKET ACC-302
+Titre : Le bleu/gris est bizarre
+Créé : 12 août 2026
+Demandeur : QA
+Priorité : ?
+Statut : Fermé
+
+Description initiale :
+Le bleu/gris est bizarre. Je ne sais pas si c'est voulu. Voir screenshot.
+
+Pièce jointe : ACC-302_contraste.png
+
+Commentaires :
+13 août - Mélissa : J'ai mesuré 2,1:1 entre le texte de statut et le fond. Pour du texte normal on vise au moins 4,5:1.
+18 août - Boréal : Palette de statut corrigée.
+20 août - Mélissa : Re-test OK à 5,3:1. Fermé.

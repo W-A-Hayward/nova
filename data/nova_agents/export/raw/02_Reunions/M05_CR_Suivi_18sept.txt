@@ -1,0 +1,13 @@
+SUIVI LIVRAISON - 18 SEPTEMBRE 2026
+
+Participants : Nicolas Perron, Marc Gervais, Sophie Lambert, Mélissa Gagnon, Olivier Côté, Boréal
+
+Faits saillants
+- INT-101 : le connecteur interne a été validé et fermé le 17 septembre.
+- DATA-401 : la correction d'idempotence a été validée; aucun doublon dans le dernier rejeu.
+- PERF-501 : performance revenue sous la cible de 1 seconde sur les essais de recherche.
+- SEC-210 : Boréal prépare un correctif concernant la journalisation des exports administrateur. La validation sécurité restera requise après livraison.
+- Accessibilité : ACC-301 et ACC-302 sont fermés. Un scénario de navigation clavier sur modal doit encore être vérifié.
+- Exploitation : le runbook n'est pas final.
+
+Le 22 octobre reste la date approuvée. Les participants rappellent toutefois que la date n'annule pas les critères de go-live.

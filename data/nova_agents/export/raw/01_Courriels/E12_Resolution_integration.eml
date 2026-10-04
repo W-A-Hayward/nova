@@ -1,0 +1,20 @@
+Date: Thu, 17 Sep 2026 16:22:00 -0400
+From: Marc Gervais <marc.gervais@demo.example>
+To: nicolas.perron@demo.example, julien.moreau@boreal.example
+Subject: INT-101 =?utf-8?q?ferm=C3=A9_-_connecteur_valid=C3=A9?=
+Message-ID: <e12_resolution_integration@nova.demo.local>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+Bonjour,
+
+Je confirme que nous avons rejou=C3=A9 les sc=C3=A9narios du connecteur apr=
+=C3=A8s le correctif. 120/120 recherches ont retourn=C3=A9 les r=C3=A9sultats=
+ attendus.
+
+INT-101 est ferm=C3=A9. Le probl=C3=A8me d'int=C3=A9gration qui avait d=C3=A9=
+clench=C3=A9 le risque d'=C3=A9ch=C3=A9ancier est consid=C3=A9r=C3=A9 r=C3=A9=
+solu.
+
+Marc

@@ -1,0 +1,16 @@
+{
+  "_aide": "Copier ce fichier en U01_<sujet>.json et placer le document reçu dans data/updates/docs/. Chaque 'preuve' doit être un extrait EXACT du document. statut: proposé | approuvé | validé | fait | signal. 'approuvé'/'validé' exigent 'par' et un extrait d'approbation explicite, sinon ils sont rétrogradés. champ: date_mise_en_production | condition:C1 | condition:C2 | condition:C3 | texte libre.",
+  "id": "U01",
+  "exercice": false,
+  "recu_le": "2026-10-01T09:00:00-04:00",
+  "document": {"fichier": "docs/NOM_DU_DOCUMENT.eml", "titre": "Auteur : objet"},
+  "resume": "",
+  "statut_probleme": "",
+  "decision_anterieure": "",
+  "nouvelle_proposition": "",
+  "changements": [
+    {"champ": "date_mise_en_production", "baseline": "22 octobre 2026", "nouveau": "", "statut": "proposé", "par": "", "preuve": ""}
+  ],
+  "actions_touchees": [{"id": "A1", "effet": "", "statut": ""}],
+  "nouvelles_actions": []
+}

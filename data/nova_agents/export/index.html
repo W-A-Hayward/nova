@@ -1,0 +1,72 @@
+<!doctype html><html lang=fr><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>Brief NOVA</title><style>
+:root{--bg:#f7f8fa;--fg:#1b1f24;--muted:#5b6470;--card:#fff;--line:#d9dee5;--head:#183760;--headfg:#fff;--th:#eef2f7;
+--ok:#0b7a32;--warn:#a15c00;--bad:#b42318;--link:#1d4f91;--hl:#fff3b0;--prop:#6b3fa0;--dec:#0b5cad;--val:#0b7a32;--sig:#b42318}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111418;--fg:#e6e9ee;--muted:#9aa4b1;--card:#1a1f26;--line:#2d343e;
+--head:#0f2747;--th:#222a35;--ok:#4cc27a;--warn:#e0a54b;--bad:#f07167;--link:#8cb8ff;--hl:#4a4215;--prop:#b794f4;--dec:#6cb2ff;--val:#4cc27a;--sig:#f07167}}
+:root[data-theme="dark"]{--bg:#111418;--fg:#e6e9ee;--muted:#9aa4b1;--card:#1a1f26;--line:#2d343e;--head:#0f2747;--th:#222a35;
+--ok:#4cc27a;--warn:#e0a54b;--bad:#f07167;--link:#8cb8ff;--hl:#4a4215;--prop:#b794f4;--dec:#6cb2ff;--val:#4cc27a;--sig:#f07167}
+*{box-sizing:border-box}body{font:15px/1.5 system-ui,sans-serif;margin:0;color:var(--fg);background:var(--bg)}
+a{color:var(--link)}header{background:var(--head);padding:8px 16px;display:flex;flex-wrap:wrap;gap:4px 14px}
+header a{color:var(--headfg);text-decoration:none;font-weight:600}header a:hover{text-decoration:underline}
+header .off{color:#aab;font-weight:400}
+main{padding:14px 16px;max-width:1150px;margin:0 auto}
+h1{font-size:22px;margin:6px 0}h2{font-size:18px;margin:22px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}h3{font-size:15px;margin:14px 0 6px}
+table{border-collapse:collapse;width:100%;margin:6px 0 14px;background:var(--card)}
+td,th{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}th{background:var(--th);font-weight:600}
+.scroll{overflow-x:auto}pre{white-space:pre-wrap;background:var(--card);border:1px solid var(--line);padding:10px;border-radius:6px}
+.card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--head);border-radius:6px;padding:10px 12px;margin:10px 0}
+.muted{color:var(--muted)}.small{font-size:13px}.ok{color:var(--ok)}.warn{color:var(--warn)}.bad{color:var(--bad)}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:1px 6px;border-radius:9px;border:1px solid currentColor;white-space:nowrap}
+.n-proposition{color:var(--prop)}.n-décision{color:var(--dec)}.n-validation{color:var(--val)}.n-livraison{color:var(--warn)}.n-signal{color:var(--sig)}.n-fait{color:var(--muted)}
+.engagement{color:var(--dec)}.recommandation{color:var(--prop)}
+a.cite{font-size:12px;white-space:nowrap;margin-right:6px}
+.quote{border-left:3px solid var(--line);padding-left:8px;color:var(--muted);font-style:italic}
+:target{background:var(--hl);outline:2px solid var(--warn)}
+.lines div{font:13px/1.45 ui-monospace,monospace;white-space:pre-wrap;padding:0 6px}.lines span{color:var(--muted);user-select:none;display:inline-block;width:3.2em}
+textarea,input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radius:4px;background:var(--card);color:var(--fg)}
+button{padding:8px 16px;margin-top:8px;background:var(--head);color:#fff;border:none;border-radius:4px;cursor:pointer}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}
+.brief td,.brief th{padding:4px 6px;font-size:13px}.brief p{margin:4px 0}.brief h1{font-size:19px}.brief h2{font-size:15px;margin:10px 0 4px}
+@media print{header,.noprint{display:none}main{padding:0;max-width:none}body{font-size:10px;line-height:1.35;background:#fff;color:#000}
+.brief td,.brief th{padding:1px 4px;font-size:9.5px}.brief h1{font-size:15px;margin:0}.brief h2{font-size:11.5px;margin:5px 0 2px;padding-bottom:1px}
+.brief table{margin:3px 0 5px}.tag{font-size:8.5px;padding:0 4px}a{color:#000;text-decoration:none}a.cite{font-size:8.5px;color:#444}
+@page{size:A4;margin:10mm}}
+</style><header><a href='brief.html'>Brief</a><a href='memoire.html'>Mémoire</a><a href='reponses.html'>Réponses Q01–Q10</a><a href='mise-a-jour.html'>Mise à jour</a><a href='sources.html'>Sources</a><a href='recherche.html'>Recherche</a><a href='guide.html'>Mode d'emploi</a><span class=off>Chat et Ajouter : serveur seulement</span></header><main><div class=brief>
+<h1>Brief de reprise : NOVA</h1>
+<p class="muted small">État au <b>30 septembre 2026, 09 h (Montréal, UTC−4)</b>. Les montants sont en CAD hors taxes. <span class='tag engagement'>engagement documenté</span> = écrit dans le dossier ;
+<span class='tag recommandation'>recommandation équipe</span> = notre proposition. Chaque lien ouvre la preuve. <a class=noprint href="memoire.html">Mémoire complète →</a></p>
+
+<h2>1. Responsable</h2>
+<p><b>Nicolas Perron</b>, chargé de projet <b>depuis le 16 septembre 2026</b>, succède à Élodie Caron (en poste depuis le 7 juillet).
+<a class=cite href='source__01_Courriels__E06_Transition_charge_projet.eml.html#L7' title='Nicolas Perron prend officiellement la charge du projet NOVA'>E06 · ligne 7</a> <a class=cite href='source__04_Documents_projet__Note_transition_Elodie_16sept.txt.html#L4' title='Nicolas Perron reprend le rôle de chargé de projet NOVA'>Note_transition · ligne 4</a></p>
+
+<h2>2. Date approuvée et conditions</h2>
+<p><b>22 octobre 2026</b>. Proposée par Boréal le 8 septembre <a class=cite href='source__01_Courriels__E05_Retard_integration.eml.html#L11' title='il s&#x27;agit d&#x27;une proposition de notre part'>E05 · ligne 11</a>,
+<b>approuvée par le comité de direction le 10 septembre</b> <a class=cite href='source__02_Reunions__M04_Transcript_Comite_direction_10sept.txt.html#L23' title='Donc approuvé. Le 22 devient la date officielle.'>M04 · ligne 23</a>,
+cible reconfirmée le 26 septembre et <b>conditionnelle</b> à 3 conditions <a class=cite href='source__02_Reunions__M06_Transcript_Comite_26sept.txt.html#L16' title='c&#x27;est conditionnel à ces trois éléments'>M06 · ligne 16</a> :
+<b>C1</b> validation sécurité de SEC-210 · <b>C2</b> fermeture d'ACC-303 · <b>C3</b> approbation du runbook incluant le rollback.
+Ce n'est pas un go garanti <a class=cite href='source__01_Courriels__E09_Rappel_mise_en_production.eml.html#L11' title='go garanti'>E09 · ligne 11</a>. Le 15 octobre (charte, plan v3) est <span class=bad>périmé</span>.
+Cause du report : connecteur INT-101, <span class=ok>fermé le 17 septembre</span> <a class=cite href='source__03_Tickets__INT-101.txt.html#L18' title='Validé côté intégration. Je ferme.'>INT-101 · ligne 18</a>.</p>
+
+<h2>3. Portée (phase 1)</h2>
+<p>SSO (uniquement en production), création et suivi de demandes, pièces jointes, workflow de traitement, tableau de suivi, rapports standards <a class=cite href='source__05_Contrats_et_finances__CONTRAT_Boreal_NOVA.pdf.html#p1' title='Portée incluse'>CONTRAT_Boreal · page 1</a>,
+plus les rapports avancés et l'export de synthèse (CR-01) <a class=cite href='source__05_Contrats_et_finances__CR-01_Rapports_avances_APPROUVE.pdf.html#p1' title='Ajout de rapports avancés et export de synthèse.'>CR-01 · page 1</a>. Données de production au <b>Canada Central</b> (ADR-007) <a class=cite href='source__06_Architecture_et_decisions__ADR-007_Localisation_donnees.md.html#doc' title='Canada Central'>ADR-007</a>.
+<b>Hors portée :</b> l'optimisation mobile avancée (CR-04) est reportée à la phase 2. La phase 1 doit seulement rester utilisable sur mobile <a class=cite href='source__06_Architecture_et_decisions__Decision_Portee_Phase2.md.html#doc' title='La phase 1 doit demeurer utilisable sur mobile'>Decision_Portee</a>.</p>
+
+<h2>4. Budget</h2>
+<p><b>Autorisé : 204 000 $</b> = contrat 180 000 $ <a class=cite href='source__05_Contrats_et_finances__CONTRAT_Boreal_NOVA.pdf.html#p1' title='Montant maximal initial'>CONTRAT_Boreal · page 1</a>
++ CR-01 24 000 $ (approuvé le 2026-08-14) <a class=cite href='source__05_Contrats_et_finances__CR-01_Rapports_avances_APPROUVE.pdf.html#p1' title='APPROUVÉE'>CR-01 · page 1</a>.
+Non autorisé : CR-04 18 000 $ (brouillon) <a class=cite href='source__05_Contrats_et_finances__CR-04_Optimisation_mobile_BROUILLON.pdf.html#p1' title='BROUILLON - APPROBATION REQUISE'>CR-04 · page 1</a>.</p>
+
+<h2>5. Situation des factures</h2>
+<table><tr><th>Facture</th><th>Date</th><th>Total</th><th>Lignes</th><th>Statut</th></tr><tr><td><a class=cite href='source__05_Contrats_et_finances__INV-001.pdf.html' title=''>INV-001</a></td><td>2026-07-31</td><td>60 000 $</td><td>60 000 $ Développement phase 1 - acompte</td><td class=ok>payée</td></tr><tr><td><a class=cite href='source__05_Contrats_et_finances__INV-002.pdf.html' title=''>INV-002</a></td><td>2026-08-31</td><td>72 000 $</td><td>48 000 $ Développement phase 1 - jalon 2 + 24 000 $ Rapports avancés - CR-01</td><td class=ok>payée</td></tr><tr><td><a class=cite href='source__05_Contrats_et_finances__INV-003.pdf.html' title=''>INV-003</a></td><td>2026-09-22</td><td>54 000 $</td><td>36 000 $ Développement phase 1 - jalon 3 + 18 000 $ Optimisation interface mobile - CR-04</td><td class=warn>en validation</td></tr></table>
+<p><b>Facturé 186 000 $</b> · <b>payé 132 000 $</b> · en validation 54 000 $.
+<span class=bad>Problème : INV-003 : 18 000 $ « Optimisation interface mobile - CR-04 » (réf. CR-04 non approuvé)</span>. Les Finances (Amélie Fortin) retiennent INV-003 <a class=cite href='source__01_Courriels__E07_Facture_003_question.eml.html#L9' title='Peux-tu me transmettre l&#x27;approbation correspondante?'>E07 · ligne 9</a>.
+La facturation de CR-04 est interdite sans nouvelle approbation <a class=cite href='source__01_Courriels__E10_Fonction_mobile.eml.html#L9' title='ne doit être engagée ou facturée sans nouvelle approbation'>E10 · ligne 9</a>.
+<span class='tag recommandation'>recommandation équipe</span> Ne pas payer les 18 000 $, demander une facture corrigée ou une note de crédit, et valider les 36 000 $ du jalon 3.</p>
+
+<h2>6. Priorités : conditions de go-live → actions</h2>
+<table><tr><th>Condition</th><th>Statut</th><th>Action : responsable</th><th>Échéance</th><th>Nature</th><th>Preuve</th></tr><tr><td rowspan=1><b>C1</b> Validation sécurité de SEC-210</td><td rowspan=1 class=warn>EN VALIDATION</td><td>A1 Re-test et acceptation sécurité : Sophie Lambert</td><td>à confirmer (re-test planifié, sans date)</td><td><span class='tag engagement'>engagement documenté</span></td><td><a class=cite href='source__03_Tickets__SEC-210.txt.html#L25' title='26 sept 15:40 - Sophie : Re-test planifié. Statut maintenu EN VALIDATION.'>SEC-210 · ligne 25</a></td></tr><tr><td rowspan=2><b>C2</b> Fermeture d&#x27;ACC-303</td><td rowspan=2 class=warn>OUVERT</td><td>A2 Correctif dans la prochaine build : Boréal (Julien Moreau)</td><td>à confirmer (« prochaine build »)</td><td><span class='tag engagement'>engagement documenté</span></td><td><a class=cite href='source__02_Reunions__M06_Transcript_Comite_26sept.txt.html#L15' title='On vise le correctif ACC-303 dans la prochaine build.'>M06 · ligne 15</a></td></tr><tr><td>A3 Re-test clavier et fermeture : Mélissa Gagnon</td><td>à confirmer (après A2)</td><td><span class='tag recommandation'>recommandation équipe</span></td><td><a class=cite href='source__03_Tickets__ACC-303.txt.html#L16' title='26 sept 11:03 - Mélissa : Toujours ouvert. Correctif annoncé pour la prochaine build.'>ACC-303 · ligne 16</a></td></tr><tr><td rowspan=2><b>C3</b> Approbation du runbook incluant le rollback</td><td rowspan=2 class=warn>OUVERT</td><td>A4 Étapes 4 (retour arrière) et 5 (validation post-déploiement) : ops Boréal</td><td>à confirmer (« quelques jours avant »)</td><td><span class='tag engagement'>engagement documenté</span></td><td><a class=cite href='source__02_Reunions__M06_Transcript_Comite_26sept.txt.html#L15' title='Pour le runbook je relance notre équipe ops.'>M06 · ligne 15</a></td></tr><tr><td>A5 Approbation du runbook (go exploitation) : Olivier Côté</td><td>à confirmer</td><td><span class='tag engagement'>engagement documenté</span></td><td><a class=cite href='source__02_Reunions__M06_Transcript_Comite_26sept.txt.html#L10' title='Je ne donnerai pas mon go exploitation tant que je n&#x27;ai pas une procédure exécutable.'>M06 · ligne 10</a></td></tr><tr><td>Hors conditions</td><td class=warn>OUVERT</td><td>A6 INV-003 : ne pas payer les 18 000 $ de CR-04, réponse à Amélie : Nicolas Perron</td><td>à confirmer (facture bloquée depuis le 23 sept)</td><td><span class='tag recommandation'>recommandation équipe</span></td><td><a class=cite href='source__01_Courriels__E07_Facture_003_question.eml.html#L9' title='Peux-tu me transmettre l&#x27;approbation correspondante?'>E07 · ligne 9</a></td></tr><tr><td>Hors conditions</td><td class=warn>OUVERT</td><td>A7 Mettre les plans au 22 octobre (v3 : 15 oct) : Nicolas Perron</td><td>à confirmer (demandé le 10 sept)</td><td><span class='tag engagement'>engagement documenté</span></td><td><a class=cite href='source__04_Documents_projet__Note_transition_Elodie_16sept.txt.html#L7' title='faire mettre à jour la date dans tous les plans (le comité a approuvé le 22 octobre);'>Note_transition · ligne 7</a></td></tr></table>
+<p class="small muted">Aucune échéance précise n'est écrite au dossier : toutes sont « à confirmer », bornées par le go-live du 22 octobre.
+Olivier veut le runbook final « quelques jours avant » <a class=cite href='source__02_Reunions__M04_Transcript_Comite_direction_10sept.txt.html#L12' title='au moins quelques jours avant'>M04 · ligne 12</a>.</p>
+</div></main></html>

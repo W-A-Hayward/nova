@@ -1,0 +1,13 @@
+COMITÉ PROJET NOVA - 27 AOÛT 2026
+Participants : Élodie, Marc, Sophie, Mélissa, Camille, Boréal
+
+Résumé de gestion
+- La migration de l'architecture vers Canada Central est déclarée terminée par Boréal et vérifiée par l'équipe architecture.
+- Le développement fonctionnel avance selon la portée de phase 1.
+- Les tests d'accessibilité ont identifié plusieurs anomalies. Certaines sont déjà corrigées, d'autres restent en traitement.
+- Le connecteur interne demeure un point d'attention mais aucun retard officiel de la date du 15 octobre n'est approuvé à ce moment.
+
+Points discutés
+Mélissa confirme que les anomalies de labels et de contraste ont été corrigées et validées les 15 et 20 août. Elle veut toutefois faire un deuxième passage clavier sur les modales. Sophie rappelle que la journalisation administrateur devra être vérifiée en situation réelle. Camille confirme que le premier lot de migration a produit quelques doublons à investiguer.
+
+Action : Boréal doit fournir une build de stabilisation début septembre.
