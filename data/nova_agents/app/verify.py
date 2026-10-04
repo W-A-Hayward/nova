@@ -18,7 +18,7 @@ MOIS = {"janv": 1, "janvier": 1, "fevr": 2, "fev": 2, "fevrier": 2, "mars": 3, "
         "juil": 7, "juillet": 7, "aout": 8, "sept": 9, "septembre": 9, "oct": 10, "octobre": 10, "nov": 11, "novembre": 11,
         "dec": 12, "decembre": 12}
 _MOIS_RE = "|".join(sorted(MOIS, key=len, reverse=True))
-CITE_RE = re.compile(r"\b(C\d{3,4}|NEW\d+|CALC|S\d{2}|N\d{2})\b")
+CITE_RE = re.compile(r"\b(C\d{3,4}|NEW\d+|CALC|S\d{2}|N\d{2}|F\d{2})\b")
 
 
 def norm(s: str) -> str:
@@ -54,7 +54,7 @@ def _strip_dates_times_ids(t: str) -> str:
     return kb.ID_RE.sub(" ", t)
 
 
-CITATION_TOKEN = re.compile(r"\b(?:C\d{3,4}|NEW\d+|CALC|S\d{2}|N\d{2}|[DKAQ]\d{1,2})\b")
+CITATION_TOKEN = re.compile(r"\b(?:C\d{3,4}|NEW\d+|CALC|S\d{2}|N\d{2}|[DKAQF]\d{1,2})\b")
 
 
 def entities(text: str) -> dict[str, set]:
@@ -131,7 +131,7 @@ def semantic_guards(text: str, cited: list[dict]) -> list[str]:
     probs = status_conflicts(text)
     real = [c for c in cited if c.get("id") != "CALC"]
     t = norm(text)
-    if real and all(c.get("perime") for c in real) and not HISTO.search(t):
+    if real and all(c.get("perime") or c.get("passe") for c in real) and not HISTO.search(t):
         probs.append("s'appuie uniquement sur des faits périmés/remplacés sans le signaler (« initialement », « remplacé »...)")
     if real and all(c.get("type") == "proposition" for c in real) and APPROVAL.search(t) and not NEG.search(t) and "propos" not in t:
         probs.append("présente une proposition comme une décision/approbation")
@@ -271,4 +271,4 @@ def to_display(text: str, claims: dict[str, dict]) -> str:
             if src not in out:
                 out.append(src)
         return "[" + ", ".join(out) + "]" if out else m.group(0)
-    return re.sub(r"\[[^\[\]]*\b(?:C\d{3,4}|NEW\d+|CALC)\b[^\[\]]*\]", sub, text)
+    return re.sub(r"\[[^\[\]]*\b(?:C\d{3,4}|NEW\d+|CALC|F\d{2})\b[^\[\]]*\]", sub, text)
