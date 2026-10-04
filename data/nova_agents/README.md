@@ -7,7 +7,7 @@ pip install -r requirements.txt
 python -m app.seed            # (ré)initialise data/claims.json depuis data/starter/Projet360_NOVA_ETUDIANTS
 uvicorn app.server:app --reload
 ```
-Pages: `/` rapport (généré du code) | `/chat` (réponse + preuves citées + affirmations rejetées) | `/ingest` (fichier txt/eml/md/pdf ou texte collé).
+Pages (sans LLM, exportables avec `python scripts/export_static.py` → `export/index.html`) : `/brief` | `/memoire` | `/reponses` | `/mise-a-jour` | `/sources` | `/recherche` | `/guide`. Avec Ollama : `/chat` (réponse + preuves citées + affirmations rejetées) | `/ingest`. Mode d'emploi complet pour le jury : `GUIDE.md`.
 
 Variables:
 | Variable | Défaut | Rôle |
