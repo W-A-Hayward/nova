@@ -1,0 +1,17 @@
+From: Julien Moreau <julien.moreau@boreal.example>
+To: nicolas.perron@demo.example, melissa.gagnon@demo.example
+Date: Thu, 01 Oct 2026 14:10:00 -0400
+Subject: [EXERCICE FICTIF] NOVA - ACC-303 et date du 22 octobre
+Content-Type: text/plain; charset=utf-8
+
+EXERCICE FICTIF - document inventé pour tester la mise à jour, ne fait pas partie du dossier NOVA.
+
+Bonjour,
+
+Le correctif ACC-303 a été livré ce matin dans la build 2026.10.01. Mélissa, tu peux refaire ton passage clavier.
+
+Par contre, la reprise du composant modal a pris plus de temps que prévu et notre équipe ops n'a pas fini le runbook. Nous proposons de déplacer la mise en production au 29 octobre.
+
+Il s'agit d'une proposition. À vous de confirmer la décision au comité.
+
+Julien
