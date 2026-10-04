@@ -4,18 +4,19 @@
 
 ## 1. Ouverture
 
-**Sans rien installer (recommandé pour le jury)** : ouvrir `export/index.html` dans un navigateur. L'export est autonome : pages HTML, fichiers du dossier copiés dans `export/raw/`, recherche intégrée. Il ne demande ni Python, ni Ollama, ni connexion.
+**Sans rien installer (recommandé pour le jury)** : ouvrir `export/index.html` dans un navigateur. L'export est autonome : pages HTML, fichiers du dossier copiés dans `export/raw/`, recherche intégrée. Il ne demande ni Python, ni modèle de langage, ni connexion.
 
 **Avec le serveur** (nécessaire pour le chat et l'ajout de documents) :
 ```bash
 cd data/nova_agents
 pip install -r requirements.txt
+echo "GEMINI_API_KEY=votre_clé" > .env   # clé gratuite (Google AI Studio) ; .env n'est pas commité
 python -m app.seed            # (ré)génère data/claims.json depuis le dossier
 python -m app.memory          # (ré)génère la baseline data/memory.json
 uvicorn app.server:app        # puis http://127.0.0.1:8000 (redirige vers /brief)
 python scripts/export_static.py   # régénère export/
 ```
-Le chat demande en plus Ollama : `ollama pull llama3.1`.
+Le chat et l'analyse des documents reçus utilisent **Gemini**, sans rien à installer : `gemini-3.5-flash`, puis `gemini-flash-lite-latest` s'il est saturé. **Ollama est facultatif** : s'il est installé (`ollama pull llama3.1`), il prend le relais quand Gemini est indisponible (pas de clé, quota dépassé, saturation, réseau). Le modèle qui a répondu est indiqué sous chaque réponse et sous chaque rapport. Sans Gemini ni Ollama, le chat et l'analyse de la page Ajouter ne fonctionnent pas. Toutes les autres pages, et l'export, n'ont besoin d'aucun modèle.
 
 ## 2. Navigation
 
@@ -26,7 +27,7 @@ Le chat demande en plus Ollama : `ollama pull llama3.1`.
 | Réponses Q01–Q10 | 3 | Réponse, nuance et preuves : fichier, repère humain (horodatage, cellule, page, étape de capture), repère calculé et extrait cité mot pour mot. |
 | Mise à jour | 4 | État actuel comparé à la baseline, changements, informations affectées, actions, ce qui n'a pas changé. La baseline reste intacte. |
 | Sources et recherche | : | Recherche plein texte sans IA dans tous les passages (fichier et repère), puis le catalogue des fichiers avec autorité, pertinence, doublons et avertissements. |
-| Chat / Ajouter | : | Serveur et Ollama seulement : questions libres. Le chat donne l'état actuel, puis l'évolution des décisions et les sources contradictoires, chacune avec son lien (voir section 4). Ajouter : aide à l'extraction d'un nouveau document. Conversation et dernière analyse (rapport, brouillon corrigé, texte tapé) gardées en changeant de page ou d'onglet, effacées à l'arrêt du serveur. |
+| Chat / Ajouter | : | Avec le serveur et un modèle (Gemini, ou Ollama en secours) : questions libres. Le chat donne l'état actuel, puis l'évolution des décisions et les sources contradictoires, chacune avec son lien (voir section 4). Ajouter : aide à l'extraction d'un nouveau document. Conversation et dernière analyse (rapport, brouillon corrigé, texte tapé) gardées en changeant de page ou d'onglet, effacées à l'arrêt du serveur. |
 
 **Retrouver une preuve** : chaque lien ouvre le fichier source au bon endroit (ligne surlignée, page, ligne Excel ou capture avec sa transcription). Exemples : Q10 → `OPS-601_runbook.png` (étapes 4 et 5) ; Q02 → `Registre_Risques_29sept.xlsx`, ligne 2 (R-01 encore « Ouvert »).
 
@@ -52,14 +53,14 @@ Le code applique ces garde-fous (à l'analyse et à l'enregistrement) :
 **État actuel = le fait documenté le plus récent, émanant d'une source compétente, daté par la date du fait.** La date du fichier ne fait pas foi : le plan v3 (12 sept) est plus récent que la décision du comité (10 sept), mais il n'a pas été corrigé ; le registre du 29 sept garde une ligne R-01 qui décrit l'état au 9 sept.
 
 1. **Fils thématiques (code, `app/fils.py`)** : 13 sujets (date, hébergement, responsable, budget, sécurité, accessibilité, runbook, intégration, conditions, communication, actions…). Chaque fil a un état actuel tranché et la liste datée de toutes les sources qui en parlent, avec leur rôle : historique (remplacé), proposition, décision, livraison (≠ validation), validation, contredit (écarté) avec la raison, signal non fiable, mise à jour reçue après la baseline.
-2. **Experts (LLM)** : ils reçoivent l'état actuel `[Fxx]` en tête, puis les positions étiquetées. Une affirmation qui présente une position passée comme actuelle est rejetée en code (sauf si elle dit « initialement », « auparavant »…), puis vérifiée par un agent vérificateur.
+2. **Experts (LLM)** : ils reçoivent l'état actuel `[Fxx]` en tête, puis les positions étiquetées. Avec Gemini, ils reçoivent tout le contexte du projet : l'état des 13 fils, les positions datées et environ 60 000 caractères de preuves. Avec Ollama, en secours, c'est 8 000 caractères. Une affirmation qui présente une position passée comme actuelle est rejetée en code (sauf si elle dit « initialement », « auparavant »…), puis vérifiée par un agent vérificateur.
 3. **Réponse** : 2 à 5 phrases sur l'état actuel, puis une section **Évolution et sources contradictoires** assemblée par le code (du plus ancien au plus récent, chaque source cliquable), puis **Ce qu'on ne sait pas**.
 4. **Questions générales** : « Existe-t-il des contradictions? » liste les 9 contradictions et leur résolution ; « Qu'est-ce qui a changé depuis la semaine dernière? » (ou « depuis le 15 septembre ») donne les événements de la période ; « engagements », « risques », « reprendre le projet » sélectionnent les fils correspondants.
 
 ## 5. Outils utilisés
 
 - **Python** : FastAPI (pages), pypdf (PDF, repère par page), openpyxl (Excel, repère par cellule), module `email` (courriels, repère par ligne de la vue normalisée).
-- **LangGraph et Ollama (llama3.1, local, gratuit)** : seulement pour le chat et l'aide à l'extraction. Les pages livrables n'utilisent aucun LLM.
+- **LangGraph et l'API Gemini (offre gratuite)** : pour le chat et l'analyse des documents reçus. **Ollama (llama3.1, local)** sert de secours facultatif. Les pages livrables n'utilisent aucun LLM. Seul le contenu du dossier, qui est fictif, est envoyé à Gemini.
 - **Claude Code (Anthropic)** : assistant de développement. Il a servi à écrire le code, à relire le dossier et à rédiger la première version des réponses, de la mémoire et des transcriptions de captures. Chaque fait a ensuite été vérifié contre le dossier, et les extraits cités sont contrôlés automatiquement (`tests/test_deliverables.py`).
 - Aucun service payant, aucune recherche externe pour les faits : tous les faits viennent du dossier.
 
@@ -78,7 +79,7 @@ Le code applique ces garde-fous (à l'analyse et à l'enregistrement) :
 - Les transcriptions de captures sont manuelles. Une erreur de lecture reste possible, mais l'image originale est affichée à côté.
 - Les repères « ligne N » des courriels renvoient à la vue normalisée (De, Date, Objet, corps), pas au fichier `.eml` brut.
 - La recherche est lexicale (termes exacts, accents ignorés), pas sémantique.
-- Le chat repose sur un modèle 8B local. L'état actuel et l'évolution sont tranchés par le code, et les affirmations du modèle sont vérifiées en code et par un agent vérificateur, mais la prose reste faillible : les réponses de référence sont dans **Réponses Q01–Q10**. Une question hors des 13 fils est traitée par recherche lexicale seulement.
+- Le chat repose sur Gemini, ou sur un modèle 8B local en secours. L'état actuel et l'évolution sont tranchés par le code, et les affirmations du modèle sont vérifiées en code et par un agent vérificateur, mais la prose reste faillible : les réponses de référence sont dans **Réponses Q01–Q10**. Une question hors des 13 fils est traitée par recherche lexicale seulement.
 - Un document ajouté par `/ingest` reçoit une autorité « inconnue » et le statut « à valider ». Rien n'est validé sans humain.
 
 ## 8. Informations incertaines ou manquantes (au 30 septembre)
@@ -99,9 +100,9 @@ Le code applique ces garde-fous (à l'analyse et à l'enregistrement) :
 ## 9. Vérifier
 
 ```bash
-python tests/test_deliverables.py   # sans Ollama : extraits, montants, garde-fous, baseline intacte
-python tests/test_impact.py         # sans Ollama : détection des changements d'un document reçu (LLM muet)
-python tests/test_chat_reasoning.py # sans Ollama : état actuel, historique, contradictions, « ce qui a changé »
-python tests/smoke_test.py          # sans Ollama : garde-fous du chat (puis relancer python -m app.seed)
-python tests/eval_qa.py --quiet     # avec Ollama : qualité du chat sur Q01–Q10
+python tests/test_deliverables.py   # sans LLM : extraits, montants, garde-fous, baseline intacte
+python tests/test_impact.py         # sans LLM : détection des changements d'un document reçu (LLM muet)
+python tests/test_chat_reasoning.py # sans LLM : état actuel, historique, contradictions, « ce qui a changé »
+python tests/smoke_test.py          # sans LLM : garde-fous du chat (puis relancer python -m app.seed)
+python tests/eval_qa.py --quiet     # avec le LLM réel (Gemini, sinon Ollama) : qualité du chat
 ```
