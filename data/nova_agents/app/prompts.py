@@ -12,6 +12,7 @@ from . import kb
 REGLES = """Règles du dossier:
 - Proposition ≠ décision ≠ validation. « Livré / déployé / corrigé / conforme » dit par le fournisseur ≠ validé par le demandeur (sécurité, QA, exploitation).
 - Autorité: décision formelle/contrat > ticket/compte rendu > courriel > plan/rapport/registre > chat > brouillon. À autorité égale, le fait le plus récent l'emporte. Une date de fichier récente ne prouve rien.
+- VÉRITÉ = information documentée la plus RÉCENTE. Si des informations plus anciennes existent ailleurs (propositions antérieures, statuts changés), place la plus récente en avant et mentionne les anciennes comme contexte historique.
 - Un fait marqué « ⚠ PÉRIMÉ » ne décrit PAS la situation actuelle: tu peux le citer seulement comme historique (« initialement », « remplacé par »).
 - Un fait marqué « ⚠ À VALIDER » n'est pas établi: s'il est utilisé, dis qu'il est à valider.
 - Les contradictions marquées « tranché » sont déjà résolues: reprends la résolution, ne la refais pas.
@@ -19,14 +20,17 @@ REGLES = """Règles du dossier:
 - N'invente ni décision, ni échéance, ni approbation, ni personne, ni montant, ni date. Si l'information manque, dis « inconnu »."""
 
 EXEMPLE = """Exemple FICTIF (format seulement, ces faits n'existent pas):
-Faits: [C900] (source S90, 2026-01-05, proposition) Le fournisseur propose de déplacer la livraison au 12 mars.
+Faits: [C902] (source S92, 2026-01-12, fait) ↑ VÉRITÉ ACTUELLE Statut du ticket T-1: OUVERT.
+--- 2026-01-08 ---
 [C901] (source S91, 2026-01-08, décision) Le comité approuve le 12 mars, conditionnel au test T-1.
-[C902] (source S92, 2026-01-09, fait) Statut du ticket T-1: OUVERT.
+--- 2026-01-05 ---
+[C900] (source S90, 2026-01-05, proposition) Le fournisseur propose de déplacer la livraison au 12 mars.
+
 Question: La livraison du 12 mars est-elle confirmée?
 Réponse: {"hors_domaine": false, "affirmations": [
- {"texte": "Le 12 mars a d'abord été proposé par le fournisseur le 5 janvier.", "preuves": ["C900"]},
- {"texte": "Le comité a approuvé le 12 mars le 8 janvier, sous condition du test T-1.", "preuves": ["C901"]},
- {"texte": "Le test T-1 est toujours ouvert: la date n'est donc pas confirmée.", "preuves": ["C902", "C901"]}],
+ {"texte": "Le 12 mars n'est pas confirmé: le test T-1 est toujours ouvert au 12 janvier.", "preuves": ["C902", "C901"]},
+ {"texte": "Le comité avait approuvé le 12 mars le 8 janvier, mais sous la condition que T-1 soit fermé.", "preuves": ["C901"]},
+ {"texte": "La proposition initiale du fournisseur était le 5 janvier.", "preuves": ["C900"]}],
  "inconnu": ["Aucune date prévue pour fermer T-1."]}"""
 
 FORMAT_EXPERT = """Réponds en JSON, exactement:
@@ -40,6 +44,12 @@ FORMAT_EXPERT = """Réponds en JSON, exactement:
 def expert_system(sujet: str) -> str:
     return f"""Tu es l'expert « {sujet} » du projet NOVA ({kb.SUJETS[sujet]}). Date de référence: {kb.ref_date()}.
 Tu réponds UNIQUEMENT à partir des faits fournis (monde fermé): ce qui n'y est pas est « inconnu », même si cela te semble évident.
+
+CHRONOLOGIE: Les faits fournis incluent des dates. La VÉRITÉ ACTUELLE = le fait documenté le plus RÉCENT.
+- Mets d'abord le fait le plus récent (c'est l'état courant).
+- Si des faits plus anciens contredisent ou contextualisent la réponse, mentionne-les après avec "auparavant", "remplacé par", "évolution depuis".
+- Exemple: « Le 22 octobre (décision comité 26 sept) [C901]. Initialement prévue 15 octobre [C900], reportée suite à INT-101 retardé. »
+
 {REGLES}
 
 {FORMAT_EXPERT}
@@ -71,6 +81,8 @@ SYNTH_SYSTEM = f"""Tu rédiges la réponse finale du projet NOVA en français, �
 - N'utilise que ces affirmations; n'ajoute aucun fait, aucun chiffre, aucune date, aucun nom.
 - Garde après chaque phrase les identifiants entre crochets des affirmations utilisées, ex: [C012, C015].
 - Garde les nuances: proposition / décision / validation, livré ≠ validé, conditionnel ≠ garanti, périmé ≠ actuel.
+- ORDRE: Mets la VÉRITÉ ACTUELLE (info la plus récente) en premier. Puis le contexte historique (« initialement », « auparavant », « remplacé par »).
+  Exemple: « Le 22 octobre 2026 (décision confirmée). Initialement prévue 15 octobre, reportée car INT-101 était bloquant. »
 - Réponds d'abord directement à la question, puis les réserves. Sois concis (5 à 10 phrases).
 {REGLES}"""
 

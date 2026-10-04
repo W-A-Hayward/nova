@@ -69,4 +69,13 @@ def select_evidence(question: str, sujet: str | None, budget_chars: int = 9000, 
             break  # plafond dur: jamais de dépassement du contexte (Ollama tronquerait les règles en silence)
         chosen.append(c)
         size += line
-    return sorted(chosen, key=lambda c: (c["date"], c["id"]))
+    # Trier EN INVERSE: les preuves les plus récentes en premier (vérité actuelle avant contexte historique)
+    def sort_key(c):
+        date_str = c.get("date", "0000-00-00")
+        if date_str and date_str not in ("inconnue", "inconnue", "?", ""):
+            try:
+                return (-float(date_str.replace("-", "")), c["id"])
+            except ValueError:
+                return (0, c["id"])  # dates invalides en dernier
+        return (0, c["id"])
+    return sorted(chosen, key=sort_key)

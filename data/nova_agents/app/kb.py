@@ -106,17 +106,29 @@ def _autorite_label(c: dict) -> str:
 
 
 def render(claims: list[dict]) -> str:
-    """Une ligne par claim, avec son identifiant à citer et des drapeaux explicites (périmé, à valider)."""
+    """Affiche les claims avec dates, en groupant par date (récentes en premier = vérité actuelle).
+    Format: [ID] (source, DATE, type, autorité) [flags] texte"""
     if not claims:
         return "(aucun)"
     out = []
-    for c in claims:
+    prev_date = None
+    for i, c in enumerate(claims):
+        curr_date = c.get("date", "????-??-??")
+        # Séparateur visuel: nouvelle date ou premier élément
+        if i > 0 and curr_date != prev_date:
+            out.append(f"--- {curr_date} ---")
+        prev_date = curr_date
+
         flags = []
         if c.get("perime"):
             flags.append(f"⚠ PÉRIMÉ/NON FIABLE: {c['perime']}")
         if c.get("statut") == "à valider":
             flags.append("⚠ À VALIDER (non confirmé par une autorité)")
-        out.append(f"[{c['id']}] (source {c['source']}, {c['date']}, {c['type']}, autorité: {_autorite_label(c)})"
+
+        # Marquer la plus récente: "(↑ VÉRITÉ ACTUELLE)" après le premier claim
+        marker = " ↑ VÉRITÉ ACTUELLE" if i == 0 and len(claims) > 1 else ""
+
+        out.append(f"[{c['id']}] (source {c['source']}, {curr_date}, {c['type']}, autorité: {_autorite_label(c)}){marker}"
                    f"{' ' + ' '.join(flags) if flags else ''} {c['texte']}")
     return "\n".join(out)
 
