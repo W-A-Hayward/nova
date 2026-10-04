@@ -1,0 +1,10 @@
+{
+ "03_Tickets/OPS-601_runbook.png": "RUNBOOK - NOVA Production Deployment\nVersion: Draft\nÉtapes:\n1. Vérifier INT-101 fermé\n2. Vérifier ACC-303 fermé\n3. Valider SEC-210\n4. Appliquer migrations (Canada Central)\n5. [MANQUANT] Rollback: procédure exécutable et checklist post-déploiement à compléter",
+ "03_Tickets/SEC-210_audit.png": "AUDIT LOG - Admin Export Missing Fields\nScénario: Admin exporte CSV, consulte audit\nObservé:\n- Ligne EXPORT_CSV présente\n- Utilisateur: ✓ enregistré\n- Horodatage: ✓ enregistré\n- Objet (ID dossier): ✗ ABSENT\n- Résultat détail: ✗ ABSENT\nProblème: Journalisation incomplète (manquent objet et résultat)",
+ "03_Tickets/ACC-303_focus.png": "MODAL KEYBOARD NAV - Inaccessible Button\nScénario: Modale, navigation clavier (Tab)\nObservé:\n- Modale s'ouvre\n- Tab parcourt champs\n- Bouton Enregistrer: ✗ NON ACCESSIBLE au clavier\n- Focus ne l'atteint pas\nProblème: Violation WCAG 2.1 critère 2.1.1 (clavier)",
+ "03_Tickets/ACC-301_labels.png": "[Form labels visibility - FERMÉ per M05 2026-09-18]",
+ "03_Tickets/ACC-302_contraste.png": "[Contrast ratio - FERMÉ per M05 2026-09-18]",
+ "03_Tickets/DATA-401_doublons.png": "[Data duplicates - VALIDÉ per M05 2026-09-18]",
+ "03_Tickets/INT-101_aucun_resultat.png": "[Connector empty result - FERMÉ/VALIDÉ 2026-09-17 per M05]",
+ "03_Tickets/PERF-501_lenteur.png": "[Performance <1sec - MET per M05 2026-09-18]"
+}

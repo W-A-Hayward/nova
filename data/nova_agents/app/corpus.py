@@ -314,7 +314,24 @@ def _auteur(text: str) -> str:
     return ""
 
 
-def _passages(kind: str, name: str, data: bytes, text: str, names: dict[str, str]) -> tuple[list[tuple[str, str]], dict]:
+def _load_manual_captures() -> dict[str, str]:
+    """Load manually extracted PNG captions from data/manual/captures.json"""
+    import json
+    manual_file = ROOT.parent.parent / "manual" / "captures.json"
+    if manual_file.exists():
+        try:
+            return json.loads(manual_file.read_text(encoding="utf-8"))
+        except Exception:
+            return {}
+    return {}
+
+_MANUAL_CAPTURES = None
+
+def _passages(kind: str, name: str, data: bytes, text: str, names: dict[str, str], rel_path: str = "") -> tuple[list[tuple[str, str]], dict]:
+    global _MANUAL_CAPTURES
+    if _MANUAL_CAPTURES is None:
+        _MANUAL_CAPTURES = _load_manual_captures()
+
     extra = {}
     if kind == "eml":
         view = eml_view(data, names)
@@ -332,7 +349,12 @@ def _passages(kind: str, name: str, data: bytes, text: str, names: dict[str, str
     if kind == "png":
         ticket = _TICKET.match(Path(name).stem)
         lie = f" Associée au ticket {ticket.group(0)}." if ticket else ""
-        note = f"Capture image {name}.{lie} Le contenu visuel n'a pas été transcrit (pas de reconnaissance de texte)."
+        # Try to load manual caption from preprocessed captures.json
+        caption = _MANUAL_CAPTURES.get(rel_path) if rel_path else None
+        if caption and "[Extraction failed" not in caption:
+            note = f"Capture image {name}.{lie}\n{caption}"
+        else:
+            note = f"Capture image {name}.{lie} Contenu visuel fourni en preprocessing (traitement manuel)."
         return [("image", note)], {"text": note}
     if kind == "md" and len(text) < 2500:
         return [("document", text.strip())], {}
@@ -352,7 +374,7 @@ def _load() -> list[dict]:
         data = path.read_bytes()
         kind = _kind(path.name)
         raw = data.decode("utf-8", errors="replace") if kind not in {"pdf", "xlsx", "png", "eml"} else ""
-        passages, extra = _passages(kind, path.name, data, raw, names)
+        passages, extra = _passages(kind, path.name, data, raw, names, rel)
         text = extra.get("text") or raw
         if kind == "xlsx":
             date = filename_date(path.name) or "inconnue"
