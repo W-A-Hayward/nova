@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 *)",
+      "Bash(.venv/bin/python scripts/extract_png_vision.py)",
+      "Bash(ollama list *)",
+      "Bash(ollama pull *)",
+      "Bash(disown)",
+      "Bash(.venv/bin/python -m app.seed)",
+      "Bash(.venv/bin/python *)",
+      "Bash(git add *)",
+      "Bash(git commit -m 'feat: PNG capture preprocessing with manual transcription *)",
+      "Bash(git commit)",
+      "Bash(git commit -m 'docs: GUIDE.md for jury — navigation, tools, traitements manuels, limites *)",
+      "Bash(git commit -m 'fix: repair /chat page with proper JavaScript error handling *)"
+    ]
+  }
+}

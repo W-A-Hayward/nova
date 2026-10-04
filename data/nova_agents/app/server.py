@@ -48,15 +48,64 @@ def table(head, rows):
 
 @app.get("/chat", response_class=HTMLResponse)
 def chat_page():
-    return page("""<h2>Chat</h2><input type=text id=q placeholder="Ex: Quelle est la date de production approuvée et pourquoi?" onkeydown="if(event.key=='Enter')go()">
-<button onclick=go()>Demander</button><p id=meta></p><pre id=a></pre>
-<details><summary>Preuves citées (faits de la base)</summary><pre id=p></pre></details>
-<details><summary>Affirmations rejetées par la vérification</summary><pre id=x class=warn></pre></details>
-<script>async function go(){a.textContent='...';meta.textContent='';p.textContent='';x.textContent='';
-const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:q.value})});const j=await r.json();
-a.textContent=j.reponse;meta.textContent='Experts consultés: '+j.sujets.join(', ');
-p.textContent=j.preuves.map(c=>'['+c.source+'] '+c.id+' — '+c.texte).join('\n')||'(aucune)';
-x.textContent=j.rejetees.map(c=>'['+c.sujet+'] « '+c.texte+' » — '+c.problemes.join('; ')).join('\n')||'(aucune)'}</script>""")
+    return page("""<h2>Chat</h2>
+<div style="display:flex;gap:8px;margin-bottom:16px">
+<input type=text id=q placeholder="Ex: Quelle est la date de production et pourquoi?" style="flex:1">
+<button onclick="go()">Demander</button>
+</div>
+<p id=meta style="font-size:12px;color:#666"></p>
+<pre id=a style="background:#fff;border:1px solid #ddd;padding:12px;min-height:60px"></pre>
+<details><summary>Preuves citées (faits de la base)</summary><pre id=p style="background:#f9f9f9;padding:8px"></pre></details>
+<details><summary>Affirmations rejetées par la vérification</summary><pre id=x style="background:#fff5f5;padding:8px;color:#9b1c1c"></pre></details>
+<script>
+async function go() {
+  const q = document.getElementById('q');
+  const a = document.getElementById('a');
+  const meta = document.getElementById('meta');
+  const p = document.getElementById('p');
+  const x = document.getElementById('x');
+
+  if (!q.value.trim()) {
+    a.textContent = 'Veuillez entrer une question.';
+    return;
+  }
+
+  a.textContent = 'Chargement...';
+  meta.textContent = '';
+  p.textContent = '';
+  x.textContent = '';
+
+  try {
+    const r = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({question: q.value})
+    });
+
+    if (!r.ok) {
+      a.textContent = 'Erreur serveur: ' + r.status + ' ' + r.statusText;
+      return;
+    }
+
+    const j = await r.json();
+    a.textContent = j.reponse || '(pas de réponse)';
+    meta.textContent = 'Experts consultés: ' + (j.sujets ? j.sujets.join(', ') : '(aucun)');
+    p.textContent = j.preuves && j.preuves.length > 0
+      ? j.preuves.map(c => '[' + c.source + '] ' + c.id + ' — ' + c.texte.substring(0, 100)).join('\\n')
+      : '(aucune)';
+    x.textContent = j.rejetees && j.rejetees.length > 0
+      ? j.rejetees.map(c => '[' + c.sujet + '] « ' + c.texte.substring(0, 80) + ' » — ' + c.problemes.join('; ')).join('\\n')
+      : '(aucune)';
+  } catch (err) {
+    a.textContent = 'Erreur: ' + err.message;
+    console.error('Chat error:', err);
+  }
+}
+
+document.getElementById('q').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') go();
+});
+</script>""")
 
 
 class Q(BaseModel):
