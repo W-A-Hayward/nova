@@ -153,7 +153,7 @@ except ImportError:
 else:
     from app.server import app
     c = TestClient(app)
-    assert c.get("/").status_code == 200 and "Décisions" in c.get("/").text
+    assert c.get("/").status_code == 200 and "Décisions" in c.get("/memoire").text
     assert c.get("/chat").status_code == 200 and c.get("/ingest").status_code == 200
     j = c.post("/api/chat", json={"question": "x"}).json()
     assert "sujets" in j and "preuves" in j
