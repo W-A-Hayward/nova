@@ -90,10 +90,14 @@ for m in ("204 000 $", "186 000 $", "132 000 $", "18 000 $", "Nicolas Perron", "
 for bad in ("50 MB", "24k$", "notifications push", "Tous les modules en production", "livré en production"):
     assert bad not in brief, bad
 assert len(re.sub(r"<[^>]+>", " ", brief).split()) < 900, "le brief doit tenir sur une page"
-for route in ("/", "/memoire", "/reponses", "/mise-a-jour", "/sources", "/recherche", "/guide", "/chat", "/ingest",
+for route in ("/", "/memoire", "/reponses", "/mise-a-jour", "/sources", "/guide", "/chat", "/ingest",
               "/source/03_Tickets/OPS-601_runbook.png", "/raw/03_Tickets/OPS-601_runbook.png"):
     assert c.get(route).status_code == 200, route
 assert c.get("/raw/../app/server.py").status_code == 404
+srcs = c.get("/sources").text
+assert "id=recherche" in srcs and "id=catalogue" in srcs and "const D=" in srcs, "recherche intégrée à /sources"
+r = c.get("/recherche?q=INV-003", follow_redirects=False)
+assert r.status_code in (302, 307) and r.headers["location"].startswith("/sources?q=INV-003")
 print("4) pages et brief OK")
 
 # ------------------------------------------------------------------ 5) mise à jour: garde-fous et baseline intacte

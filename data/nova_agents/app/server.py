@@ -1,6 +1,6 @@
 """Interface web NOVA.
 
-/brief (1 page) | /memoire | /reponses | /mise-a-jour | /sources | /source/<fichier> | /recherche | /guide | /chat | /ingest
+/brief (1 page) | /memoire | /reponses | /mise-a-jour | /sources (catalogue + recherche) | /source/<fichier> | /guide | /chat | /ingest
 Toutes les pages sauf /chat et /ingest sont rendues sans LLM et exportables en HTML statique (scripts/export_static.py):
 en mode STATIC, href() produit des liens relatifs vers des fichiers .html au lieu de routes.
 """
@@ -103,7 +103,7 @@ button{padding:8px 16px;margin-top:8px;background:var(--head);color:#fff;border:
 """
 
 NAV = [("brief", "Brief"), ("memoire", "Mémoire"), ("reponses", "Réponses Q01–Q10"), ("mise-a-jour", "Mise à jour"),
-       ("sources", "Sources"), ("recherche", "Recherche"), ("guide", "Mode d'emploi")]
+       ("sources", "Sources et recherche"), ("guide", "Mode d'emploi")]
 
 
 def page(body: str, title: str = "NOVA") -> str:
@@ -340,6 +340,36 @@ def maj_page(exercice: int = 0):
     return page(render_updates(ups, bool(exercice)), "Mise à jour NOVA")
 
 
+def search_block() -> str:
+    """Recherche plein texte côté navigateur (sans IA, fonctionne aussi dans l'export statique)."""
+    data = []
+    for c in kb.load_claims():
+        if not c.get("fichier") or c.get("origine") == "ingestion":
+            continue
+        rep = c.get("repere", "")
+        data.append({"f": c["fichier"], "r": rep, "t": re.sub(r"^\[[^\]]*\]\s*", "", c["texte"]), "d": c.get("date", ""),
+                     "p": c.get("perime", ""), "u": href("source/" + c["fichier"], evidence.anchor(rep) if rep else "")})
+    js = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
+    return f"""<h2 id=recherche>Rechercher dans le dossier</h2>
+<p class="small muted">Recherche plein texte, sans IA, dans {len(data)} passages (fichier et repère). Les accents et la casse sont ignorés. Les résultats sont triés par nombre de termes trouvés.</p>
+<input type=text id=q placeholder="ex. : runbook rollback · INV-003 · Canada Central · approuvé 22 octobre" autofocus>
+<p id=n class="small muted"></p><div id=res></div>
+<script>
+const D={js};
+const N=s=>s.normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();
+D.forEach(x=>x.n=N(x.t+' '+x.f));
+const esc=s=>s.replace(/[&<>"']/g,c=>({{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}}[c]));
+function run(){{const terms=N(q.value).split(/\\s+/).filter(w=>w.length>1);
+ if(!terms.length){{res.innerHTML='';n.textContent='';return}}
+ const r=D.map(x=>[terms.filter(t=>x.n.includes(t)).length,x]).filter(a=>a[0]>0).sort((a,b)=>b[0]-a[0]).slice(0,40);
+ n.textContent=r.length+' résultat(s) affiché(s)';
+ res.innerHTML=r.map(([s,x])=>`<div class=card><a href="${{x.u}}">${{esc(x.f)}} : ${{esc(x.r)}}</a> <span class="small muted">${{esc(x.d)}} · ${{s}}/${{terms.length}} termes</span>`
+  +(x.p?` <span class="tag n-signal">${{esc(x.p)}}</span>`:'')+`<div class=small>${{esc(x.t)}}</div></div>`).join('')}}
+q.addEventListener('input',run);
+const p=new URLSearchParams(location.search).get('q');if(p){{q.value=p;run()}}
+</script>"""
+
+
 @app.get("/sources", response_class=HTMLResponse)
 def sources_page():
     rows = ""
@@ -348,8 +378,11 @@ def sources_page():
         cls = "" if s["pertinence"] == "NOVA" else "muted"
         rows += (f"<tr class={cls}><td>{s['id']}</td><td><a href='{href('source/' + s['fichier'])}'>{e(s['fichier'])}</a></td><td>{e(s['date'])}</td>"
                  f"<td>{e(kb.AUTORITE.get(s['autorite'], '?'))}</td><td>{e(s['pertinence'])}{e(dup)}</td><td class=warn>{e(s['perime'])}</td></tr>")
-    return page(f"""<h1>Sources du dossier ({len(kb.baseline()['sources'])} fichiers)</h1>
-<p class=muted>Autorité, en ordre décroissant : décision formelle et contrat > ticket et compte rendu > courriel > plan, rapport et registre > chat > brouillon. Les doublons et pièces jointes ne comptent pas comme confirmations indépendantes.</p>
+    return page(f"""<h1>Sources du dossier</h1>
+<p class=small>Aller à : <a href="#recherche">Recherche</a> · <a href="#catalogue">Catalogue des {len(kb.baseline()['sources'])} fichiers</a></p>
+{search_block()}
+<h2 id=catalogue>Catalogue des fichiers ({len(kb.baseline()['sources'])})</h2>
+<p class="small muted">Autorité, en ordre décroissant : décision formelle et contrat > ticket et compte rendu > courriel > plan, rapport et registre > chat > brouillon. Les doublons et pièces jointes ne comptent pas comme confirmations indépendantes.</p>
 <div class=scroll><table><tr><th>ID</th><th>Fichier</th><th>Date</th><th>Autorité</th><th>Pertinence</th><th>Avertissement</th></tr>{rows}</table></div>""", "Sources NOVA")
 
 
@@ -389,34 +422,10 @@ def raw_file(fichier: str):
     return FileResponse(path)
 
 
-@app.get("/recherche", response_class=HTMLResponse)
-def recherche_page():
-    data = []
-    for c in kb.load_claims():
-        if not c.get("fichier") or c.get("origine") == "ingestion":
-            continue
-        rep = c.get("repere", "")
-        data.append({"f": c["fichier"], "r": rep, "t": re.sub(r"^\[[^\]]*\]\s*", "", c["texte"]), "d": c.get("date", ""),
-                     "p": c.get("perime", ""), "u": href("source/" + c["fichier"], evidence.anchor(rep) if rep else "")})
-    js = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
-    return page(f"""<h1>Recherche dans le dossier</h1>
-<p class=muted>Recherche plein texte, sans IA, sur {len(data)} passages (fichier et repère). Les accents et la casse sont ignorés. Les résultats sont triés par nombre de termes trouvés.</p>
-<input type=text id=q placeholder="ex. : runbook rollback · INV-003 · Canada Central · approuvé 22 octobre" autofocus>
-<p id=n class="small muted"></p><div id=res></div>
-<script>
-const D={js};
-const N=s=>s.normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();
-D.forEach(x=>x.n=N(x.t+' '+x.f));
-const esc=s=>s.replace(/[&<>"']/g,c=>({{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}}[c]));
-function run(){{const terms=N(q.value).split(/\\s+/).filter(w=>w.length>1);
- if(!terms.length){{res.innerHTML='';n.textContent='';return}}
- const r=D.map(x=>[terms.filter(t=>x.n.includes(t)).length,x]).filter(a=>a[0]>0).sort((a,b)=>b[0]-a[0]).slice(0,40);
- n.textContent=r.length+' résultat(s) affiché(s)';
- res.innerHTML=r.map(([s,x])=>`<div class=card><a href="${{x.u}}">${{esc(x.f)}} : ${{esc(x.r)}}</a> <span class="small muted">${{esc(x.d)}} · ${{s}}/${{terms.length}} termes</span>`
-  +(x.p?` <span class="tag n-signal">${{esc(x.p)}}</span>`:'')+`<div class=small>${{esc(x.t)}}</div></div>`).join('')}}
-q.addEventListener('input',run);
-const p=new URLSearchParams(location.search).get('q');if(p){{q.value=p;run()}}
-</script>""", "Recherche NOVA")
+@app.get("/recherche")
+def recherche_redirect(q: str = ""):
+    """Ancienne page: la recherche fait maintenant partie de /sources."""
+    return RedirectResponse("/sources" + (f"?q={quote(q)}" if q else "") + "#recherche")
 
 
 def md_to_html(md: str) -> str:
