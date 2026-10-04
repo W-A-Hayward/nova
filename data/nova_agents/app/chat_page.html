@@ -16,7 +16,9 @@ Pour les réponses de référence, voir <a href="/reponses">Réponses Q01–Q10<
 #bar button{margin:0}
 </style>
 <div id=box><div id=messages></div>
-<div id=bar><input type=text id=q placeholder="ex. : Qu'est-ce qui bloque encore le go-live?"><button id=send>Envoyer</button></div></div>
+<div id=bar><input type=text id=q aria-label="Votre question" placeholder="Par exemple : qu'est-ce qui bloque encore le go-live?"><button id=send>Envoyer</button></div></div>
+<p class=small><button id=effacer type=button hidden style="background:none;color:var(--muted);padding:0;text-decoration:underline">Effacer la conversation</button>
+La conversation est gardée tant que le serveur tourne.</p>
 <script>
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function add(text, me, j) {
@@ -52,19 +54,50 @@ function add(text, me, j) {
   messages.appendChild(d);
   messages.scrollTop = messages.scrollHeight;
 }
+// La conversation vit côté serveur (mémoire du processus): elle est reprise en revenant sur la page,
+// une réponse en cours continue d'arriver, et tout disparaît à l'arrêt du serveur.
+const ACCUEIL = 'Posez une question sur NOVA (état au 30 septembre 2026, 9 h). La réponse donne l\'état actuel, puis l\'évolution des décisions et les sources contradictoires, chacune avec son lien.';
+let attente = null;
+function rendre(hist) {
+  messages.innerHTML = '';
+  add(ACCUEIL, false);
+  hist.forEach(m => {
+    if (m.role === 'user') add(m.texte, true);
+    else if (m.statut === 'ok') add(m.reponse.reponse || '(pas de réponse)', false, m.reponse);
+    else if (m.statut === 'erreur') add('Erreur : ' + m.message + ' (Ollama est-il lancé?)', false);
+    else add('Réponse en cours… (' + Math.round(Date.now() / 1000 - m.debut) + ' s) Vous pouvez changer de page : la réponse sera là au retour.', false);
+  });
+  const enCours = hist.some(m => m.statut === 'en cours');
+  send.disabled = enCours; send.textContent = enCours ? '…' : 'Envoyer';
+  effacer.hidden = !hist.length;
+  clearTimeout(attente);
+  if (enCours) attente = setTimeout(charger, 2000);
+}
+async function charger() {
+  try { rendre(await (await fetch('/api/session/chat')).json()); }
+  catch (err) { add('Erreur : ' + err.message, false); }
+}
 async function go() {
   const question = q.value.trim();
-  if (!question) return;
-  add(question, true); q.value = ''; send.disabled = true; send.textContent = '…';
-  try {
-    const r = await fetch('/api/chat', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({question})});
-    if (!r.ok) { add('Erreur serveur ' + r.status + ' (Ollama est-il lancé?)', false); return; }
-    const j = await r.json();
-    add(j.reponse || '(pas de réponse)', false, j);
-  } catch (err) { add('Erreur : ' + err.message, false); }
-  finally { send.disabled = false; send.textContent = 'Envoyer'; q.focus(); }
+  if (!question || send.disabled) return;
+  q.value = ''; garderSaisie();
+  add(question, true); add('Réponse en cours…', false);
+  send.disabled = true; send.textContent = '…';
+  clearTimeout(attente); attente = setTimeout(charger, 2000);  // l'état du serveur fait foi, même si la requête est coupée
+  try { await fetch('/api/chat', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({question})}); }
+  catch (err) { /* page quittée ou réseau: la réponse reste conservée par le serveur */ }
+  await charger(); q.focus();
+}
+let minuteur = null;
+function garderSaisie() {
+  clearTimeout(minuteur);
+  minuteur = setTimeout(() => fetch('/api/session/saisie', {method: 'PUT', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({cle: 'chat_question', valeur: q.value})}), 300);
 }
 send.onclick = go;
+effacer.onclick = async () => { rendre(await (await fetch('/api/session/chat', {method: 'DELETE'})).json()); };
+q.addEventListener('input', garderSaisie);
 q.addEventListener('keydown', ev => { if (ev.key === 'Enter') { ev.preventDefault(); go(); } });
-add('Posez une question sur NOVA (état au 30 septembre 2026, 09 h). La réponse donne l\'état actuel, puis l\'évolution des décisions et les sources contradictoires, chacune avec son lien.', false);
+fetch('/api/session/saisie').then(r => r.json()).then(s => { if (s.chat_question && !q.value) q.value = s.chat_question; });
+charger();
 </script>
