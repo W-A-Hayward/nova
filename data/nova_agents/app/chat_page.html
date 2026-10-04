@@ -1,5 +1,5 @@
 <h1>Poser une question</h1>
-<p class="muted small">Questions libres. Ce module nécessite Ollama. Les réponses sont vérifiées affirmation par affirmation, et chaque preuve ouvre le fichier au bon repère.
+<p class="muted small">Questions libres, traitées par Gemini (Ollama en secours). Les réponses sont vérifiées affirmation par affirmation, et chaque preuve ouvre le fichier au bon repère.
 Pour les réponses de référence, voir <a href="/reponses">Réponses Q01–Q10</a>.</p>
 <style>
 #box{display:flex;flex-direction:column;height:72vh;border:1px solid var(--line);border-radius:8px;background:var(--card);overflow:hidden}
@@ -43,6 +43,11 @@ function add(text, me, j) {
     h += '</div>';
   }
   if (j) {
+    if (j.modeles && Object.keys(j.modeles).length) {
+      const ks = Object.keys(j.modeles), repli = ks.some(k => k.startsWith('ollama'));
+      h += '<div class="meta muted">Rédigé par ' + esc(ks.map(k => k.split(':')[1] + ' (' + j.modeles[k] + ' appel' + (j.modeles[k] > 1 ? 's' : '') + ')').join(', '))
+         + (repli ? ' : repli sur Ollama, Gemini était indisponible' : '') + '</div>';
+    }
     if (j.preuves && j.preuves.length)
       h += '<div class=meta><b>Preuves citées :</b><br>' + j.preuves.map(p =>
         p.lien ? `<a href="${esc(p.lien)}">${esc(p.fichier)} : ${esc(p.repere)}</a>` : esc(p.source + ' ' + p.id)).join('<br>') + '</div>';
@@ -64,7 +69,7 @@ function rendre(hist) {
   hist.forEach(m => {
     if (m.role === 'user') add(m.texte, true);
     else if (m.statut === 'ok') add(m.reponse.reponse || '(pas de réponse)', false, m.reponse);
-    else if (m.statut === 'erreur') add('Erreur : ' + m.message + ' (Ollama est-il lancé?)', false);
+    else if (m.statut === 'erreur') add('Erreur : ' + m.message + ' (aucun modèle disponible : clé Gemini ou Ollama)', false);
     else add('Réponse en cours… (' + Math.round(Date.now() / 1000 - m.debut) + ' s) Vous pouvez changer de page : la réponse sera là au retour.', false);
   });
   const enCours = hist.some(m => m.statut === 'en cours');

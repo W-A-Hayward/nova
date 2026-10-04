@@ -39,7 +39,9 @@ function rendre(st) {
   }
   if (st.statut === 'erreur') { r.textContent = 'Échec de l\'analyse : ' + st.message; b.value = ''; return; }
   const j = st.resultat;
-  r.textContent = j.rapport + '\n\n' + j.nouveaux.length + ' fait(s) ajouté(s) « à valider », ' + j.rejetes.length + ' écarté(s), source ' + j.source + '.';
+  const mod = j.modeles && Object.keys(j.modeles).length ? ' Modèles : ' + Object.entries(j.modeles).map(([k, n]) => k.split(':')[1] + ' (' + n + ')').join(', ')
+    + (Object.keys(j.modeles).some(k => k.startsWith('ollama')) ? ', repli sur Ollama.' : '.') : ' Analyse faite par le code seulement.';
+  r.textContent = j.rapport + '\n\n' + j.nouveaux.length + ' fait(s) ajouté(s) « à valider », ' + j.rejetes.length + ' écarté(s), source ' + j.source + '.' + mod;
   if (document.activeElement !== b) b.value = st.brouillon_texte ?? JSON.stringify(j.brouillon, null, 2);
   if (st.enregistrement) afficherEnregistrement(st.enregistrement);
 }

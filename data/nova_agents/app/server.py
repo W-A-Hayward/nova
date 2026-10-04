@@ -678,8 +678,12 @@ def api_chat(q: Q):
 
 
 def _chat(question: str) -> dict:
+    from collections import Counter
+    from . import llm
     from .chat_graph import ask  # importé ici: les pages statiques n'ont pas besoin de LangGraph/Ollama
+    avant = Counter(llm.USAGE)
     r = ask(question)
+    modeles = llm.fournisseurs_depuis(avant)
     preuves = [{**p, "lien": href("source/" + p["fichier"], evidence.anchor(p["repere"]) if p.get("repere") else "") if p.get("fichier") else ""}
                for p in r["preuves"]]
     for sec in r["evolution"]:
@@ -688,7 +692,7 @@ def _chat(question: str) -> dict:
             x["lien"] = href("mise-a-jour") if x["role"] == "mise à jour" else href("source/" + src["fichier"], src.get("anchor", ""))
     rejetees = [{"sujet": x["sujet"], "texte": a["texte"], "problemes": a["problemes"]} for x in r["experts"] for a in x["retirees"]]
     return {"reponse": r["reponse_courte"], "reponse_complete": r["reponse"], "evolution": r["evolution"], "fils": r["fils"],
-            "sujets": r["sujets"], "preuves": preuves, "confiance": r["confiance"], "rejetees": rejetees}
+            "sujets": r["sujets"], "preuves": preuves, "confiance": r["confiance"], "rejetees": rejetees, "modeles": modeles}
 
 
 @app.get("/ingest", response_class=HTMLResponse)
@@ -716,8 +720,12 @@ async def api_ingest(fichier: UploadFile | None = File(None), texte: str = Form(
         dest = docs / f"{dest.stem}_{len(list(docs.glob(dest.stem + '*'))) + 1}{dest.suffix}"
     dest.write_bytes(data)
     SESSION["ingest"] = {"statut": "en cours", "nom": dest.name, "debut": time.time()}
+    from collections import Counter
+    from . import llm
+    avant = Counter(llm.USAGE)
     try:  # l'analyse est longue: dans un thread, pour que la page puisse interroger l'état pendant ce temps
         out = await run_in_threadpool(ingest, corpus.read_bytes(dest.name, data), dest.name, f"docs/{dest.name}")
+        out["modeles"] = llm.fournisseurs_depuis(avant)
     except Exception as ex:
         SESSION["ingest"] = {"statut": "erreur", "nom": dest.name, "message": f"{type(ex).__name__}: {ex}"}
         raise HTTPException(503, SESSION["ingest"]["message"])
