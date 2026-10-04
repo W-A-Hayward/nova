@@ -33,6 +33,7 @@ def main():
     OUT.mkdir(parents=True)
     for route, fn in PAGES.items():
         (OUT / server.href(route)).write_text(fn(), encoding="utf-8")
+    shutil.copytree(ROOT / "app" / "static", OUT / "static")  # polices embarquées: l'export reste lisible hors ligne
     (OUT / "index.html").write_text((OUT / server.href("brief")).read_text(encoding="utf-8"), encoding="utf-8")
     for fichier in evidence.by_file():
         (OUT / server.href("source/" + fichier)).write_text(server.source_html(fichier), encoding="utf-8")
