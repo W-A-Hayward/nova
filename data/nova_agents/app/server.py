@@ -389,10 +389,10 @@ def memoire_page():
     return page(f"""<h2>Mémoire opérationnelle NOVA</h2>
 <p><strong>Baseline:</strong> {e(memory_data['ref_date'])}</p>
 
-<h3>Chronologie (13 événements clés)</h3>
+<h3>Chronologie complète</h3>
 <table style="width:100%;border-collapse:collapse">
 <tr style="background:#eef2f7"><th style="text-align:left;padding:8px;border:1px solid #ddd">Date</th><th style="text-align:left;padding:8px;border:1px solid #ddd">Événement</th><th style="text-align:left;padding:8px;border:1px solid #ddd">Type</th><th style="text-align:left;padding:8px;border:1px solid #ddd">Source</th><th style="text-align:left;padding:8px;border:1px solid #ddd">Détail</th></tr>
-{chr(10).join(f"<tr><td style='padding:8px;border:1px solid #ddd;white-space:nowrap'>{e(d['date'])}</td><td style='padding:8px;border:1px solid #ddd'>{e(d['event'])}</td><td style='padding:8px;border:1px solid #ddd'>{e(d['type'])}</td><td style='padding:8px;border:1px solid #ddd'>{e(d['source'])}</td><td style='padding:8px;border:1px solid #ddd;word-wrap:break-word'>{e(d['detail'])}</td></tr>" for d in memory_data['timeline'][:13])}
+{chr(10).join(f"<tr><td style='padding:8px;border:1px solid #ddd;white-space:nowrap'>{e(d['date'])}</td><td style='padding:8px;border:1px solid #ddd'>{e(d['event'])}</td><td style='padding:8px;border:1px solid #ddd'>{e(d['type'])}</td><td style='padding:8px;border:1px solid #ddd'>{e(d['source'])}</td><td style='padding:8px;border:1px solid #ddd;word-wrap:break-word'>{e(d['detail'])}</td></tr>" for d in memory_data['timeline'])}
 </table>
 
 <h3>Décisions documentées (5)</h3>

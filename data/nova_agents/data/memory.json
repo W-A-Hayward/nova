@@ -11,7 +11,7 @@
   },
   {
    "date": "2026-07-23",
-   "event": "ADR-007 approuvée",
+   "event": "ADR-007 approuvée (Canada Central)",
    "type": "decision",
    "source": "ADR-007",
    "detail": "Architecture: Canada Central (remplace v1 East US)"
@@ -28,70 +28,98 @@
    "event": "Proposition report 22 oct",
    "type": "proposition",
    "source": "R-01 (registre risques)",
-   "detail": "Nouvelle date proposée par Boréal"
+   "detail": "Nouvelle date proposée par Boréal pour la mise en production"
   },
   {
    "date": "2026-09-10",
-   "event": "Comité: approbation 22 octobre",
+   "event": "Comité approuve 22 octobre",
    "type": "decision",
    "source": "M04 (10 sept)",
-   "detail": "Décision comité de direction: 22 oct sous réserve de 3 conditions"
+   "detail": "Décision comité de direction: 22 oct sous réserve de conditions à définir"
   },
   {
    "date": "2026-09-16",
-   "event": "Transition: Nicolas reprend",
-   "type": "fact",
-   "source": "Note_transition_16sept (Élodie)",
-   "detail": "Nicolas Perron devient chargé de projet"
+   "event": "Transition: Nicolas Perron responsable",
+   "type": "decision",
+   "source": "Note_transition_16sept",
+   "detail": "Nicolas Perron reprend la gestion du projet (Élodie Caron → Nicolas Perron)"
   },
   {
    "date": "2026-09-17",
-   "event": "INT-101 fermé",
+   "event": "INT-101 validé et fermé",
    "type": "validation",
    "source": "M05 (18 sept)",
-   "detail": "Connecteur validé et fermé"
+   "detail": "Connecteur intégration interne complété, cause initiale du report résolue"
   },
   {
    "date": "2026-09-18",
-   "event": "Comité suivi",
+   "event": "Bilan accessibilité partiel",
    "type": "fact",
    "source": "M05 (18 sept)",
-   "detail": "ACC-301/302 fermés, ACC-303 reste ouvert"
+   "detail": "ACC-301 et ACC-302 fermés, ACC-303 reste OUVERT (condition go-live)"
   },
   {
    "date": "2026-09-19",
-   "event": "SEC-210 fix livré",
+   "event": "SEC-210 fix déployé",
    "type": "fact",
-   "source": "SEC-210.txt (commentaire Boréal 19 sept)",
-   "detail": "Fix audit déployé, validation sécurité attendue"
+   "source": "SEC-210.txt (Boréal)",
+   "detail": "Fix audit livré en production, EN ATTENTE de validation sécurité (Sophie Lambert)"
   },
   {
    "date": "2026-09-24",
-   "event": "Decision_Portee_Phase2",
+   "event": "Décision portée Phase 2",
    "type": "decision",
    "source": "Decision_Portee_Phase2.md",
-   "detail": "CR-04 mobile avancé reporté à phase 2, pas de dépense sans approbation"
+   "detail": "CR-04 (mobile avancé) reporté à phase 2, aucune dépense sans nouvelle approbation"
   },
   {
    "date": "2026-09-26",
-   "event": "Comité direction: 3 conditions",
+   "event": "Comité: 3 conditions go-live",
    "type": "decision",
-   "source": "M06 (26 sept 10:00)",
-   "detail": "Conditions explicites: SEC-210 validation, ACC-303 fermé, runbook+rollback"
+   "source": "M06 (26 sept 10:00-10:15)",
+   "detail": "Conditions formelles: (1) SEC-210 validation sécurité, (2) ACC-303 fermé, (3) OPS-601 runbook+rollback"
+  },
+  {
+   "date": "2026-09-26",
+   "event": "Action: SEC-210 validation",
+   "type": "action",
+   "source": "M06 (26 sept)",
+   "detail": "Sophie Lambert responsable, délai: avant 22 oct (condition 1/3)"
+  },
+  {
+   "date": "2026-09-26",
+   "event": "Action: ACC-303 modale clavier",
+   "type": "action",
+   "source": "M06 (26 sept)",
+   "detail": "Mélissa Gagnon/Boréal responsables, délai: avant 22 oct (condition 2/3)"
+  },
+  {
+   "date": "2026-09-26",
+   "event": "Action: OPS-601 runbook complet",
+   "type": "action",
+   "source": "M06 (26 sept)",
+   "detail": "Olivier Côté/Boréal responsables, manquent étapes 4-5, délai: avant 22 oct (condition 3/3)"
+  },
+  {
+   "date": "2026-09-26",
+   "event": "Observation: INV-003 contient CR-04 non approuvé",
+   "type": "action",
+   "source": "M06 (26 sept 10:25)",
+   "detail": "Facture 54k$ inclut 18k$ CR-04, ligne à traiter/contester avant paiement"
   },
   {
    "date": "2026-09-29",
-   "event": "Registre risques 29 sept",
+   "event": "Registre risques mis à jour",
    "type": "fact",
    "source": "Registre_Risques_29sept.xlsx",
-   "detail": "État des risques et actions au 29 sept"
+   "detail": "État des risques et actions documenté au 29 sept, R-01 marqué résolu"
   },
   {
    "date": "2026-09-30",
    "event": "Baseline de référence",
    "type": "fact",
-   "source": "README.txt (30 sept 09:00)",
-   "detail": "État du dossier at 30 septembre 2026 09:00 Montréal"
+   "source": "README.txt",
+   "detail": "État du dossier: 30 septembre 2026, 09:00 Montréal (UTC-4)"
   }
  ],
  "decisions": [
