@@ -330,7 +330,7 @@ def fenetre(question: str) -> tuple[str, str] | None:
 
 def _src(e: dict) -> dict:
     return {"fichier": e["fichier"], "repere": e.get("repere", ""), "anchor": e.get("anchor", ""), "extrait": e.get("extrait", ""),
-            "court": memory_short(e["fichier"]) + (f" · {e['repere']}" if e.get("repere") and e["repere"] != "document" else "")}
+            "court": memory_short(e["fichier"]) + (f", {e['repere']}" if e.get("repere") and e["repere"] != "document" else "")}
 
 
 def evolution(question: str, choisis: list[str]) -> list[dict]:

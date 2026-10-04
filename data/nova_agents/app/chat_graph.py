@@ -211,7 +211,7 @@ def _confiance(affs: list[dict]) -> str:
 
 
 def label(cid: str, claims: dict[str, dict]) -> str:
-    """Étiquette lisible d'une preuve: « M04 · ligne 23 », « état actuel F01 », « calcul NOVA »."""
+    """Étiquette lisible d'une preuve: « M04, ligne 23 », « état actuel F01 », « calcul NOVA »."""
     if cid == "CALC":
         return "calcul NOVA"
     if cid.startswith("F"):
@@ -220,7 +220,7 @@ def label(cid: str, claims: dict[str, dict]) -> str:
     if not c:
         return cid
     rep = c.get("repere", "")
-    return fils.memory_short(c.get("fichier", "")) + (f" · {rep}" if rep and rep != "document" else "")
+    return fils.memory_short(c.get("fichier", "")) + (f", {rep}" if rep and rep != "document" else "")
 
 
 def afficher(text: str, claims: dict[str, dict]) -> str:
