@@ -307,6 +307,61 @@ def brief_page():
 <p style="font-size:11px;margin-top:20px">Details: /memoire (timeline/decisions) | /reponses (Q01-Q10 sources)</p>"""
     return page(brief_html)
 
+def build_elements_table(memory_data: dict) -> str:
+    """Build HTML table rows for all project elements (tickets, decisions, actions, risks)."""
+    rows = []
+    tickets = kb.ticket_status()
+
+    # Add all tickets
+    for ticket_id, ticket_info in sorted(tickets.items()):
+        statut = ticket_info.get('statut', 'INCONNU')
+        rows.append({
+            'element': ticket_id,
+            'type': 'Ticket',
+            'statut': statut,
+            'responsable': '',
+            'date': ''
+        })
+
+    # Add decisions
+    for d in memory_data.get('decisions', []):
+        rows.append({
+            'element': d['field'],
+            'type': 'Décision',
+            'statut': 'Approuvé' if d.get('nouveau') else 'Proposal',
+            'responsable': '',
+            'date': d.get('ancien', {}).get('date', '')
+        })
+
+    # Add actions
+    for a in memory_data.get('actions', []):
+        rows.append({
+            'element': a['action'],
+            'type': 'Action',
+            'statut': a.get('statut_courant', 'À faire'),
+            'responsable': a.get('responsable', 'À confirmer'),
+            'date': a.get('echéance', 'À confirmer')
+        })
+
+    # Add risks (R-01, R-02, etc. from memory timeline)
+    for event in memory_data.get('timeline', []):
+        if 'risque' in event.get('source', '').lower() or 'registre' in event.get('source', '').lower():
+            rows.append({
+                'element': event['event'],
+                'type': 'Risque',
+                'statut': event.get('type', 'Fact'),
+                'responsable': '',
+                'date': event['date']
+            })
+
+    # Generate table rows HTML
+    html = ""
+    for row in rows:
+        html += f"""<tr><td style='padding:8px;border:1px solid #ddd'>{e(row['element'])}</td><td style='padding:8px;border:1px solid #ddd'>{e(row['type'])}</td><td style='padding:8px;border:1px solid #ddd'>{e(row['statut'])}</td><td style='padding:8px;border:1px solid #ddd'>{e(row['responsable'])}</td><td style='padding:8px;border:1px solid #ddd'>{e(row['date'])}</td></tr>"""
+
+    return html
+
+
 @app.get("/memoire", response_class=HTMLResponse)
 def memoire_page():
     """Structured memory with timeline, decisions, contradictions, actions."""
@@ -362,6 +417,12 @@ def memoire_page():
   overflow-wrap: break-word;
 }}
 </style>
+
+<h3>Registre complet du projet</h3>
+<table style="width:100%;border-collapse:collapse;font-size:13px">
+<tr style="background:#eef2f7"><th style="text-align:left;padding:8px;border:1px solid #ddd">Élément</th><th style="text-align:left;padding:8px;border:1px solid #ddd">Type</th><th style="text-align:left;padding:8px;border:1px solid #ddd">Statut</th><th style="text-align:left;padding:8px;border:1px solid #ddd">Responsable</th><th style="text-align:left;padding:8px;border:1px solid #ddd">Échéance / Date</th></tr>
+{build_elements_table(memory_data)}
+</table>
 
 <p style="font-size:12px;margin-top:20px"><em>Tous les éléments sont sourcés avec date et autorité. Les contradictions sont tagées: ✓ RÉSOLUE (raisonnement documenté) ou ⚠ NON RÉSOLUE (en attente). Les recommandations de l'équipe sont clairement séparées des engagements documentés.</em></p>""")
 
