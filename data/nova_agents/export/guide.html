@@ -1,37 +1,115 @@
-<!doctype html><html lang=fr><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>Mode d&#x27;emploi NOVA</title><style>
-:root{--bg:#f7f8fa;--fg:#1b1f24;--muted:#5b6470;--card:#fff;--line:#d9dee5;--head:#183760;--headfg:#fff;--th:#eef2f7;
---ok:#0b7a32;--warn:#a15c00;--bad:#b42318;--link:#1d4f91;--hl:#fff3b0;--prop:#6b3fa0;--dec:#0b5cad;--val:#0b7a32;--sig:#b42318}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111418;--fg:#e6e9ee;--muted:#9aa4b1;--card:#1a1f26;--line:#2d343e;
---head:#0f2747;--th:#222a35;--ok:#4cc27a;--warn:#e0a54b;--bad:#f07167;--link:#8cb8ff;--hl:#4a4215;--prop:#b794f4;--dec:#6cb2ff;--val:#4cc27a;--sig:#f07167}}
-:root[data-theme="dark"]{--bg:#111418;--fg:#e6e9ee;--muted:#9aa4b1;--card:#1a1f26;--line:#2d343e;--head:#0f2747;--th:#222a35;
---ok:#4cc27a;--warn:#e0a54b;--bad:#f07167;--link:#8cb8ff;--hl:#4a4215;--prop:#b794f4;--dec:#6cb2ff;--val:#4cc27a;--sig:#f07167}
-*{box-sizing:border-box}body{font:15px/1.5 system-ui,sans-serif;margin:0;color:var(--fg);background:var(--bg)}
-a{color:var(--link)}header{background:var(--head);padding:8px 16px;display:flex;flex-wrap:wrap;gap:4px 14px}
-header a{color:var(--headfg);text-decoration:none;font-weight:600}header a:hover{text-decoration:underline}
-header .off{color:#aab;font-weight:400}
-main{padding:14px 16px;max-width:1150px;margin:0 auto}
-h1{font-size:22px;margin:6px 0}h2{font-size:18px;margin:22px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}h3{font-size:15px;margin:14px 0 6px}
-table{border-collapse:collapse;width:100%;margin:6px 0 14px;background:var(--card)}
-td,th{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}th{background:var(--th);font-weight:600}
-.scroll{overflow-x:auto}pre{white-space:pre-wrap;background:var(--card);border:1px solid var(--line);padding:10px;border-radius:6px}
-.card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--head);border-radius:6px;padding:10px 12px;margin:10px 0}
-.muted{color:var(--muted)}.small{font-size:13px}.ok{color:var(--ok)}.warn{color:var(--warn)}.bad{color:var(--bad)}
-.tag{display:inline-block;font-size:11px;font-weight:700;padding:1px 6px;border-radius:9px;border:1px solid currentColor;white-space:nowrap}
-.n-proposition{color:var(--prop)}.n-décision{color:var(--dec)}.n-validation{color:var(--val)}.n-livraison{color:var(--warn)}.n-signal{color:var(--sig)}.n-fait{color:var(--muted)}
-.engagement{color:var(--dec)}.recommandation{color:var(--prop)}
-a.cite{font-size:12px;white-space:nowrap;margin-right:6px}
-.quote{border-left:3px solid var(--line);padding-left:8px;color:var(--muted);font-style:italic}
-:target{background:var(--hl);outline:2px solid var(--warn)}
-.lines div{font:13px/1.45 ui-monospace,monospace;white-space:pre-wrap;padding:0 6px}.lines span{color:var(--muted);user-select:none;display:inline-block;width:3.2em}
-textarea,input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radius:4px;background:var(--card);color:var(--fg)}
-button{padding:8px 16px;margin-top:8px;background:var(--head);color:#fff;border:none;border-radius:4px;cursor:pointer}
-.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}
-.brief td,.brief th{padding:4px 6px;font-size:13px}.brief p{margin:4px 0}.brief h1{font-size:19px}.brief h2{font-size:15px;margin:10px 0 4px}
-@media print{header,.noprint{display:none}main{padding:0;max-width:none}body{font-size:10px;line-height:1.35;background:#fff;color:#000}
-.brief td,.brief th{padding:1px 4px;font-size:9.5px}.brief h1{font-size:15px;margin:0}.brief h2{font-size:11.5px;margin:5px 0 2px;padding-bottom:1px}
-.brief table{margin:3px 0 5px}.tag{font-size:8.5px;padding:0 4px}a{color:#000;text-decoration:none}a.cite{font-size:8.5px;color:#444}
-@page{size:A4;margin:10mm}}
-</style><header><a href='brief.html'>Brief</a><a href='memoire.html'>Mémoire</a><a href='reponses.html'>Réponses Q01–Q10</a><a href='mise-a-jour.html'>Mise à jour</a><a href='sources.html'>Sources et recherche</a><a href='guide.html'>Mode d'emploi</a><span class=off>Chat et Ajouter : serveur seulement</span></header><main><h1>NOVA : mode d&#x27;emploi</h1>
+<!doctype html><html lang=fr><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>Mode d&#x27;emploi NOVA</title><style>@font-face{font-family:'Public Sans';font-style:normal;font-weight:100 900;font-display:swap;src:url(static/fonts/PublicSans-normal.woff2) format('woff2')}@font-face{font-family:'Public Sans';font-style:italic;font-weight:100 900;font-display:swap;src:url(static/fonts/PublicSans-italic.woff2) format('woff2')}@font-face{font-family:'Source Serif 4';font-style:italic;font-weight:200 900;font-display:swap;src:url(static/fonts/SourceSerif4-italic.woff2) format('woff2')}
+:root{--paper:#F5F6F4;--surface:#FFFFFF;--ink:#1C2433;--muted:#5F6B78;--rule:#D6DBE0;--rule-strong:#AEB6BF;
+--acte:#0E5C63;--acte-bg:#E3EFEF;--ouvert:#A9550A;--ouvert-bg:#FBF0E4;--passe:#9A2F3A;--passe-bg:#F7E9EA;--link:#0E5C63;--hl:#FFF1C2;
+color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#14181D;--surface:#1B2027;--ink:#E6E9EC;--muted:#9AA5B1;
+--rule:#2C333C;--rule-strong:#46505B;--acte:#5DBDBF;--acte-bg:#17302F;--ouvert:#E3A04F;--ouvert-bg:#33261A;--passe:#E58A93;--passe-bg:#35202A;
+--link:#7FD0D2;--hl:#4A3F17;color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#14181D;--surface:#1B2027;--ink:#E6E9EC;--muted:#9AA5B1;--rule:#2C333C;--rule-strong:#46505B;
+--acte:#5DBDBF;--acte-bg:#17302F;--ouvert:#E3A04F;--ouvert-bg:#33261A;--passe:#E58A93;--passe-bg:#35202A;--link:#7FD0D2;--hl:#4A3F17;color-scheme:dark}
+/* alias utilisés par les pages de chat et d'ajout */
+:root{--bg:var(--paper);--fg:var(--ink);--card:var(--surface);--line:var(--rule);--head:var(--acte);--ok:var(--acte);--warn:var(--ouvert);--bad:var(--passe)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.55 "Public Sans",system-ui,sans-serif;
+-webkit-font-smoothing:antialiased}
+a{color:var(--link);text-underline-offset:2px;text-decoration-thickness:1px}a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:3px solid var(--ouvert);outline-offset:2px;border-radius:2px}
+.masthead{background:var(--surface);border-bottom:1px solid var(--rule);padding:14px 20px 0}
+.masthead .id{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;max-width:1150px;margin:0 auto}
+.masthead .nova{font-weight:800;font-size:22px;letter-spacing:-.02em;color:var(--ink);text-decoration:none}
+.masthead .ref{color:var(--muted);font-size:14px}
+.masthead nav{display:flex;flex-wrap:wrap;gap:2px 22px;max-width:1150px;margin:10px auto 0}
+.masthead nav a{color:var(--muted);text-decoration:none;font-weight:550;font-size:15px;padding:6px 0 9px;border-bottom:3px solid transparent}
+.masthead nav a:hover{color:var(--ink)}
+.masthead nav a[aria-current=page]{color:var(--ink);border-bottom-color:var(--acte)}
+.masthead nav .off{color:var(--muted);font-size:13px;padding:7px 0}
+main{padding:22px 20px 48px;max-width:1150px;margin:0 auto}
+h1{font-size:30px;line-height:1.15;font-weight:750;letter-spacing:-.015em;margin:4px 0 6px}
+h2{font-size:21px;line-height:1.25;font-weight:700;margin:34px 0 10px;padding-top:12px;border-top:2px solid var(--ink)}
+h3{font-size:17px;line-height:1.3;font-weight:650;margin:18px 0 6px}
+.lede{color:var(--muted);max-width:72ch;margin:0 0 6px}
+p,li{max-width:80ch}
+table{border-collapse:collapse;width:100%;margin:8px 0 18px;font-size:15px;font-variant-numeric:tabular-nums}
+.money,.verdict .v{font-variant-numeric:tabular-nums}
+th{font-weight:600;font-size:13px;color:var(--muted);text-align:left;padding:6px 10px;border-bottom:2px solid var(--rule-strong);vertical-align:bottom}
+td{padding:8px 10px;border-bottom:1px solid var(--rule);vertical-align:top;text-align:left}
+tbody tr:hover td,table tr:hover td{background:color-mix(in srgb,var(--surface) 70%,transparent)}
+.scroll{overflow-x:auto}
+pre{white-space:pre-wrap;background:var(--surface);border:1px solid var(--rule);padding:12px;border-radius:6px;font-size:14px}
+code{font-size:.92em}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:14px 16px;margin:12px 0}
+.muted{color:var(--muted)}.small{font-size:14px}.ok{color:var(--acte)}.warn{color:var(--ouvert)}.bad{color:var(--passe)}
+/* rôles: plein = acté, contour = en cours, pointillé = passé ou contredit */
+.tag{display:inline-block;font-size:12.5px;font-weight:600;line-height:1.5;padding:0 7px;border-radius:3px;border:1px solid var(--rule-strong);
+color:var(--muted);white-space:nowrap;vertical-align:1px}
+.r-acte{background:var(--acte);border-color:var(--acte);color:var(--surface)}
+.r-ouvert{border-color:var(--ouvert);color:var(--ouvert);background:var(--ouvert-bg)}
+.r-passe{border:1px dashed var(--passe);color:var(--passe)}
+.engagement{background:var(--acte-bg);border-color:var(--acte);color:var(--acte)}.recommandation{border-style:dashed;color:var(--muted)}
+/* compatibilité des anciennes classes n-* (chat) */
+.n-décision,.n-validation{background:var(--acte);border-color:var(--acte);color:var(--surface)}
+.n-proposition,.n-livraison{border-color:var(--ouvert);color:var(--ouvert);background:var(--ouvert-bg)}.n-signal{border:1px dashed var(--passe);color:var(--passe)}
+.passe-txt{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--passe)}
+tr.passe td{color:var(--muted)}
+a.cite{font-size:13px;white-space:nowrap;margin:0 1px 0 3px;color:var(--muted);text-decoration-color:var(--rule-strong)}
+.nw{white-space:nowrap}td.num,th.num{text-align:right;white-space:nowrap}
+a.cite:hover{color:var(--link)}
+.quote,blockquote{font-family:"Source Serif 4",Georgia,serif;font-style:italic;font-size:16.5px;line-height:1.6;color:var(--ink);
+border-left:2px solid var(--rule-strong);margin:4px 0 8px;padding:0 0 0 12px}
+:target{background:var(--hl);outline:2px solid var(--ouvert);outline-offset:2px}
+.lines{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:8px 0}
+.lines div{font-size:15px;line-height:1.6;white-space:pre-wrap;padding:0 12px}
+.lines span{color:var(--muted);user-select:none;display:inline-block;width:3em;font:12px "Public Sans",sans-serif}
+textarea,input[type=text]{width:100%;padding:10px 12px;border:1px solid var(--rule-strong);border-radius:4px;background:var(--surface);color:var(--ink);font:inherit}
+input[type=text]{font-size:17px}
+button{font:600 15px "Public Sans",sans-serif;padding:9px 18px;margin-top:8px;background:var(--acte);color:var(--surface);border:none;border-radius:4px;cursor:pointer}
+button:disabled{opacity:.5}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.toc{position:sticky;top:0;z-index:2;background:var(--paper);border-bottom:1px solid var(--rule);padding:8px 0;margin:0 0 6px;font-size:14px;
+display:flex;flex-wrap:wrap;gap:4px 18px}
+.toc a{color:var(--muted)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+label{display:block;font-weight:600;margin:0 0 4px}
+/* brief: la décision et ses trois conditions d'abord */
+.verdict{display:grid;grid-template-columns:minmax(260px,1fr) 1.6fr;gap:0;border:1px solid var(--rule);border-radius:6px;background:var(--surface);
+margin:14px 0 8px;overflow:hidden}
+.verdict .date{padding:18px 22px;border-right:1px solid var(--rule)}
+.verdict .date .k{color:var(--muted);font-size:14px}
+.verdict .date .v{font-size:38px;line-height:1.05;font-weight:780;letter-spacing:-.025em;color:var(--acte);margin:4px 0 8px}
+.verdict .date .s{color:var(--ouvert);font-weight:600}
+.verdict ol{list-style:none;margin:0;padding:0}
+.verdict li{display:grid;grid-template-columns:2.6em 1fr auto;gap:2px 10px;align-items:baseline;padding:11px 18px;border-bottom:1px solid var(--rule);max-width:none}
+.verdict li:last-child{border-bottom:0}
+.verdict li .c{font-weight:780;font-size:18px;color:var(--ouvert)}
+.verdict li .l{font-weight:600}.verdict li .w{grid-column:2;color:var(--muted);font-size:14px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:0 36px}
+.brief h2{font-size:17px;margin:20px 0 6px;padding-top:8px;border-top:1px solid var(--ink)}.brief p{margin:4px 0}
+.money{font-size:24px;font-weight:750;letter-spacing:-.01em}
+/* contradictions: ce qui est écarté face à ce qui est retenu */
+.duel{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:8px 0}
+.duel>div{padding:10px 12px;border-radius:4px}
+.duel .ecarte{background:var(--passe-bg);border-left:3px solid var(--passe)}
+.duel .retenu{background:var(--acte-bg);border-left:3px solid var(--acte)}
+.duel .who{font-size:14px;color:var(--muted)}
+.resolution{margin:6px 0 0}.card>h3:first-child,.card>.qnum+h3{margin-top:0}
+.qnum{float:left;font-size:30px;font-weight:780;color:var(--rule-strong);width:2.6em;line-height:1.1;letter-spacing:-.02em}
+.answer{overflow:hidden}.answer h3{font-size:19px;margin-top:4px}.answer .rep{font-size:17px;max-width:76ch}
+.answer details{clear:both;margin-top:8px}
+summary{cursor:pointer;font-weight:600;color:var(--acte)}
+@media (max-width:760px){.verdict,.cols,.duel{grid-template-columns:1fr}.verdict .date{border-right:0;border-bottom:1px solid var(--rule)}
+.qnum{float:none;display:block;width:auto}h1{font-size:25px}}
+@media print{.masthead,.noprint,.toc{display:none}main{padding:0;max-width:none}
+body{font-size:9.6px;line-height:1.35;background:#fff;color:#000}
+.brief h1{font-size:15px;margin:0}.brief h2{font-size:11px;margin:5px 0 2px;padding-top:3px}
+.brief td,.brief th{padding:1px 4px;font-size:9px}.brief table{margin:2px 0 4px}
+.verdict{margin:4px 0;border-color:#999}.verdict .date{padding:6px 10px}.verdict .date .v{font-size:20px;margin:1px 0 2px}
+.verdict li{padding:3px 10px}.verdict li .c{font-size:11px}.verdict li .w{font-size:9px}
+.brief p,.brief .small,.brief .lede,.verdict .date .k,.verdict li .l{font-size:9.6px}
+.cols{grid-template-columns:1fr 1fr;gap:0 14px}.verdict{grid-template-columns:1fr 1.5fr}.verdict .date{border-right:1px solid #999;border-bottom:0}
+.money{font-size:12px}.tag{font-size:8px;padding:0 3px}a{color:#000;text-decoration:none}a.cite{font-size:8px;color:#555}
+@page{size:A4;margin:9mm}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style><header class=masthead><div class=id><a class=nova href='brief.html'>NOVA</a><span class=ref>Mémoire du projet, état au 30 septembre 2026 à 9 h (Montréal)</span></div><nav aria-label='Pages'><a href='brief.html'>Brief</a><a href='memoire.html'>Mémoire</a><a href='reponses.html'>Réponses Q01–Q10</a><a href='mise-a-jour.html'>Mise à jour</a><a href='sources.html'>Sources et recherche</a><a href='guide.html' aria-current=page>Mode d'emploi</a><span class=off>Chat et Ajouter : avec le serveur</span></nav></header><main><h1>NOVA : mode d&#x27;emploi</h1>
 <p>État de référence : <b>30 septembre 2026, 09 h, Montréal (UTC−4)</b>. Toutes les réponses sont données à cette date fictive.</p>
 <h2>1. Ouverture</h2>
 <p><b>Sans rien installer (recommandé pour le jury)</b> : ouvrir <code>export/index.html</code> dans un navigateur. L&#x27;export est autonome : pages HTML, fichiers du dossier copiés dans <code>export/raw/</code>, recherche intégrée. Il ne demande ni Python, ni Ollama, ni connexion.</p>
@@ -44,23 +122,28 @@ uvicorn app.server:app        # puis http://127.0.0.1:8000 (redirige vers /brief
 python scripts/export_static.py   # régénère export/</pre>
 <p>Le chat demande en plus Ollama : <code>ollama pull llama3.1</code>.</p>
 <h2>2. Navigation</h2>
-<div class=scroll><table><tr><th>Page</th><th>Livrable</th><th>Contenu</th></tr><tr><td>Brief</td><td>1</td><td>Une page imprimable : responsable, date approuvée et conditions, portée, budget, factures, priorités (conditions → actions → responsables → échéances).</td></tr><tr><td>Mémoire</td><td>2</td><td>Chronologie (41 événements typés proposition, décision, validation, livraison ou signal), décisions (proposition → décision → validation), 9 contradictions résolues, conditions de go-live, 10 actions, registre des risques cellule par cellule, sources écartées.</td></tr><tr><td>Réponses Q01–Q10</td><td>3</td><td>Réponse, nuance et preuves : fichier, repère humain (horodatage, cellule, page, étape de capture), repère calculé et extrait cité mot pour mot.</td></tr><tr><td>Mise à jour</td><td>4</td><td>État actuel comparé à la baseline, changements, informations affectées, actions, ce qui n&#x27;a pas changé. La baseline reste intacte.</td></tr><tr><td>Sources et recherche</td><td>:</td><td>Recherche plein texte sans IA dans tous les passages (fichier et repère), puis le catalogue des fichiers avec autorité, pertinence, doublons et avertissements.</td></tr><tr><td>Chat / Ajouter</td><td>:</td><td>Serveur et Ollama seulement : questions libres vérifiées, aide à l&#x27;extraction d&#x27;un nouveau document.</td></tr></table></div>
+<div class=scroll><table><tr><th>Page</th><th>Livrable</th><th>Contenu</th></tr><tr><td>Brief</td><td>1</td><td>Une page imprimable : responsable, date approuvée et conditions, portée, budget, factures, priorités (conditions → actions → responsables → échéances).</td></tr><tr><td>Mémoire</td><td>2</td><td>Chronologie (41 événements typés proposition, décision, validation, livraison ou signal), décisions (proposition → décision → validation), 9 contradictions résolues, conditions de go-live, 10 actions, registre des risques cellule par cellule, sources écartées.</td></tr><tr><td>Réponses Q01–Q10</td><td>3</td><td>Réponse, nuance et preuves : fichier, repère humain (horodatage, cellule, page, étape de capture), repère calculé et extrait cité mot pour mot.</td></tr><tr><td>Mise à jour</td><td>4</td><td>État actuel comparé à la baseline, changements, informations affectées, actions, ce qui n&#x27;a pas changé. La baseline reste intacte.</td></tr><tr><td>Sources et recherche</td><td>:</td><td>Recherche plein texte sans IA dans tous les passages (fichier et repère), puis le catalogue des fichiers avec autorité, pertinence, doublons et avertissements.</td></tr><tr><td>Chat / Ajouter</td><td>:</td><td>Serveur et Ollama seulement : questions libres. Le chat donne l&#x27;état actuel, puis l&#x27;évolution des décisions et les sources contradictoires, chacune avec son lien (voir section 4). Ajouter : aide à l&#x27;extraction d&#x27;un nouveau document. Conversation et dernière analyse (rapport, brouillon corrigé, texte tapé) gardées en changeant de page ou d&#x27;onglet, effacées à l&#x27;arrêt du serveur.</td></tr></table></div>
 <p><b>Retrouver une preuve</b> : chaque lien ouvre le fichier source au bon endroit (ligne surlignée, page, ligne Excel ou capture avec sa transcription). Exemples : Q10 → <code>OPS-601_runbook.png</code> (étapes 4 et 5) ; Q02 → <code>Registre_Risques_29sept.xlsx</code>, ligne 2 (R-01 encore « Ouvert »).</p>
 <p><b>Légende</b> : <code>engagement documenté</code> = quelqu&#x27;un s&#x27;y est engagé dans le dossier ; <code>recommandation équipe</code> = notre proposition, sans trace d&#x27;engagement. Échéance « à confirmer » = aucune date écrite au dossier.</p>
 <h2>3. Intégrer la nouvelle information (livrable 4)</h2>
-<ul><li>Déposer le document reçu dans <code>data/updates/docs/</code>.</li><li>Copier <code>data/updates/_modele.json</code> en <code>data/updates/U01_&lt;sujet&gt;.json</code> et le remplir : statut du problème, décision antérieure, nouvelle proposition, changements (avec un <b>extrait exact</b> du document comme preuve), actions touchées, nouvelles actions. <code>/ingest</code> (Ollama) peut aider à repérer les extraits.</li><li>Ouvrir <b>Mise à jour</b>, puis régénérer l&#x27;export.</li></ul>
-<p>Le code applique trois garde-fous :</p>
-<ul><li>un extrait introuvable dans le document écarte le changement ;</li><li>un statut « approuvé » ou « validé » sans approbation explicite et sans approbateur est rétrogradé en « proposé », car une proposition ne remplace jamais une décision ;</li><li>une condition de go-live n&#x27;est levée que par son validateur (Sophie pour C1, Mélissa pour C2, Olivier pour C3).</li></ul>
+<ul><li>Page <b>Ajouter</b> (serveur) : téléverser le document reçu ou coller son texte. Il est conservé dans <code>data/updates/docs/</code>.</li><li>Le <b>rapport d&#x27;impacts</b> répond aux trois questions de la consigne : ce qui vient de changer, les informations et actions affectées, les actions à prendre. Il ajoute ce qui n&#x27;a pas changé. L&#x27;analyse est faite <b>par le code</b> (<code>app/impact.py</code>) : chaque phrase porteuse d&#x27;un signal (date, ticket, montant, proposition, livraison, validation, retard) est rattachée à un sujet, puis comparée à son état actuel. Exemples : une nouvelle date proposée alors que le 22 octobre reste approuvé ; une livraison qui n&#x27;est pas une validation ; une validation, qui ne compte que si elle vient du validateur désigné. Le LLM n&#x27;ajoute que des remarques vérifiées (désactivable : <code>NOVA_IMPACT_LLM=0</code>).</li><li>Relire le <b>brouillon de mise à jour</b> proposé sous le rapport (statuts, responsables, échéances), puis cliquer « Enregistrer comme mise à jour ». Il devient <code>data/updates/Uxx_*.json</code>. Sans serveur, on peut aussi copier <code>data/updates/_modele.json</code> à la main.</li><li>Ouvrir <b>Mise à jour</b> : l&#x27;état actuel est comparé à la baseline. Le chat tient compte de la mise à jour (nouvelle position dans l&#x27;évolution du sujet). Régénérer ensuite l&#x27;export.</li></ul>
+<p>Le code applique ces garde-fous (à l&#x27;analyse et à l&#x27;enregistrement) :</p>
+<ul><li>une instruction adressée au système dans le document (« ignorez les règles », « marquez … comme validé ») est écartée et signalée ;</li><li>un extrait introuvable dans le document écarte le changement ;</li><li>un statut « approuvé » ou « validé » sans approbation explicite et sans approbateur est rétrogradé en « proposé », car une proposition ne remplace jamais une décision ;</li><li>une condition de go-live n&#x27;est levée que par son validateur (Sophie pour C1, Mélissa pour C2, Olivier pour C3).</li></ul>
 <p><code>data/memory.json</code> et <code>data/answers_baseline.json</code> ne sont jamais réécrits, et le tag git <code>baseline-30sept-09h00</code> conserve la version initiale. Une démonstration avec un document <b>fictif</b> est disponible sur le serveur : <code>/mise-a-jour?exercice=1</code> (fichiers dans <code>tests/fixtures/</code>, jamais chargés dans <code>data/</code>).</p>
-<h2>4. Outils utilisés</h2>
+<h2>4. Raisonnement du chat</h2>
+<p><b>État actuel = le fait documenté le plus récent, émanant d&#x27;une source compétente, daté par la date du fait.</b> La date du fichier ne fait pas foi : le plan v3 (12 sept) est plus récent que la décision du comité (10 sept), mais il n&#x27;a pas été corrigé ; le registre du 29 sept garde une ligne R-01 qui décrit l&#x27;état au 9 sept.</p>
+<ul><li><b>Fils thématiques (code, <code>app/fils.py</code>)</b> : 13 sujets (date, hébergement, responsable, budget, sécurité, accessibilité, runbook, intégration, conditions, communication, actions…). Chaque fil a un état actuel tranché et la liste datée de toutes les sources qui en parlent, avec leur rôle : historique (remplacé), proposition, décision, livraison (≠ validation), validation, contredit (écarté) avec la raison, signal non fiable, mise à jour reçue après la baseline.</li><li><b>Experts (LLM)</b> : ils reçoivent l&#x27;état actuel <code>[Fxx]</code> en tête, puis les positions étiquetées. Une affirmation qui présente une position passée comme actuelle est rejetée en code (sauf si elle dit « initialement », « auparavant »…), puis vérifiée par un agent vérificateur.</li><li><b>Réponse</b> : 2 à 5 phrases sur l&#x27;état actuel, puis une section <b>Évolution et sources contradictoires</b> assemblée par le code (du plus ancien au plus récent, chaque source cliquable), puis <b>Ce qu&#x27;on ne sait pas</b>.</li><li><b>Questions générales</b> : « Existe-t-il des contradictions? » liste les 9 contradictions et leur résolution ; « Qu&#x27;est-ce qui a changé depuis la semaine dernière? » (ou « depuis le 15 septembre ») donne les événements de la période ; « engagements », « risques », « reprendre le projet » sélectionnent les fils correspondants.</li></ul>
+<h2>5. Outils utilisés</h2>
 <ul><li><b>Python</b> : FastAPI (pages), pypdf (PDF, repère par page), openpyxl (Excel, repère par cellule), module <code>email</code> (courriels, repère par ligne de la vue normalisée).</li><li><b>LangGraph et Ollama (llama3.1, local, gratuit)</b> : seulement pour le chat et l&#x27;aide à l&#x27;extraction. Les pages livrables n&#x27;utilisent aucun LLM.</li><li><b>Claude Code (Anthropic)</b> : assistant de développement. Il a servi à écrire le code, à relire le dossier et à rédiger la première version des réponses, de la mémoire et des transcriptions de captures. Chaque fait a ensuite été vérifié contre le dossier, et les extraits cités sont contrôlés automatiquement (<code>tests/test_deliverables.py</code>).</li><li>Aucun service payant, aucune recherche externe pour les faits : tous les faits viennent du dossier.</li></ul>
-<h2>5. Traitements manuels</h2>
+<h2>6. Traitements manuels</h2>
 <div class=scroll><table><tr><th>Traitement</th><th>Où</th><th>Contrôle</th></tr><tr><td>Transcription des 8 captures PNG (aucun modèle de vision n&#x27;a été utilisé)</td><td><code>data/manual/captures.json</code></td><td>Relue contre les images. Les captures historiques sont marquées « ne prouve pas que le défaut reste ouvert »</td></tr><tr><td>Rédaction de Q01–Q10</td><td><code>data/answers_baseline.json</code></td><td>Chaque extrait est retrouvé dans le fichier cité (test automatique)</td></tr><tr><td>Chronologie, décisions, contradictions, actions</td><td><code>app/memory.py</code> → <code>data/memory.json</code></td><td>Idem. Natures et responsables attribués à la main</td></tr><tr><td>Classement autorité et pertinence des sources</td><td><code>app/corpus.py</code></td><td>Règles codées par dossier et par nom de fichier</td></tr><tr><td>Montants (autorisé, facturé, payé)</td><td>calculés par le code depuis les PDF</td><td>Test : 204 000 / 186 000 / 132 000</td></tr></table></div>
-<h2>6. Limites</h2>
-<ul><li>Les transcriptions de captures sont manuelles. Une erreur de lecture reste possible, mais l&#x27;image originale est affichée à côté.</li><li>Les repères « ligne N » des courriels renvoient à la vue normalisée (De, Date, Objet, corps), pas au fichier <code>.eml</code> brut.</li><li>La recherche est lexicale (termes exacts, accents ignorés), pas sémantique.</li><li>Le chat repose sur un modèle 8B local. Les affirmations sont vérifiées en code et par un agent vérificateur, mais il reste faillible : les réponses de référence sont dans <b>Réponses Q01–Q10</b>.</li><li>Un document ajouté par <code>/ingest</code> reçoit une autorité « inconnue » et le statut « à valider ». Rien n&#x27;est validé sans humain.</li></ul>
-<h2>7. Informations incertaines ou manquantes (au 30 septembre)</h2>
+<h2>7. Limites</h2>
+<ul><li>Les transcriptions de captures sont manuelles. Une erreur de lecture reste possible, mais l&#x27;image originale est affichée à côté.</li><li>Les repères « ligne N » des courriels renvoient à la vue normalisée (De, Date, Objet, corps), pas au fichier <code>.eml</code> brut.</li><li>La recherche est lexicale (termes exacts, accents ignorés), pas sémantique.</li><li>Le chat repose sur un modèle 8B local. L&#x27;état actuel et l&#x27;évolution sont tranchés par le code, et les affirmations du modèle sont vérifiées en code et par un agent vérificateur, mais la prose reste faillible : les réponses de référence sont dans <b>Réponses Q01–Q10</b>. Une question hors des 13 fils est traitée par recherche lexicale seulement.</li><li>Un document ajouté par <code>/ingest</code> reçoit une autorité « inconnue » et le statut « à valider ». Rien n&#x27;est validé sans humain.</li></ul>
+<h2>8. Informations incertaines ou manquantes (au 30 septembre)</h2>
 <div class=scroll><table><tr><th>Élément</th><th>Ce qu&#x27;on sait</th><th>Ce qui manque</th></tr><tr><td>SEC-210 (C1)</td><td>Correctif déployé en <b>validation</b> le 19 sept ; re-test « planifié » (26 sept, 15:40)</td><td>Date du re-test, résultat, acceptation</td></tr><tr><td>ACC-303 (C2)</td><td>Correctif « annoncé pour la prochaine build »</td><td>Date de la build, livraison, re-test</td></tr><tr><td>Runbook OPS-601 (C3)</td><td>Étapes 4 (retour arrière) et 5 (validation post-déploiement) manquantes ; version finale non reçue au 29 sept</td><td>Échéance (Olivier veut « quelques jours avant »)</td></tr><tr><td>INV-003</td><td>Ligne CR-04 de 18 000 $ non autorisée ; Finances en attente (23 sept)</td><td>Réponse de Nicolas à Amélie ; facture corrigée ou note de crédit</td></tr><tr><td>Communication « au vert » d&#x27;Alex</td><td>Brouillon du 21 sept basé sur le rapport erroné</td><td>Envoyée ou corrigée?</td></tr><tr><td>Plan projet</td><td>v3 (12 sept) indique encore le 15 octobre</td><td>Version corrigée</td></tr><tr><td>Registre des risques</td><td>R-01 encore « Ouvert » au 29 sept</td><td>Mise à jour du registre</td></tr><tr><td>Canada Central</td><td>Migration déclarée par Boréal (26 août) et vérifiée par l&#x27;architecture (27 août)</td><td>Aucune preuve sur l&#x27;environnement de production lui-même (pas encore en production)</td></tr><tr><td>Ajustements mobiles</td><td>Julien : « on a déjà commencé à regarder » (26 sept)</td><td>Ces travaux relèvent-ils de CR-04?</td></tr><tr><td>Vote du 10 sept</td><td>Sophie, Marc et Olivier « Non » à l&#x27;opposition ; Nicolas « D&#x27;accord »</td><td>Position transcrite de Mélissa et de Camille</td></tr></table></div>
-<h2>8. Vérifier</h2>
+<h2>9. Vérifier</h2>
 <pre>python tests/test_deliverables.py   # sans Ollama : extraits, montants, garde-fous, baseline intacte
+python tests/test_impact.py         # sans Ollama : détection des changements d&#x27;un document reçu (LLM muet)
+python tests/test_chat_reasoning.py # sans Ollama : état actuel, historique, contradictions, « ce qui a changé »
 python tests/smoke_test.py          # sans Ollama : garde-fous du chat (puis relancer python -m app.seed)
 python tests/eval_qa.py --quiet     # avec Ollama : qualité du chat sur Q01–Q10</pre></main></html>

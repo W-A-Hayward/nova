@@ -10,32 +10,35 @@ Principes anti-hallucination appliqués:
 from . import kb
 
 REGLES = """Règles du dossier:
-- Proposition ≠ décision ≠ validation. « Livré / déployé / corrigé / conforme » dit par le fournisseur ≠ validé par le demandeur (sécurité, QA, exploitation).
-- Autorité: décision formelle/contrat > ticket/compte rendu > courriel > plan/rapport/registre > chat > brouillon. À autorité égale, le fait le plus récent l'emporte. Une date de fichier récente ne prouve rien.
-- VÉRITÉ = information documentée la plus RÉCENTE. Si des informations plus anciennes existent ailleurs (propositions antérieures, statuts changés), place la plus récente en avant et mentionne les anciennes comme contexte historique.
-- Un fait marqué « ⚠ PÉRIMÉ » ne décrit PAS la situation actuelle: tu peux le citer seulement comme historique (« initialement », « remplacé par »).
-- Un fait marqué « ⚠ À VALIDER » n'est pas établi: s'il est utilisé, dis qu'il est à valider.
-- Les contradictions marquées « tranché » sont déjà résolues: reprends la résolution, ne la refais pas.
-- Une « recommandation de l'équipe » n'est pas un engagement documenté.
+- ÉTAT ACTUEL = le fait documenté le plus récent émanant d'une source COMPÉTENTE pour ce fait (décision formelle, validateur désigné,
+  ticket), daté par la date du FAIT. La date d'un fichier ne prouve rien: un plan ou un registre récent peut recopier une info périmée.
+- Les faits « [Fxx] ÉTAT ACTUEL — ... » sont déjà tranchés par le code (date du fait + autorité): ta réponse part d'eux.
+- Les faits étiquetés HISTORIQUE, CONTREDIT ou SIGNAL ne décrivent PAS la situation actuelle. Tu peux les citer seulement comme
+  évolution, avec « initialement », « auparavant », « le JJ mois, X affirmait … mais » (jamais comme l'état présent).
+- Proposition ≠ décision ≠ validation. « Livré / déployé / corrigé / conforme » dit par le fournisseur ≠ validé par le demandeur.
+- Autorité: décision formelle/contrat > ticket/compte rendu > courriel > plan/rapport/registre > chat > brouillon.
+- Un fait « ⚠ PÉRIMÉ » ou « ⚠ À VALIDER » n'est pas établi comme actuel: dis-le.
+- Une « recommandation équipe » n'est pas un engagement documenté.
 - N'invente ni décision, ni échéance, ni approbation, ni personne, ni montant, ni date. Si l'information manque, dis « inconnu »."""
 
 EXEMPLE = """Exemple FICTIF (format seulement, ces faits n'existent pas):
-Faits: [C902] (source S92, 2026-01-12, fait) ↑ VÉRITÉ ACTUELLE Statut du ticket T-1: OUVERT.
---- 2026-01-08 ---
-[C901] (source S91, 2026-01-08, décision) Le comité approuve le 12 mars, conditionnel au test T-1.
---- 2026-01-05 ---
-[C900] (source S90, 2026-01-05, proposition) Le fournisseur propose de déplacer la livraison au 12 mars.
+Faits:
+[F90] (source S92, 2026-01-12, fait, autorité: état actuel tranché) ÉTAT ACTUEL — Livraison : 12 mars, décidée le 8 janvier, conditionnelle au test T-1 (ouvert).
+[C902] (source S92, 2026-01-12, fait) [F90 · FAIT] Statut du ticket T-1: OUVERT.
+[C901] (source S91, 2026-01-08, décision) [F90 · DÉCISION] Le comité approuve le 12 mars, conditionnel au test T-1.
+[C899] (source S89, 2026-01-02, fait) [F90 · HISTORIQUE (remplacé) — remplacé par : 12 mars] Cible de livraison : 1er mars.
 
 Question: La livraison du 12 mars est-elle confirmée?
 Réponse: {"hors_domaine": false, "affirmations": [
- {"texte": "Le 12 mars n'est pas confirmé: le test T-1 est toujours ouvert au 12 janvier.", "preuves": ["C902", "C901"]},
- {"texte": "Le comité avait approuvé le 12 mars le 8 janvier, mais sous la condition que T-1 soit fermé.", "preuves": ["C901"]},
- {"texte": "La proposition initiale du fournisseur était le 5 janvier.", "preuves": ["C900"]}],
+ {"texte": "Le 12 mars est la date décidée le 8 janvier, mais elle n'est pas confirmée: le test T-1 est toujours ouvert.", "preuves": ["F90", "C902", "C901"]},
+ {"texte": "Initialement, la cible était le 1er mars.", "preuves": ["C899"]}],
  "inconnu": ["Aucune date prévue pour fermer T-1."]}"""
 
 FORMAT_EXPERT = """Réponds en JSON, exactement:
-{"hors_domaine": false, "affirmations": [{"texte": "une seule idée factuelle, en français", "preuves": ["C0xx"]}], "inconnu": ["ce que les faits ne disent pas"]}
-- Chaque affirmation = UNE idée, appuyée par les identifiants [Cxxx] des faits qui la disent explicitement (« CALC » pour les calculs financiers).
+{"hors_domaine": false, "affirmations": [{"texte": "une seule idée factuelle, en français", "preuves": ["F0x", "C0xx"]}], "inconnu": ["ce que les faits ne disent pas"]}
+- 1 à 5 affirmations, de la plus importante (état actuel) à la moins importante. Pas deux fois la même idée.
+- Chaque affirmation = UNE idée qui répond à la QUESTION, appuyée par les identifiants des faits qui la disent explicitement
+  (« CALC » pour les calculs financiers). Ignore les faits sans rapport avec la question.
 - Ne recopie un montant, une date, une heure, un nom ou un identifiant que s'il apparaît mot pour mot dans les faits cités.
 - Aucun calcul de ton cru: utilise seulement les totaux du bloc CALC.
 - Si aucun fait ne concerne ton domaine: {"hors_domaine": true, "affirmations": [], "inconnu": []}"""
@@ -44,11 +47,8 @@ FORMAT_EXPERT = """Réponds en JSON, exactement:
 def expert_system(sujet: str) -> str:
     return f"""Tu es l'expert « {sujet} » du projet NOVA ({kb.SUJETS[sujet]}). Date de référence: {kb.ref_date()}.
 Tu réponds UNIQUEMENT à partir des faits fournis (monde fermé): ce qui n'y est pas est « inconnu », même si cela te semble évident.
-
-CHRONOLOGIE: Les faits fournis incluent des dates. La VÉRITÉ ACTUELLE = le fait documenté le plus RÉCENT.
-- Mets d'abord le fait le plus récent (c'est l'état courant).
-- Si des faits plus anciens contredisent ou contextualisent la réponse, mentionne-les après avec "auparavant", "remplacé par", "évolution depuis".
-- Exemple: « Le 22 octobre (décision comité 26 sept) [C901]. Initialement prévue 15 octobre [C900], reportée suite à INT-101 retardé. »
+Raisonne ainsi: (1) quel est l'état actuel? (fait [Fxx] ÉTAT ACTUEL, sinon le fait le plus récent d'une source compétente);
+(2) qu'est-ce qui l'établit (décision, validation, ticket)? (3) qu'est-ce qui a changé avant? (positions HISTORIQUE / CONTREDIT).
 
 {REGLES}
 
@@ -77,14 +77,14 @@ Corrige-les pour qu'elles disent seulement ce que les faits cités disent (bonne
 ou supprime-les si aucun fait ne les appuie. Réponds dans le même format JSON, avec seulement les affirmations corrigées."""
 
 
-SYNTH_SYSTEM = f"""Tu rédiges la réponse finale du projet NOVA en français, à partir d'affirmations DÉJÀ VÉRIFIÉES.
+SYNTH_SYSTEM = f"""Tu rédiges la réponse du projet NOVA en français, à partir d'affirmations DÉJÀ VÉRIFIÉES.
+- Date de référence: {kb.ref_date()}. Réponds d'abord DIRECTEMENT à la question avec l'état actuel, en 2 à 5 phrases, sans répétition.
+- L'historique détaillé et les sources contradictoires sont ajoutés automatiquement SOUS ta réponse: ne les énumère pas.
+  Au plus une phrase de contexte (« initialement … », « auparavant … ») si elle aide à comprendre pourquoi l'état actuel est ce qu'il est.
 - N'utilise que ces affirmations; n'ajoute aucun fait, aucun chiffre, aucune date, aucun nom.
-- Garde après chaque phrase les identifiants entre crochets des affirmations utilisées, ex: [C012, C015].
-- Garde les nuances: proposition / décision / validation, livré ≠ validé, conditionnel ≠ garanti, périmé ≠ actuel.
-- ORDRE: Mets la VÉRITÉ ACTUELLE (info la plus récente) en premier. Puis le contexte historique (« initialement », « auparavant », « remplacé par »).
-  Exemple: « Le 22 octobre 2026 (décision confirmée). Initialement prévue 15 octobre, reportée car INT-101 était bloquant. »
-- Réponds d'abord directement à la question, puis les réserves. Sois concis (5 à 10 phrases).
-{REGLES}"""
+- Garde après chaque phrase les identifiants entre crochets des affirmations utilisées, ex: [F01, C012].
+- Garde les nuances: proposition / décision / validation, livré ≠ validé, conditionnel ≠ garanti.
+- Pas de titre, pas de liste, pas de formule d'introduction (« La réponse finale est »)."""
 
 
 def synth_prompt(question: str, affirmations: list[dict], feedback: list[tuple[str, list[str]]] | None = None) -> str:
@@ -93,7 +93,7 @@ def synth_prompt(question: str, affirmations: list[dict], feedback: list[tuple[s
     if feedback:
         fb = "\n\nTon brouillon précédent contenait des phrases non appuyées; corrige-les ou retire-les:\n" + "\n".join(
             f"- « {s} »: {'; '.join(p)}" for s, p in feedback)
-    return f"QUESTION: {question}\n\nAFFIRMATIONS VÉRIFIÉES (seule matière autorisée):\n{bloc}{fb}"
+    return f"QUESTION: {question}\n\nAFFIRMATIONS VÉRIFIÉES (seule matière autorisée, la plus importante d'abord):\n{bloc}{fb}"
 
 
 ROUTE_SYSTEM = "Tu classes des questions sur le projet NOVA par domaine. En cas de doute, inclus plus de domaines."
@@ -122,7 +122,9 @@ def extract_prompt(nom: str, morceau: str, i: int, n: int) -> str:
 
 def impact_system(sujet: str) -> str:
     return f"""Tu es l'expert « {sujet} » du projet NOVA ({kb.SUJETS[sujet]}). Date de référence: {kb.ref_date()}.
-De nouveaux claims (NON validés, identifiants NEWx) arrivent. Compare-les aux faits existants (identifiants Cxxx).
+De nouveaux claims (NON validés, identifiants NEWx) arrivent. Compare-les à l'ÉTAT ACTUEL ([Fxx], tranché par le code) et aux faits existants (Cxxx).
+Un changement = ce que le document reçu dit de NOUVEAU par rapport à l'état actuel (nouvelle proposition, livraison, retard, validation...).
+Ne présente jamais un fait déjà connu de la baseline comme un changement.
 {REGLES}
 - Ne ferme AUCUNE condition de go-live (SEC-210, ACC-303, runbook avec rollback) sans la preuve écrite de son validateur.
 Réponds en JSON:
@@ -134,8 +136,11 @@ Réponds en JSON:
 Si rien ne concerne ton domaine: {{"hors_domaine": true, "changements": [], "affectes": [], "actions": []}}"""
 
 
-def impact_prompt(nouveaux: str, existants: str, calculs: str) -> str:
-    return f"""NOUVEAUX CLAIMS (à valider):
+def impact_prompt(nouveaux: str, existants: str, calculs: str, detectes: str = "(aucun)") -> str:
+    return f"""CHANGEMENTS DÉJÀ DÉTECTÉS PAR LE CODE (ne les répète pas; complète seulement ce qui manque, ou rien):
+{detectes}
+
+NOUVEAUX CLAIMS (à valider):
 {nouveaux}
 
 FAITS EXISTANTS PERTINENTS:

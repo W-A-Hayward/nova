@@ -1,72 +1,154 @@
-<!doctype html><html lang=fr><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>Brief NOVA</title><style>
-:root{--bg:#f7f8fa;--fg:#1b1f24;--muted:#5b6470;--card:#fff;--line:#d9dee5;--head:#183760;--headfg:#fff;--th:#eef2f7;
---ok:#0b7a32;--warn:#a15c00;--bad:#b42318;--link:#1d4f91;--hl:#fff3b0;--prop:#6b3fa0;--dec:#0b5cad;--val:#0b7a32;--sig:#b42318}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111418;--fg:#e6e9ee;--muted:#9aa4b1;--card:#1a1f26;--line:#2d343e;
---head:#0f2747;--th:#222a35;--ok:#4cc27a;--warn:#e0a54b;--bad:#f07167;--link:#8cb8ff;--hl:#4a4215;--prop:#b794f4;--dec:#6cb2ff;--val:#4cc27a;--sig:#f07167}}
-:root[data-theme="dark"]{--bg:#111418;--fg:#e6e9ee;--muted:#9aa4b1;--card:#1a1f26;--line:#2d343e;--head:#0f2747;--th:#222a35;
---ok:#4cc27a;--warn:#e0a54b;--bad:#f07167;--link:#8cb8ff;--hl:#4a4215;--prop:#b794f4;--dec:#6cb2ff;--val:#4cc27a;--sig:#f07167}
-*{box-sizing:border-box}body{font:15px/1.5 system-ui,sans-serif;margin:0;color:var(--fg);background:var(--bg)}
-a{color:var(--link)}header{background:var(--head);padding:8px 16px;display:flex;flex-wrap:wrap;gap:4px 14px}
-header a{color:var(--headfg);text-decoration:none;font-weight:600}header a:hover{text-decoration:underline}
-header .off{color:#aab;font-weight:400}
-main{padding:14px 16px;max-width:1150px;margin:0 auto}
-h1{font-size:22px;margin:6px 0}h2{font-size:18px;margin:22px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}h3{font-size:15px;margin:14px 0 6px}
-table{border-collapse:collapse;width:100%;margin:6px 0 14px;background:var(--card)}
-td,th{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}th{background:var(--th);font-weight:600}
-.scroll{overflow-x:auto}pre{white-space:pre-wrap;background:var(--card);border:1px solid var(--line);padding:10px;border-radius:6px}
-.card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--head);border-radius:6px;padding:10px 12px;margin:10px 0}
-.muted{color:var(--muted)}.small{font-size:13px}.ok{color:var(--ok)}.warn{color:var(--warn)}.bad{color:var(--bad)}
-.tag{display:inline-block;font-size:11px;font-weight:700;padding:1px 6px;border-radius:9px;border:1px solid currentColor;white-space:nowrap}
-.n-proposition{color:var(--prop)}.n-décision{color:var(--dec)}.n-validation{color:var(--val)}.n-livraison{color:var(--warn)}.n-signal{color:var(--sig)}.n-fait{color:var(--muted)}
-.engagement{color:var(--dec)}.recommandation{color:var(--prop)}
-a.cite{font-size:12px;white-space:nowrap;margin-right:6px}
-.quote{border-left:3px solid var(--line);padding-left:8px;color:var(--muted);font-style:italic}
-:target{background:var(--hl);outline:2px solid var(--warn)}
-.lines div{font:13px/1.45 ui-monospace,monospace;white-space:pre-wrap;padding:0 6px}.lines span{color:var(--muted);user-select:none;display:inline-block;width:3.2em}
-textarea,input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radius:4px;background:var(--card);color:var(--fg)}
-button{padding:8px 16px;margin-top:8px;background:var(--head);color:#fff;border:none;border-radius:4px;cursor:pointer}
-.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}
-.brief td,.brief th{padding:4px 6px;font-size:13px}.brief p{margin:4px 0}.brief h1{font-size:19px}.brief h2{font-size:15px;margin:10px 0 4px}
-@media print{header,.noprint{display:none}main{padding:0;max-width:none}body{font-size:10px;line-height:1.35;background:#fff;color:#000}
-.brief td,.brief th{padding:1px 4px;font-size:9.5px}.brief h1{font-size:15px;margin:0}.brief h2{font-size:11.5px;margin:5px 0 2px;padding-bottom:1px}
-.brief table{margin:3px 0 5px}.tag{font-size:8.5px;padding:0 4px}a{color:#000;text-decoration:none}a.cite{font-size:8.5px;color:#444}
-@page{size:A4;margin:10mm}}
-</style><header><a href='brief.html'>Brief</a><a href='memoire.html'>Mémoire</a><a href='reponses.html'>Réponses Q01–Q10</a><a href='mise-a-jour.html'>Mise à jour</a><a href='sources.html'>Sources et recherche</a><a href='guide.html'>Mode d'emploi</a><span class=off>Chat et Ajouter : serveur seulement</span></header><main><div class=brief>
-<h1>Brief de reprise : NOVA</h1>
-<p class="muted small">État au <b>30 septembre 2026, 09 h (Montréal, UTC−4)</b>. Les montants sont en CAD hors taxes. <span class='tag engagement'>engagement documenté</span> = écrit dans le dossier ;
-<span class='tag recommandation'>recommandation équipe</span> = notre proposition. Chaque lien ouvre la preuve. <a class=noprint href="memoire.html">Mémoire complète →</a></p>
+<!doctype html><html lang=fr><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>Brief NOVA</title><style>@font-face{font-family:'Public Sans';font-style:normal;font-weight:100 900;font-display:swap;src:url(static/fonts/PublicSans-normal.woff2) format('woff2')}@font-face{font-family:'Public Sans';font-style:italic;font-weight:100 900;font-display:swap;src:url(static/fonts/PublicSans-italic.woff2) format('woff2')}@font-face{font-family:'Source Serif 4';font-style:italic;font-weight:200 900;font-display:swap;src:url(static/fonts/SourceSerif4-italic.woff2) format('woff2')}
+:root{--paper:#F5F6F4;--surface:#FFFFFF;--ink:#1C2433;--muted:#5F6B78;--rule:#D6DBE0;--rule-strong:#AEB6BF;
+--acte:#0E5C63;--acte-bg:#E3EFEF;--ouvert:#A9550A;--ouvert-bg:#FBF0E4;--passe:#9A2F3A;--passe-bg:#F7E9EA;--link:#0E5C63;--hl:#FFF1C2;
+color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#14181D;--surface:#1B2027;--ink:#E6E9EC;--muted:#9AA5B1;
+--rule:#2C333C;--rule-strong:#46505B;--acte:#5DBDBF;--acte-bg:#17302F;--ouvert:#E3A04F;--ouvert-bg:#33261A;--passe:#E58A93;--passe-bg:#35202A;
+--link:#7FD0D2;--hl:#4A3F17;color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#14181D;--surface:#1B2027;--ink:#E6E9EC;--muted:#9AA5B1;--rule:#2C333C;--rule-strong:#46505B;
+--acte:#5DBDBF;--acte-bg:#17302F;--ouvert:#E3A04F;--ouvert-bg:#33261A;--passe:#E58A93;--passe-bg:#35202A;--link:#7FD0D2;--hl:#4A3F17;color-scheme:dark}
+/* alias utilisés par les pages de chat et d'ajout */
+:root{--bg:var(--paper);--fg:var(--ink);--card:var(--surface);--line:var(--rule);--head:var(--acte);--ok:var(--acte);--warn:var(--ouvert);--bad:var(--passe)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.55 "Public Sans",system-ui,sans-serif;
+-webkit-font-smoothing:antialiased}
+a{color:var(--link);text-underline-offset:2px;text-decoration-thickness:1px}a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:3px solid var(--ouvert);outline-offset:2px;border-radius:2px}
+.masthead{background:var(--surface);border-bottom:1px solid var(--rule);padding:14px 20px 0}
+.masthead .id{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;max-width:1150px;margin:0 auto}
+.masthead .nova{font-weight:800;font-size:22px;letter-spacing:-.02em;color:var(--ink);text-decoration:none}
+.masthead .ref{color:var(--muted);font-size:14px}
+.masthead nav{display:flex;flex-wrap:wrap;gap:2px 22px;max-width:1150px;margin:10px auto 0}
+.masthead nav a{color:var(--muted);text-decoration:none;font-weight:550;font-size:15px;padding:6px 0 9px;border-bottom:3px solid transparent}
+.masthead nav a:hover{color:var(--ink)}
+.masthead nav a[aria-current=page]{color:var(--ink);border-bottom-color:var(--acte)}
+.masthead nav .off{color:var(--muted);font-size:13px;padding:7px 0}
+main{padding:22px 20px 48px;max-width:1150px;margin:0 auto}
+h1{font-size:30px;line-height:1.15;font-weight:750;letter-spacing:-.015em;margin:4px 0 6px}
+h2{font-size:21px;line-height:1.25;font-weight:700;margin:34px 0 10px;padding-top:12px;border-top:2px solid var(--ink)}
+h3{font-size:17px;line-height:1.3;font-weight:650;margin:18px 0 6px}
+.lede{color:var(--muted);max-width:72ch;margin:0 0 6px}
+p,li{max-width:80ch}
+table{border-collapse:collapse;width:100%;margin:8px 0 18px;font-size:15px;font-variant-numeric:tabular-nums}
+.money,.verdict .v{font-variant-numeric:tabular-nums}
+th{font-weight:600;font-size:13px;color:var(--muted);text-align:left;padding:6px 10px;border-bottom:2px solid var(--rule-strong);vertical-align:bottom}
+td{padding:8px 10px;border-bottom:1px solid var(--rule);vertical-align:top;text-align:left}
+tbody tr:hover td,table tr:hover td{background:color-mix(in srgb,var(--surface) 70%,transparent)}
+.scroll{overflow-x:auto}
+pre{white-space:pre-wrap;background:var(--surface);border:1px solid var(--rule);padding:12px;border-radius:6px;font-size:14px}
+code{font-size:.92em}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:14px 16px;margin:12px 0}
+.muted{color:var(--muted)}.small{font-size:14px}.ok{color:var(--acte)}.warn{color:var(--ouvert)}.bad{color:var(--passe)}
+/* rôles: plein = acté, contour = en cours, pointillé = passé ou contredit */
+.tag{display:inline-block;font-size:12.5px;font-weight:600;line-height:1.5;padding:0 7px;border-radius:3px;border:1px solid var(--rule-strong);
+color:var(--muted);white-space:nowrap;vertical-align:1px}
+.r-acte{background:var(--acte);border-color:var(--acte);color:var(--surface)}
+.r-ouvert{border-color:var(--ouvert);color:var(--ouvert);background:var(--ouvert-bg)}
+.r-passe{border:1px dashed var(--passe);color:var(--passe)}
+.engagement{background:var(--acte-bg);border-color:var(--acte);color:var(--acte)}.recommandation{border-style:dashed;color:var(--muted)}
+/* compatibilité des anciennes classes n-* (chat) */
+.n-décision,.n-validation{background:var(--acte);border-color:var(--acte);color:var(--surface)}
+.n-proposition,.n-livraison{border-color:var(--ouvert);color:var(--ouvert);background:var(--ouvert-bg)}.n-signal{border:1px dashed var(--passe);color:var(--passe)}
+.passe-txt{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--passe)}
+tr.passe td{color:var(--muted)}
+a.cite{font-size:13px;white-space:nowrap;margin:0 1px 0 3px;color:var(--muted);text-decoration-color:var(--rule-strong)}
+.nw{white-space:nowrap}td.num,th.num{text-align:right;white-space:nowrap}
+a.cite:hover{color:var(--link)}
+.quote,blockquote{font-family:"Source Serif 4",Georgia,serif;font-style:italic;font-size:16.5px;line-height:1.6;color:var(--ink);
+border-left:2px solid var(--rule-strong);margin:4px 0 8px;padding:0 0 0 12px}
+:target{background:var(--hl);outline:2px solid var(--ouvert);outline-offset:2px}
+.lines{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:8px 0}
+.lines div{font-size:15px;line-height:1.6;white-space:pre-wrap;padding:0 12px}
+.lines span{color:var(--muted);user-select:none;display:inline-block;width:3em;font:12px "Public Sans",sans-serif}
+textarea,input[type=text]{width:100%;padding:10px 12px;border:1px solid var(--rule-strong);border-radius:4px;background:var(--surface);color:var(--ink);font:inherit}
+input[type=text]{font-size:17px}
+button{font:600 15px "Public Sans",sans-serif;padding:9px 18px;margin-top:8px;background:var(--acte);color:var(--surface);border:none;border-radius:4px;cursor:pointer}
+button:disabled{opacity:.5}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.toc{position:sticky;top:0;z-index:2;background:var(--paper);border-bottom:1px solid var(--rule);padding:8px 0;margin:0 0 6px;font-size:14px;
+display:flex;flex-wrap:wrap;gap:4px 18px}
+.toc a{color:var(--muted)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+label{display:block;font-weight:600;margin:0 0 4px}
+/* brief: la décision et ses trois conditions d'abord */
+.verdict{display:grid;grid-template-columns:minmax(260px,1fr) 1.6fr;gap:0;border:1px solid var(--rule);border-radius:6px;background:var(--surface);
+margin:14px 0 8px;overflow:hidden}
+.verdict .date{padding:18px 22px;border-right:1px solid var(--rule)}
+.verdict .date .k{color:var(--muted);font-size:14px}
+.verdict .date .v{font-size:38px;line-height:1.05;font-weight:780;letter-spacing:-.025em;color:var(--acte);margin:4px 0 8px}
+.verdict .date .s{color:var(--ouvert);font-weight:600}
+.verdict ol{list-style:none;margin:0;padding:0}
+.verdict li{display:grid;grid-template-columns:2.6em 1fr auto;gap:2px 10px;align-items:baseline;padding:11px 18px;border-bottom:1px solid var(--rule);max-width:none}
+.verdict li:last-child{border-bottom:0}
+.verdict li .c{font-weight:780;font-size:18px;color:var(--ouvert)}
+.verdict li .l{font-weight:600}.verdict li .w{grid-column:2;color:var(--muted);font-size:14px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:0 36px}
+.brief h2{font-size:17px;margin:20px 0 6px;padding-top:8px;border-top:1px solid var(--ink)}.brief p{margin:4px 0}
+.money{font-size:24px;font-weight:750;letter-spacing:-.01em}
+/* contradictions: ce qui est écarté face à ce qui est retenu */
+.duel{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:8px 0}
+.duel>div{padding:10px 12px;border-radius:4px}
+.duel .ecarte{background:var(--passe-bg);border-left:3px solid var(--passe)}
+.duel .retenu{background:var(--acte-bg);border-left:3px solid var(--acte)}
+.duel .who{font-size:14px;color:var(--muted)}
+.resolution{margin:6px 0 0}.card>h3:first-child,.card>.qnum+h3{margin-top:0}
+.qnum{float:left;font-size:30px;font-weight:780;color:var(--rule-strong);width:2.6em;line-height:1.1;letter-spacing:-.02em}
+.answer{overflow:hidden}.answer h3{font-size:19px;margin-top:4px}.answer .rep{font-size:17px;max-width:76ch}
+.answer details{clear:both;margin-top:8px}
+summary{cursor:pointer;font-weight:600;color:var(--acte)}
+@media (max-width:760px){.verdict,.cols,.duel{grid-template-columns:1fr}.verdict .date{border-right:0;border-bottom:1px solid var(--rule)}
+.qnum{float:none;display:block;width:auto}h1{font-size:25px}}
+@media print{.masthead,.noprint,.toc{display:none}main{padding:0;max-width:none}
+body{font-size:9.6px;line-height:1.35;background:#fff;color:#000}
+.brief h1{font-size:15px;margin:0}.brief h2{font-size:11px;margin:5px 0 2px;padding-top:3px}
+.brief td,.brief th{padding:1px 4px;font-size:9px}.brief table{margin:2px 0 4px}
+.verdict{margin:4px 0;border-color:#999}.verdict .date{padding:6px 10px}.verdict .date .v{font-size:20px;margin:1px 0 2px}
+.verdict li{padding:3px 10px}.verdict li .c{font-size:11px}.verdict li .w{font-size:9px}
+.brief p,.brief .small,.brief .lede,.verdict .date .k,.verdict li .l{font-size:9.6px}
+.cols{grid-template-columns:1fr 1fr;gap:0 14px}.verdict{grid-template-columns:1fr 1.5fr}.verdict .date{border-right:1px solid #999;border-bottom:0}
+.money{font-size:12px}.tag{font-size:8px;padding:0 3px}a{color:#000;text-decoration:none}a.cite{font-size:8px;color:#555}
+@page{size:A4;margin:9mm}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style><header class=masthead><div class=id><a class=nova href='brief.html'>NOVA</a><span class=ref>Mémoire du projet, état au 30 septembre 2026 à 9 h (Montréal)</span></div><nav aria-label='Pages'><a href='brief.html' aria-current=page>Brief</a><a href='memoire.html'>Mémoire</a><a href='reponses.html'>Réponses Q01–Q10</a><a href='mise-a-jour.html'>Mise à jour</a><a href='sources.html'>Sources et recherche</a><a href='guide.html'>Mode d'emploi</a><span class=off>Chat et Ajouter : avec le serveur</span></nav></header><main><div class=brief>
+<h1>Brief de reprise</h1>
+<p class=lede>Ce qu'il faut savoir pour reprendre NOVA. Montants en CAD, hors taxes. Chaque lien gris ouvre la preuve.
+<span class='tag engagement'>engagement documenté</span> : écrit dans le dossier. <span class='tag recommandation'>recommandation équipe</span> : notre proposition.
+<a class=noprint href="memoire.html">Voir la mémoire complète</a></p>
 
-<h2>1. Responsable</h2>
-<p><b>Nicolas Perron</b>, chargé de projet <b>depuis le 16 septembre 2026</b>, succède à Élodie Caron (en poste depuis le 7 juillet).
-<a class=cite href='source__01_Courriels__E06_Transition_charge_projet.eml.html#L7' title='Nicolas Perron prend officiellement la charge du projet NOVA'>E06 · ligne 7</a> <a class=cite href='source__04_Documents_projet__Note_transition_Elodie_16sept.txt.html#L4' title='Nicolas Perron reprend le rôle de chargé de projet NOVA'>Note_transition · ligne 4</a></p>
+<section class=verdict aria-label="Date de mise en production">
+<div class=date><div class=k>Mise en production approuvée</div><div class=v>22 octobre 2026</div>
+<div class=s>Conditionnelle : aucune des trois conditions n'est remplie</div>
+<p class=small>Proposée par Boréal le 8 septembre <a class=cite href='source__01_Courriels__E05_Retard_integration.eml.html#L11' title='il s&#x27;agit d&#x27;une proposition de notre part'>E05, ligne 11</a>,
+approuvée par le comité de direction le 10 septembre <a class=cite href='source__02_Reunions__M04_Transcript_Comite_direction_10sept.txt.html#L23' title='Donc approuvé. Le 22 devient la date officielle.'>M04, ligne 23</a>,
+reconfirmée sous conditions le 26 septembre <a class=cite href='source__02_Reunions__M06_Transcript_Comite_26sept.txt.html#L16' title='c&#x27;est conditionnel à ces trois éléments'>M06, ligne 16</a>.
+Pas un go garanti <a class=cite href='source__01_Courriels__E09_Rappel_mise_en_production.eml.html#L11' title='go garanti'>E09, ligne 11</a>.</p></div>
+<ol><li><span class=c>C1</span><span class=l>Validation sécurité de SEC-210</span><span class='tag r-ouvert'>En validation</span><span class=w>Validation : Sophie Lambert. Échéance à confirmer.</span></li><li><span class=c>C2</span><span class=l>Fermeture d&#x27;ACC-303</span><span class='tag r-ouvert'>Ouvert</span><span class=w>Validation : Mélissa Gagnon. Échéance à confirmer.</span></li><li><span class=c>C3</span><span class=l>Approbation du runbook incluant le rollback</span><span class='tag r-ouvert'>Ouvert</span><span class=w>Validation : Olivier Côté. Échéance à confirmer.</span></li></ol>
+</section>
+<p class=small>Le 15 octobre de la charte et du plan v3 est <span class=passe-txt>périmé</span>.
+La cause du report, le connecteur INT-101, est <span class=ok>fermée depuis le 17 septembre</span> <a class=cite href='source__03_Tickets__INT-101.txt.html#L18' title='Validé côté intégration. Je ferme.'>INT-101, ligne 18</a>.</p>
 
-<h2>2. Date approuvée et conditions</h2>
-<p><b>22 octobre 2026</b>. Proposée par Boréal le 8 septembre <a class=cite href='source__01_Courriels__E05_Retard_integration.eml.html#L11' title='il s&#x27;agit d&#x27;une proposition de notre part'>E05 · ligne 11</a>,
-<b>approuvée par le comité de direction le 10 septembre</b> <a class=cite href='source__02_Reunions__M04_Transcript_Comite_direction_10sept.txt.html#L23' title='Donc approuvé. Le 22 devient la date officielle.'>M04 · ligne 23</a>,
-cible reconfirmée le 26 septembre et <b>conditionnelle</b> à 3 conditions <a class=cite href='source__02_Reunions__M06_Transcript_Comite_26sept.txt.html#L16' title='c&#x27;est conditionnel à ces trois éléments'>M06 · ligne 16</a> :
-<b>C1</b> validation sécurité de SEC-210 · <b>C2</b> fermeture d'ACC-303 · <b>C3</b> approbation du runbook incluant le rollback.
-Ce n'est pas un go garanti <a class=cite href='source__01_Courriels__E09_Rappel_mise_en_production.eml.html#L11' title='go garanti'>E09 · ligne 11</a>. Le 15 octobre (charte, plan v3) est <span class=bad>périmé</span>.
-Cause du report : connecteur INT-101, <span class=ok>fermé le 17 septembre</span> <a class=cite href='source__03_Tickets__INT-101.txt.html#L18' title='Validé côté intégration. Je ferme.'>INT-101 · ligne 18</a>.</p>
+<div class=cols>
+<div><h2>Responsable</h2>
+<p><b>Nicolas Perron</b>, chargé de projet depuis le 16 septembre 2026. Il succède à Élodie Caron, en poste depuis le 7 juillet.
+<a class=cite href='source__01_Courriels__E06_Transition_charge_projet.eml.html#L7' title='Nicolas Perron prend officiellement la charge du projet NOVA'>E06, ligne 7</a> <a class=cite href='source__04_Documents_projet__Note_transition_Elodie_16sept.txt.html#L4' title='Nicolas Perron reprend le rôle de chargé de projet NOVA'>Note_transition, ligne 4</a></p>
+<h2>Portée de la phase 1</h2>
+<p>SSO (uniquement en production), création et suivi de demandes, pièces jointes, workflow de traitement, tableau de suivi, rapports standards <a class=cite href='source__05_Contrats_et_finances__CONTRAT_Boreal_NOVA.pdf.html#p1' title='Portée incluse'>CONTRAT_Boreal, page 1</a>,
+plus les rapports avancés et l'export de synthèse de CR-01 <a class=cite href='source__05_Contrats_et_finances__CR-01_Rapports_avances_APPROUVE.pdf.html#p1' title='Ajout de rapports avancés et export de synthèse.'>CR-01, page 1</a>. Données de production au Canada Central <a class=cite href='source__06_Architecture_et_decisions__ADR-007_Localisation_donnees.md.html#doc' title='Canada Central'>ADR-007</a>.
+Hors portée : l'optimisation mobile avancée (CR-04), reportée à la phase 2 <a class=cite href='source__06_Architecture_et_decisions__Decision_Portee_Phase2.md.html#doc' title='La phase 1 doit demeurer utilisable sur mobile'>Decision_Portee</a>.</p></div>
+<div><h2>Budget</h2>
+<p><span class=money>204 000 $</span> autorisés : contrat 180 000 $ <a class=cite href='source__05_Contrats_et_finances__CONTRAT_Boreal_NOVA.pdf.html#p1' title='Montant maximal initial'>CONTRAT_Boreal, page 1</a>
++ CR-01 24 000 $, approuvé le 2026-08-14 <a class=cite href='source__05_Contrats_et_finances__CR-01_Rapports_avances_APPROUVE.pdf.html#p1' title='APPROUVÉE'>CR-01, page 1</a>.
+Non autorisé : CR-04, 18 000 $, brouillon <a class=cite href='source__05_Contrats_et_finances__CR-04_Optimisation_mobile_BROUILLON.pdf.html#p1' title='BROUILLON - APPROBATION REQUISE'>CR-04, page 1</a>.</p>
+<h2>Factures</h2>
+<p>Facturé <b>186 000 $</b>, payé <b>132 000 $</b>, en validation 54 000 $.
+<span class=bad>INV-003 : 18 000 $ « Optimisation interface mobile - CR-04 » (réf. CR-04 non approuvé)</span>. Les Finances retiennent INV-003 <a class=cite href='source__01_Courriels__E07_Facture_003_question.eml.html#L9' title='Peux-tu me transmettre l&#x27;approbation correspondante?'>E07, ligne 9</a> ;
+CR-04 ne doit pas être facturé <a class=cite href='source__01_Courriels__E10_Fonction_mobile.eml.html#L9' title='ne doit être engagée ou facturée sans nouvelle approbation'>E10, ligne 9</a>.
+<span class='tag recommandation'>recommandation équipe</span> Ne pas payer les 18 000 $, demander une facture corrigée ou une note de crédit, valider les 36 000 $ du jalon 3.</p></div>
+</div>
+<table><tr><th>Facture</th><th>Date</th><th class=num>Total</th><th>Lignes</th><th>Statut</th></tr><tr><td><a class=cite href='source__05_Contrats_et_finances__INV-001.pdf.html' title=''>INV-001</a></td><td class=nw>2026-07-31</td><td class=num><b>60 000 $</b></td><td><span>60 000 $ Développement phase 1 - acompte</span></td><td><span class='tag r-acte'>payée</span></td></tr><tr><td><a class=cite href='source__05_Contrats_et_finances__INV-002.pdf.html' title=''>INV-002</a></td><td class=nw>2026-08-31</td><td class=num><b>72 000 $</b></td><td><span>48 000 $ Développement phase 1 - jalon 2</span><br><span>24 000 $ Rapports avancés - CR-01</span></td><td><span class='tag r-acte'>payée</span></td></tr><tr><td><a class=cite href='source__05_Contrats_et_finances__INV-003.pdf.html' title=''>INV-003</a></td><td class=nw>2026-09-22</td><td class=num><b>54 000 $</b></td><td><span>36 000 $ Développement phase 1 - jalon 3</span><br><span class=bad>18 000 $ Optimisation interface mobile - CR-04</span></td><td><span class='tag r-ouvert'>en validation</span></td></tr></table>
 
-<h2>3. Portée (phase 1)</h2>
-<p>SSO (uniquement en production), création et suivi de demandes, pièces jointes, workflow de traitement, tableau de suivi, rapports standards <a class=cite href='source__05_Contrats_et_finances__CONTRAT_Boreal_NOVA.pdf.html#p1' title='Portée incluse'>CONTRAT_Boreal · page 1</a>,
-plus les rapports avancés et l'export de synthèse (CR-01) <a class=cite href='source__05_Contrats_et_finances__CR-01_Rapports_avances_APPROUVE.pdf.html#p1' title='Ajout de rapports avancés et export de synthèse.'>CR-01 · page 1</a>. Données de production au <b>Canada Central</b> (ADR-007) <a class=cite href='source__06_Architecture_et_decisions__ADR-007_Localisation_donnees.md.html#doc' title='Canada Central'>ADR-007</a>.
-<b>Hors portée :</b> l'optimisation mobile avancée (CR-04) est reportée à la phase 2. La phase 1 doit seulement rester utilisable sur mobile <a class=cite href='source__06_Architecture_et_decisions__Decision_Portee_Phase2.md.html#doc' title='La phase 1 doit demeurer utilisable sur mobile'>Decision_Portee</a>.</p>
-
-<h2>4. Budget</h2>
-<p><b>Autorisé : 204 000 $</b> = contrat 180 000 $ <a class=cite href='source__05_Contrats_et_finances__CONTRAT_Boreal_NOVA.pdf.html#p1' title='Montant maximal initial'>CONTRAT_Boreal · page 1</a>
-+ CR-01 24 000 $ (approuvé le 2026-08-14) <a class=cite href='source__05_Contrats_et_finances__CR-01_Rapports_avances_APPROUVE.pdf.html#p1' title='APPROUVÉE'>CR-01 · page 1</a>.
-Non autorisé : CR-04 18 000 $ (brouillon) <a class=cite href='source__05_Contrats_et_finances__CR-04_Optimisation_mobile_BROUILLON.pdf.html#p1' title='BROUILLON - APPROBATION REQUISE'>CR-04 · page 1</a>.</p>
-
-<h2>5. Situation des factures</h2>
-<table><tr><th>Facture</th><th>Date</th><th>Total</th><th>Lignes</th><th>Statut</th></tr><tr><td><a class=cite href='source__05_Contrats_et_finances__INV-001.pdf.html' title=''>INV-001</a></td><td>2026-07-31</td><td>60 000 $</td><td>60 000 $ Développement phase 1 - acompte</td><td class=ok>payée</td></tr><tr><td><a class=cite href='source__05_Contrats_et_finances__INV-002.pdf.html' title=''>INV-002</a></td><td>2026-08-31</td><td>72 000 $</td><td>48 000 $ Développement phase 1 - jalon 2 + 24 000 $ Rapports avancés - CR-01</td><td class=ok>payée</td></tr><tr><td><a class=cite href='source__05_Contrats_et_finances__INV-003.pdf.html' title=''>INV-003</a></td><td>2026-09-22</td><td>54 000 $</td><td>36 000 $ Développement phase 1 - jalon 3 + 18 000 $ Optimisation interface mobile - CR-04</td><td class=warn>en validation</td></tr></table>
-<p><b>Facturé 186 000 $</b> · <b>payé 132 000 $</b> · en validation 54 000 $.
-<span class=bad>Problème : INV-003 : 18 000 $ « Optimisation interface mobile - CR-04 » (réf. CR-04 non approuvé)</span>. Les Finances (Amélie Fortin) retiennent INV-003 <a class=cite href='source__01_Courriels__E07_Facture_003_question.eml.html#L9' title='Peux-tu me transmettre l&#x27;approbation correspondante?'>E07 · ligne 9</a>.
-La facturation de CR-04 est interdite sans nouvelle approbation <a class=cite href='source__01_Courriels__E10_Fonction_mobile.eml.html#L9' title='ne doit être engagée ou facturée sans nouvelle approbation'>E10 · ligne 9</a>.
-<span class='tag recommandation'>recommandation équipe</span> Ne pas payer les 18 000 $, demander une facture corrigée ou une note de crédit, et valider les 36 000 $ du jalon 3.</p>
-
-<h2>6. Priorités : conditions de go-live → actions</h2>
-<table><tr><th>Condition</th><th>Statut</th><th>Action : responsable</th><th>Échéance</th><th>Nature</th><th>Preuve</th></tr><tr><td rowspan=1><b>C1</b> Validation sécurité de SEC-210</td><td rowspan=1 class=warn>EN VALIDATION</td><td>A1 Re-test et acceptation sécurité : Sophie Lambert</td><td>à confirmer (re-test planifié, sans date)</td><td><span class='tag engagement'>engagement documenté</span></td><td><a class=cite href='source__03_Tickets__SEC-210.txt.html#L25' title='26 sept 15:40 - Sophie : Re-test planifié. Statut maintenu EN VALIDATION.'>SEC-210 · ligne 25</a></td></tr><tr><td rowspan=2><b>C2</b> Fermeture d&#x27;ACC-303</td><td rowspan=2 class=warn>OUVERT</td><td>A2 Correctif dans la prochaine build : Boréal (Julien Moreau)</td><td>à confirmer (« prochaine build »)</td><td><span class='tag engagement'>engagement documenté</span></td><td><a class=cite href='source__02_Reunions__M06_Transcript_Comite_26sept.txt.html#L15' title='On vise le correctif ACC-303 dans la prochaine build.'>M06 · ligne 15</a></td></tr><tr><td>A3 Re-test clavier et fermeture : Mélissa Gagnon</td><td>à confirmer (après A2)</td><td><span class='tag recommandation'>recommandation équipe</span></td><td><a class=cite href='source__03_Tickets__ACC-303.txt.html#L16' title='26 sept 11:03 - Mélissa : Toujours ouvert. Correctif annoncé pour la prochaine build.'>ACC-303 · ligne 16</a></td></tr><tr><td rowspan=2><b>C3</b> Approbation du runbook incluant le rollback</td><td rowspan=2 class=warn>OUVERT</td><td>A4 Étapes 4 (retour arrière) et 5 (validation post-déploiement) : ops Boréal</td><td>à confirmer (« quelques jours avant »)</td><td><span class='tag engagement'>engagement documenté</span></td><td><a class=cite href='source__02_Reunions__M06_Transcript_Comite_26sept.txt.html#L15' title='Pour le runbook je relance notre équipe ops.'>M06 · ligne 15</a></td></tr><tr><td>A5 Approbation du runbook (go exploitation) : Olivier Côté</td><td>à confirmer</td><td><span class='tag engagement'>engagement documenté</span></td><td><a class=cite href='source__02_Reunions__M06_Transcript_Comite_26sept.txt.html#L10' title='Je ne donnerai pas mon go exploitation tant que je n&#x27;ai pas une procédure exécutable.'>M06 · ligne 10</a></td></tr><tr><td>Hors conditions</td><td class=warn>OUVERT</td><td>A6 INV-003 : ne pas payer les 18 000 $ de CR-04, réponse à Amélie : Nicolas Perron</td><td>à confirmer (facture bloquée depuis le 23 sept)</td><td><span class='tag recommandation'>recommandation équipe</span></td><td><a class=cite href='source__01_Courriels__E07_Facture_003_question.eml.html#L9' title='Peux-tu me transmettre l&#x27;approbation correspondante?'>E07 · ligne 9</a></td></tr><tr><td>Hors conditions</td><td class=warn>OUVERT</td><td>A7 Mettre les plans au 22 octobre (v3 : 15 oct) : Nicolas Perron</td><td>à confirmer (demandé le 10 sept)</td><td><span class='tag engagement'>engagement documenté</span></td><td><a class=cite href='source__04_Documents_projet__Note_transition_Elodie_16sept.txt.html#L7' title='faire mettre à jour la date dans tous les plans (le comité a approuvé le 22 octobre);'>Note_transition · ligne 7</a></td></tr></table>
-<p class="small muted">Aucune échéance précise n'est écrite au dossier : toutes sont « à confirmer », bornées par le go-live du 22 octobre.
-Olivier veut le runbook final « quelques jours avant » <a class=cite href='source__02_Reunions__M04_Transcript_Comite_direction_10sept.txt.html#L12' title='au moins quelques jours avant'>M04 · ligne 12</a>.</p>
+<h2>Priorités : chaque condition et ses actions</h2>
+<table><tr><th>Condition</th><th>Statut</th><th>Action et responsable</th><th>Échéance</th><th>Nature</th><th>Preuve</th></tr><tr><td rowspan=1><b>C1</b> Validation sécurité de SEC-210</td><td rowspan=1><span class='tag r-ouvert'>En validation</span></td><td>A1 Re-test et acceptation sécurité : Sophie Lambert</td><td>à confirmer (re-test planifié, sans date)</td><td><span class='tag engagement'>engagement documenté</span></td><td><a class=cite href='source__03_Tickets__SEC-210.txt.html#L25' title='26 sept 15:40 - Sophie : Re-test planifié. Statut maintenu EN VALIDATION.'>SEC-210, ligne 25</a></td></tr><tr><td rowspan=2><b>C2</b> Fermeture d&#x27;ACC-303</td><td rowspan=2><span class='tag r-ouvert'>Ouvert</span></td><td>A2 Correctif dans la prochaine build : Boréal (Julien Moreau)</td><td>à confirmer (« prochaine build »)</td><td><span class='tag engagement'>engagement documenté</span></td><td><a class=cite href='source__02_Reunions__M06_Transcript_Comite_26sept.txt.html#L15' title='On vise le correctif ACC-303 dans la prochaine build.'>M06, ligne 15</a></td></tr><tr><td>A3 Re-test clavier et fermeture : Mélissa Gagnon</td><td>à confirmer (après A2)</td><td><span class='tag recommandation'>recommandation équipe</span></td><td><a class=cite href='source__03_Tickets__ACC-303.txt.html#L16' title='26 sept 11:03 - Mélissa : Toujours ouvert. Correctif annoncé pour la prochaine build.'>ACC-303, ligne 16</a></td></tr><tr><td rowspan=2><b>C3</b> Approbation du runbook incluant le rollback</td><td rowspan=2><span class='tag r-ouvert'>Ouvert</span></td><td>A4 Étapes 4 (retour arrière) et 5 (validation post-déploiement) : ops Boréal</td><td>à confirmer (« quelques jours avant »)</td><td><span class='tag engagement'>engagement documenté</span></td><td><a class=cite href='source__02_Reunions__M06_Transcript_Comite_26sept.txt.html#L15' title='Pour le runbook je relance notre équipe ops.'>M06, ligne 15</a></td></tr><tr><td>A5 Approbation du runbook (go exploitation) : Olivier Côté</td><td>à confirmer</td><td><span class='tag engagement'>engagement documenté</span></td><td><a class=cite href='source__02_Reunions__M06_Transcript_Comite_26sept.txt.html#L10' title='Je ne donnerai pas mon go exploitation tant que je n&#x27;ai pas une procédure exécutable.'>M06, ligne 10</a></td></tr><tr><td class=muted>Hors conditions</td><td><span class='tag r-ouvert'>Ouvert</span></td><td>A6 INV-003 : ne pas payer les 18 000 $ de CR-04, réponse à Amélie : Nicolas Perron</td><td>à confirmer (facture bloquée depuis le 23 sept)</td><td><span class='tag recommandation'>recommandation équipe</span></td><td><a class=cite href='source__01_Courriels__E07_Facture_003_question.eml.html#L9' title='Peux-tu me transmettre l&#x27;approbation correspondante?'>E07, ligne 9</a></td></tr><tr><td class=muted>Hors conditions</td><td><span class='tag r-ouvert'>Ouvert</span></td><td>A7 Mettre les plans au 22 octobre (v3 : 15 oct) : Nicolas Perron</td><td>à confirmer (demandé le 10 sept)</td><td><span class='tag engagement'>engagement documenté</span></td><td><a class=cite href='source__04_Documents_projet__Note_transition_Elodie_16sept.txt.html#L7' title='faire mettre à jour la date dans tous les plans (le comité a approuvé le 22 octobre);'>Note_transition, ligne 7</a></td></tr></table>
+<p class="small muted">Aucune échéance précise n'est écrite au dossier : toutes sont à confirmer, au plus tard le 22 octobre.
+Olivier veut le runbook final « quelques jours avant » <a class=cite href='source__02_Reunions__M04_Transcript_Comite_direction_10sept.txt.html#L12' title='au moins quelques jours avant'>M04, ligne 12</a>.</p>
 </div></main></html>

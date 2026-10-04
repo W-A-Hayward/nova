@@ -15,7 +15,6 @@ import json
 import re
 from pathlib import Path
 from . import corpus, evidence
-from .ingest_graph import APPROBATION, NEGATION
 
 DATA = Path(__file__).resolve().parent.parent / "data"
 UPDATES = DATA / "updates"
@@ -26,8 +25,9 @@ def doc_text(path: Path) -> str:
     return corpus.read_bytes(path.name, path.read_bytes())
 
 
-def load(folder: Path = UPDATES) -> list[dict]:
+def load(folder: Path | None = None) -> list[dict]:
     """Fichiers Uxx_*.json triés; les fichiers commençant par « _ » (modèle) sont ignorés."""
+    folder = folder or UPDATES
     if not folder.is_dir():
         return []
     out = []
@@ -45,6 +45,7 @@ def _found(extrait: str, texte: str) -> bool:
 
 def check(u: dict) -> dict:
     """Vérifie une mise à jour; renvoie une copie annotée (statut retenu, avertissements)."""
+    from .ingest_graph import APPROBATION, NEGATION  # import tardif: ingest_graph -> chat_graph -> fils -> updates
     u = copy.deepcopy(u)
     path = Path(u["_base"]) / u["document"]["fichier"]
     texte = doc_text(path) if path.exists() else ""

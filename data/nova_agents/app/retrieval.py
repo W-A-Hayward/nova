@@ -43,15 +43,19 @@ def bm25(query: str, docs: list[str], k1=1.4, b=0.75) -> list[float]:
     return scores
 
 
-def select_evidence(question: str, sujet: str | None, budget_chars: int = 9000, k_min: int = 8, extra: list[dict] | None = None) -> list[dict]:
-    claims = kb.load_claims() + (extra or [])
+def select_evidence(question: str, sujet: str | None, budget_chars: int = 9000, k_min: int = 8, extra: list[dict] | None = None,
+                    pinned: list[dict] | None = None) -> list[dict]:
+    """`pinned`: faits imposés en tête (état actuel des fils et positions datées), dans l'ordre donné."""
+    pinned = pinned or []
+    pin_ids = {c["id"] for c in pinned}
+    claims = [c for c in kb.load_claims() + (extra or []) if c["id"] not in pin_ids]
     if sujet:
         domaine = {sujet, *kb.VOISINS.get(sujet, [])}
         pool = [c for c in claims if set(c["sujets"]) & domaine]
     else:
         pool = claims
     if not pool:
-        return []
+        return pinned
     q_ids = kb.tokens(question)
     scores = bm25(question, [c["texte"] + " " + c.get("fichier", "") for c in pool])
     must, ranked = [], []
@@ -63,19 +67,18 @@ def select_evidence(question: str, sujet: str | None, budget_chars: int = 9000, 
             ranked.append((s * (1.5 if own else 1.0), c))
     ranked.sort(key=lambda x: -x[0])
     chosen, size = [], 0
+    for c in pinned:
+        chosen.append(c)
+        size += len(c["texte"]) + 120
     for c in must + [c for s, c in ranked if s > 0] + [c for s, c in ranked if s <= 0][: max(0, k_min - len(must))]:
         line = len(c["texte"]) + 120
         if (size + line > budget_chars and len(chosen) >= k_min) or size + line > budget_chars * 1.25:
             break  # plafond dur: jamais de dépassement du contexte (Ollama tronquerait les règles en silence)
         chosen.append(c)
         size += line
-    # Trier EN INVERSE: les preuves les plus récentes en premier (vérité actuelle avant contexte historique)
-    def sort_key(c):
-        date_str = c.get("date", "0000-00-00")
-        if date_str and date_str not in ("inconnue", "inconnue", "?", ""):
-            try:
-                return (-float(date_str.replace("-", "")), c["id"])
-            except ValueError:
-                return (0, c["id"])  # dates invalides en dernier
-        return (0, c["id"])
-    return sorted(chosen, key=sort_key)
+    # Épinglés d'abord (état actuel puis positions des fils, dans l'ordre du fil), puis le reste du plus récent au plus ancien.
+    # La position dans la liste n'est pas un statut: c'est l'étiquette temporelle de chaque fait qui le dit.
+    pins = [c for c in chosen if c["id"] in pin_ids]
+    rest = sorted((c for c in chosen if c["id"] not in pin_ids),
+                  key=lambda c: (c.get("date", "") if c.get("date", "")[:1].isdigit() else "0000", c["id"]), reverse=True)
+    return pins + rest

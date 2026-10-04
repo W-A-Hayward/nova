@@ -1,0 +1,70 @@
+<h1>Ajouter un document reçu</h1>
+<p class=lede>NOVA compare le document à l'état actuel de chaque sujet. Il signale ce qui change (nouvelle proposition, livraison qui n'est pas une
+validation, retard, validation par le validateur…), les informations et actions touchées, les actions à prendre et ce qui n'a pas changé.
+Rien n'est fermé ni approuvé : l'état actualisé n'est publié qu'après relecture et enregistrement du brouillon.</p>
+<form id=f><p><input type=file name=fichier aria-label="Document reçu"></p><label for=texte>ou coller le texte du document</label><textarea id=texte name=texte rows=6></textarea>
+<button type=submit id=go>Analyser</button></form>
+<div id=out hidden>
+<h2>Rapport d'impacts <span id=nom class="small muted"></span></h2><pre id=r></pre>
+<h2>Brouillon de mise à jour</h2>
+<p class="small muted">Corrigez au besoin (statuts, responsables, échéances) : vos corrections sont gardées si vous changez de page. Chaque « preuve »
+doit rester un extrait exact du document. À l'enregistrement, le code rétrograde en « proposé » tout « approuvé » ou « validé » non démontré,
+et aucune condition de go-live n'est levée sans son validateur.</p>
+<textarea id=b rows=18 aria-label="Brouillon de mise à jour (JSON)" style="font:13px/1.5 ui-monospace,monospace"></textarea>
+<button id=save type=button>Enregistrer comme mise à jour</button> <span id=s class=small></span>
+<p class=small><button id=effacer type=button style="background:none;color:var(--muted);padding:0;text-decoration:underline">Effacer cette analyse</button>
+L'analyse est gardée tant que le serveur tourne.</p>
+</div>
+<script>
+// L'analyse vit côté serveur (mémoire du processus): reprise en revenant sur la page, même si elle était encore en cours.
+let attente = null, minuteur = null;
+const mettre = (cle, valeur) => fetch(cle === 'brouillon' ? '/api/session/ingest' : '/api/session/saisie', {method: 'PUT',
+  headers: {'Content-Type': 'application/json'}, body: JSON.stringify(cle === 'brouillon' ? {brouillon_texte: valeur} : {cle, valeur})});
+const plustard = (cle, valeur) => { clearTimeout(minuteur); minuteur = setTimeout(() => mettre(cle, valeur), 300); };
+
+function afficherEnregistrement(j) {
+  s.innerHTML = 'Enregistré : ' + j.enregistre + ' (' + j.changements_retenus + ' changement(s) retenu(s)'
+    + (j.avertissements.length ? ' ; contrôles : ' + j.avertissements.join(' / ') : '') + '). <a href="' + j.lien + '">Voir la mise à jour</a>';
+  save.disabled = true;
+}
+function rendre(st) {
+  clearTimeout(attente);
+  out.hidden = !st; go.disabled = !!(st && st.statut === 'en cours');
+  if (!st) return;
+  nom.textContent = st.nom ? '(' + st.nom + ')' : '';
+  s.textContent = ''; save.disabled = false;
+  if (st.statut === 'en cours') {
+    r.textContent = 'Analyse en cours… (' + Math.round(Date.now() / 1000 - st.debut) + ' s) Vous pouvez changer de page : le rapport sera là au retour.';
+    b.value = ''; attente = setTimeout(charger, 2000); return;
+  }
+  if (st.statut === 'erreur') { r.textContent = 'Échec de l\'analyse : ' + st.message; b.value = ''; return; }
+  const j = st.resultat;
+  r.textContent = j.rapport + '\n\n' + j.nouveaux.length + ' fait(s) ajouté(s) « à valider », ' + j.rejetes.length + ' écarté(s), source ' + j.source + '.';
+  if (document.activeElement !== b) b.value = st.brouillon_texte ?? JSON.stringify(j.brouillon, null, 2);
+  if (st.enregistrement) afficherEnregistrement(st.enregistrement);
+}
+async function charger() { rendre(await (await fetch('/api/session/ingest')).json()); }
+
+f.onsubmit = async ev => {
+  ev.preventDefault();
+  const donnees = new FormData(f);
+  rendre({statut: 'en cours', debut: Date.now() / 1000, nom: ''});
+  try {
+    const x = await fetch('/api/ingest', {method: 'POST', body: donnees});
+    if (x.ok) { texte.value = ''; mettre('ingest_texte', ''); f.reset(); }
+  } catch (err) { /* page quittée: le serveur garde le résultat */ }
+  charger();
+};
+b.addEventListener('input', () => plustard('brouillon', b.value));
+texte.addEventListener('input', () => plustard('ingest_texte', texte.value));
+save.onclick = async () => {
+  let br; try { br = JSON.parse(b.value); } catch (e) { s.textContent = 'JSON invalide : ' + e.message; return; }
+  const x = await fetch('/api/updates', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({brouillon: br})});
+  const j = await x.json();
+  if (!x.ok) { s.textContent = 'Refusé : ' + (j.detail || x.status); return; }
+  afficherEnregistrement(j);
+};
+effacer.onclick = async () => { rendre(await (await fetch('/api/session/ingest', {method: 'DELETE'})).json()); };
+fetch('/api/session/saisie').then(x => x.json()).then(st => { if (st.ingest_texte && !texte.value) texte.value = st.ingest_texte; });
+charger();
+</script>

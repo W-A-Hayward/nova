@@ -33,7 +33,7 @@ MOTS = {
 # Règle d'autorité codée (pas laissée au LLM)
 AUTORITE = {1: "décision formelle / contrat", 2: "ticket / compte rendu / transcript", 3: "courriel",
             4: "plan / rapport / registre (peut être périmé)", 5: "chat", 6: "brouillon / non fiable", None: "inconnue (à confirmer)"}
-ORIGINE_LABEL = {"contradiction": "analyse consolidée (baseline)", "action": "registre d'actions (baseline)",
+ORIGINE_LABEL = {"etat_actuel": "état actuel tranché (date du fait + autorité)", "contradiction": "analyse consolidée (baseline)", "action": "registre d'actions (baseline)",
                  "ticket": "statut de ticket (baseline)"}
 EXCLUS = {"HORS SUJET", "NON FIABLE", "ANCIEN", "CONSIGNES"}
 MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"]
@@ -106,29 +106,21 @@ def _autorite_label(c: dict) -> str:
 
 
 def render(claims: list[dict]) -> str:
-    """Affiche les claims avec dates, en groupant par date (récentes en premier = vérité actuelle).
-    Format: [ID] (source, DATE, type, autorité) [flags] texte"""
+    """Affiche les claims au modèle: [ID] (source, date du fait, type, autorité) [étiquettes] texte.
+    L'étiquette temporelle (ÉTAT ACTUEL / HISTORIQUE / CONTREDIT...) vient des fils (app/fils.py), calculée en code:
+    l'ordre de la liste ne vaut jamais statut de vérité."""
     if not claims:
         return "(aucun)"
     out = []
-    prev_date = None
-    for i, c in enumerate(claims):
-        curr_date = c.get("date", "????-??-??")
-        # Séparateur visuel: nouvelle date ou premier élément
-        if i > 0 and curr_date != prev_date:
-            out.append(f"--- {curr_date} ---")
-        prev_date = curr_date
-
+    for c in claims:
         flags = []
+        if c.get("etiquette"):
+            flags.append(c["etiquette"])
         if c.get("perime"):
             flags.append(f"⚠ PÉRIMÉ/NON FIABLE: {c['perime']}")
         if c.get("statut") == "à valider":
             flags.append("⚠ À VALIDER (non confirmé par une autorité)")
-
-        # Marquer la plus récente: "(↑ VÉRITÉ ACTUELLE)" après le premier claim
-        marker = " ↑ VÉRITÉ ACTUELLE" if i == 0 and len(claims) > 1 else ""
-
-        out.append(f"[{c['id']}] (source {c['source']}, {curr_date}, {c['type']}, autorité: {_autorite_label(c)}){marker}"
+        out.append(f"[{c['id']}] (source {c['source']}, {c.get('date', '?')}, {c['type']}, autorité: {_autorite_label(c)})"
                    f"{' ' + ' '.join(flags) if flags else ''} {c['texte']}")
     return "\n".join(out)
 

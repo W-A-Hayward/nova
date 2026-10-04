@@ -84,12 +84,13 @@ from fastapi.testclient import TestClient  # noqa: E402
 from app import server  # noqa: E402
 
 c = TestClient(server.app)
-brief = c.get("/brief").text
+brief = c.get("/brief").text.replace("\u202f", " ").replace("\u00a0", " ")  # montants affichés avec espaces insécables
 for m in ("204 000 $", "186 000 $", "132 000 $", "18 000 $", "Nicolas Perron", "16 septembre 2026", "22 octobre 2026"):
     assert m in brief, m
 for bad in ("50 MB", "24k$", "notifications push", "Tous les modules en production", "livré en production"):
     assert bad not in brief, bad
-assert len(re.sub(r"<[^>]+>", " ", brief).split()) < 900, "le brief doit tenir sur une page"
+texte_brief = re.sub(r"<[^>]+>", " ", re.sub(r"(?s)<style>.*?</style>", "", brief))  # sans le CSS embarqué
+assert len(texte_brief.split()) < 900, "le brief doit tenir sur une page"
 for route in ("/", "/memoire", "/reponses", "/mise-a-jour", "/sources", "/guide", "/chat", "/ingest",
               "/source/03_Tickets/OPS-601_runbook.png", "/raw/03_Tickets/OPS-601_runbook.png"):
     assert c.get(route).status_code == 200, route
