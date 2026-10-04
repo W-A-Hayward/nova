@@ -72,50 +72,46 @@ def api_chat(q: Q):
 
 @app.get("/brief", response_class=HTMLResponse)
 def brief_page():
-    """One-page brief: responsable, date+conditions, portee, budget, factures, priorites."""
+    """One-page operational brief (printable)."""
+    memory_data = memory.load_memory()
     ledger = kb.ledger()
-    autorise = ledger["contrat"] + sum(c["montant"] for c in ledger["changements"] if c["statut"] == "approuve")
-    facture_total = sum(sum(l["montant"] for l in f["lignes"]) for f in ledger["factures"])
-    paye = sum(sum(l["montant"] for l in f["lignes"]) for f in ledger["factures"] if f["statut"] == "payee")
-    
-    fac_html = "<strong>Factures:</strong><ul>"
-    for fac in ledger["factures"]:
-        fac_html += f"<li>{fac['id']} ({fac['date']}, {fac['statut']}): {sum(l['montant'] for l in fac['lignes']):,} $</li>"
-    fac_html += "</ul>"
-    
-    brief_html = f"""<h2>BRIEF OPERATIONNEL — NOVA</h2>
-<p><strong>Baseline:</strong> 30 sept 2026 09:00</p>
+    autorise = ledger["contrat"] + sum(c["montant"] for c in ledger["changements"] if c["statut"] == "approuvé")
+    facture = sum(sum(l["montant"] for l in f["lignes"]) for f in ledger["factures"])
 
-<div class="brief-section"><h3>1. RESPONSABLE</h3>
-<p><strong>Nicolas Perron</strong> (depuis 16 sept 2026)</p></div>
+    return page(f"""<h2 style="page-break-after:avoid">BRIEF NOVA — 30 septembre 2026 09h00</h2>
+<div class="brief-section"><h3>1. Responsable et échéance</h3>
+<p><strong>Responsable:</strong> Nicolas Perron (depuis 16 sept 2026)<br>
+<strong>Date approuvée:</strong> 22 octobre 2026<br>
+<strong>Réserves:</strong> Trois conditions de go-live (validation SEC-210, ACC-303, runbook).</p>
+</div>
 
-<div class="brief-section"><h3>2. DATE APPROUVEE ET CONDITIONS</h3>
-<p><strong>Date:</strong> 22 octobre 2026 | <strong>Approbation:</strong> Comite 26 sept<br>
-<strong>Conditions obligatoires:</strong>
-<ol><li>SEC-210: Validation securite (Sophie Lambert)</li>
-<li>ACC-303: Fermeture modale clavier (Melissa Gagnon)</li>
-<li>OPS-601: Runbook + rollback (Olivier Cote)</li></ol></p></div>
+<div class="brief-section"><h3>2. Portée (Phase 1)</h3>
+<p>SSO, création/suivi demandes, pièces jointes, workflow, tableau suivi, rapports standards.
+Mobile: utilisable mais optimisations avancées (CR-04) reportées à phase 2.</p>
+</div>
 
-<div class="brief-section"><h3>3. PORTEE</h3>
-<p>SSO, creation/suivi demandes, pieces jointes, workflow, rapports. Mobile utilisable (avancees → Phase 2).</p></div>
+<div class="brief-section"><h3>3. Budget</h3>
+<p>Autorisé: {autorise:,} $ (contrat 180k + CR-01 approuvé 24k)<br>
+Facturé: {facture:,} $<br>
+<strong>Problème:</strong> INV-003 inclut 18k$ CR-04 (non approuvé, phase 2) → doit être retiré.</p>
+</div>
 
-<div class="brief-section"><h3>4. BUDGET</h3>
-<p><strong>Autorise:</strong> {autorise:,} $ (contrat 180k + CR-01 24k)<br>
-<strong>Facture total:</strong> {facture_total:,} $<br>
-<strong style="color:#9b1c1c">Probleme:</strong> INV-003 inclut 18k$ CR-04 non approuve</p></div>
+<div class="brief-section"><h3>4. Priorités immédiates (conditions go-live)</h3>
+<ol>
+<li><span class="todo">SEC-210</span> — Validation sécurité (audit log). Fix livré 19 sept, validation = <strong>Sophie Lambert</strong>, échéance: avant 22 oct.</li>
+<li><span class="todo">ACC-303</span> — Modale clavier. Bloquant accessibilité, fermeture = <strong>Mélissa Gagnon/Boréal</strong>, échéance: avant 22 oct.</li>
+<li><span class="todo">OPS-601</span> — Runbook complet (rollback + validation post-deploy). Olivier Côté demande procédure exécutable, échéance: avant 22 oct.</li>
+</ol>
+</div>
 
-<div class="brief-section"><h3>5. SITUATION FACTURES</h3>
-{fac_html}<p>Facture total: {facture_total:,} $ | Paye: {paye:,} $</p></div>
+<div class="brief-section"><h3>5. État des risques</h3>
+<p>INT-101 (connecteur) = fermé 17 sept ✓. Trois risques actifs bloquent go-live. Aucun autre problème technique identifié au 29 sept.</p>
+</div>
 
-<div class="brief-section"><h3>6. PRIORITES</h3>
-<table><tr><th>Item</th><th>Responsable</th><th>Statut</th><th>Echéance</th></tr>
-<tr><td>SEC-210</td><td>Sophie</td><td>EN VALIDATION</td><td>Avant 22 oct</td></tr>
-<tr><td>ACC-303</td><td>Melissa</td><td>OUVERT</td><td>Avant 22 oct</td></tr>
-<tr><td>OPS-601</td><td>Olivier</td><td>OUVERT</td><td>Avant 22 oct</td></tr>
-<tr><td style="background:#eef2f7">INT-101</td><td>Boreal</td><td>FERME</td><td>17 sept OK</td></tr></table></div>
+<p style="font-size:12px;margin-top:20px;border-top:1px solid #ddd;padding-top:10px">
+Baseline 30 sept 09:00 Montréal (UTC-04:00). Pour détails: /memoire (timeline/décisions/contradictions) et /reponses (Q01-Q10).
+</p>""")
 
-<p style="font-size:11px;margin-top:20px">Details: /memoire (timeline/decisions) | /reponses (Q01-Q10 sources)</p>"""
-    return page(brief_html)
 
 @app.get("/memoire", response_class=HTMLResponse)
 def memoire_page():
