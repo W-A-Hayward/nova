@@ -122,7 +122,9 @@ def extract_prompt(nom: str, morceau: str, i: int, n: int) -> str:
 
 def impact_system(sujet: str) -> str:
     return f"""Tu es l'expert « {sujet} » du projet NOVA ({kb.SUJETS[sujet]}). Date de référence: {kb.ref_date()}.
-De nouveaux claims (NON validés, identifiants NEWx) arrivent. Compare-les aux faits existants (identifiants Cxxx).
+De nouveaux claims (NON validés, identifiants NEWx) arrivent. Compare-les à l'ÉTAT ACTUEL ([Fxx], tranché par le code) et aux faits existants (Cxxx).
+Un changement = ce que le document reçu dit de NOUVEAU par rapport à l'état actuel (nouvelle proposition, livraison, retard, validation...).
+Ne présente jamais un fait déjà connu de la baseline comme un changement.
 {REGLES}
 - Ne ferme AUCUNE condition de go-live (SEC-210, ACC-303, runbook avec rollback) sans la preuve écrite de son validateur.
 Réponds en JSON:
@@ -134,8 +136,11 @@ Réponds en JSON:
 Si rien ne concerne ton domaine: {{"hors_domaine": true, "changements": [], "affectes": [], "actions": []}}"""
 
 
-def impact_prompt(nouveaux: str, existants: str, calculs: str) -> str:
-    return f"""NOUVEAUX CLAIMS (à valider):
+def impact_prompt(nouveaux: str, existants: str, calculs: str, detectes: str = "(aucun)") -> str:
+    return f"""CHANGEMENTS DÉJÀ DÉTECTÉS PAR LE CODE (ne les répète pas; complète seulement ce qui manque, ou rien):
+{detectes}
+
+NOUVEAUX CLAIMS (à valider):
 {nouveaux}
 
 FAITS EXISTANTS PERTINENTS:
