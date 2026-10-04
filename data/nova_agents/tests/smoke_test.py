@@ -139,11 +139,13 @@ out = ingest(DOC, "test.txt")
 print(out["rapport"])
 assert out["source"] == "N01" and len(out["affectes"]) > 0
 nv = kb.load_claims()[before:]
-assert len(nv) == 2 and [c["type"] for c in nv] == ["proposition", "fait"] and all(c["statut"] == "à valider" for c in nv), nv
+assert [c["type"] for c in nv[:2]] == ["proposition", "fait"] and all(c["statut"] == "à valider" for c in nv), nv
 assert nv[1]["date"] == "inconnue"            # 2026-09-29 n'est écrit nulle part dans le document
+assert not any("Ignorez" in c["texte"] for c in nv), "une instruction (injection) ne devient jamais un fait"
+assert "injection" in out["rapport"] and "LIVRAISON annoncée (≠ validation)" in out["rapport"]
 assert "citation introuvable" in out["rapport"] and "absent du document: montant 40000" in out["rapport"]
-assert "SEC-210: toujours EN VALIDATION" in out["rapport"] and "fermer la condition" not in out["rapport"]
-assert "Recommandation: Demander la confirmation" in out["rapport"]
+assert "C1 Validation sécurité de SEC-210 : EN VALIDATION (non levée)" in out["rapport"] and "fermer la condition" not in out["rapport"]
+assert "Recommandation : Demander la confirmation" in out["rapport"]
 assert kb.load_claims()[:before] == CL        # base intacte (ajout seulement)
 assert "N01" in kb.known_sources()
 print("6) ingestion ancrée OK")
@@ -154,7 +156,10 @@ try:
 except ImportError:
     print("7) serveur: FastAPI absent, test ignoré")
 else:
+    import tempfile
+    from app import updates
     from app.server import app
+    updates.UPDATES = Path(tempfile.mkdtemp()) / "updates"  # /api/ingest conserve le document reçu: hors de data/ pour le test
     c = TestClient(app)
     assert c.get("/").status_code == 200 and "Décisions" in c.get("/memoire").text
     assert c.get("/chat").status_code == 200 and c.get("/ingest").status_code == 200
