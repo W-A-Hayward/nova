@@ -26,7 +26,7 @@ Le chat demande en plus Ollama : `ollama pull llama3.1`.
 | Réponses Q01–Q10 | 3 | Réponse, nuance et preuves : fichier, repère humain (horodatage, cellule, page, étape de capture), repère calculé et extrait cité mot pour mot. |
 | Mise à jour | 4 | État actuel comparé à la baseline, changements, informations affectées, actions, ce qui n'a pas changé. La baseline reste intacte. |
 | Sources et recherche | : | Recherche plein texte sans IA dans tous les passages (fichier et repère), puis le catalogue des fichiers avec autorité, pertinence, doublons et avertissements. |
-| Chat / Ajouter | : | Serveur et Ollama seulement : questions libres. Le chat donne l'état actuel, puis l'évolution des décisions et les sources contradictoires, chacune avec son lien (voir section 4). Ajouter : aide à l'extraction d'un nouveau document. |
+| Chat / Ajouter | : | Serveur et Ollama seulement : questions libres. Le chat donne l'état actuel, puis l'évolution des décisions et les sources contradictoires, chacune avec son lien (voir section 4). Ajouter : aide à l'extraction d'un nouveau document. Conversation et dernière analyse (rapport, brouillon corrigé, texte tapé) gardées en changeant de page ou d'onglet, effacées à l'arrêt du serveur. |
 
 **Retrouver une preuve** : chaque lien ouvre le fichier source au bon endroit (ligne surlignée, page, ligne Excel ou capture avec sa transcription). Exemples : Q10 → `OPS-601_runbook.png` (étapes 4 et 5) ; Q02 → `Registre_Risques_29sept.xlsx`, ligne 2 (R-01 encore « Ouvert »).
 
