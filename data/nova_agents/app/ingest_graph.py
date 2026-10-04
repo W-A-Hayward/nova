@@ -23,7 +23,11 @@ from .chat_graph import verify_batch, REGLES  # noqa: F401  (REGLES: rétro-comp
 
 IMPACT_LLM = os.getenv("NOVA_IMPACT_LLM", "1") != "0"  # analyse complémentaire par les experts (lente; le code suffit)
 TYPES = ["proposition", "décision", "validation", "fait", "signal"]
-CHUNK, OVERLAP = 3500, 300
+CHUNK, OVERLAP = 3500, 300  # Ollama; avec Gemini le document entier part en une fois (voir chunk_size)
+
+
+def chunk_size() -> int:
+    return 150_000 if llm.grand_contexte() else CHUNK
 APPROBATION = re.compile(r"approuv|décid|décision|adopt|entérin|retenu|accept|valid|go\b|d'accord|autoris", re.I)
 VALIDATION = re.compile(r"validé|validée|accepté|acceptée|fermé|fermée|clos|approuvé|approuvée|signé|re-?test\w* (ok|réussi)", re.I)
 PROPOSITION = re.compile(r"propos|suggèr|recommand|brouillon|draft|pourrai|envisag|souhait|demande", re.I)
@@ -47,6 +51,7 @@ class State(TypedDict, total=False):
 
 
 def chunks(texte: str) -> list[str]:
+    CHUNK = chunk_size()
     if len(texte) <= CHUNK:
         return [texte]
     out, i = [], 0
@@ -164,10 +169,11 @@ def _valid_impact(o):
 def expert_impact(p: dict):
     s = p["sujet"]
     requete = " ".join(c["texte"] for c in p["nouveaux"])
-    existants = retrieval.select_evidence(requete, s, budget_chars=6000)
+    existants = retrieval.select_evidence(requete, s, budget_chars=40000 if llm.grand_contexte() else 6000)
     ids = {c["id"] for c in existants}
     existants += [c for c in p["affectes"] if c["id"] not in ids][:15]
-    etats = list(fils.pseudo_claims([fils.get(f) for f in p.get("fils", [])]).values())
+    # état actuel des fils touchés; avec Gemini, de tous les fils (contexte complet du projet)
+    etats = list(fils.pseudo_claims(fils.all_fils() if llm.grand_contexte() else [fils.get(f) for f in p.get("fils", [])]).values())
     existants = etats + existants
     allowed = {c["id"]: c for c in p["nouveaux"] + existants}
     calculs = kb.finance_summary() if s == "finance" else "(sans objet)"

@@ -22,7 +22,12 @@ from . import fils, kb, llm, prompts, retrieval, verify
 VERIFY_LLM = os.getenv("NOVA_VERIFY_LLM", "1") != "0"   # agent vérificateur (coûte 1 appel par expert)
 REVISE = os.getenv("NOVA_REVISE", "1") != "0"           # une passe de correction des affirmations rejetées
 SYNTH_TRIES = int(os.getenv("NOVA_SYNTH_TRIES", "2"))
-EVIDENCE_CHARS = int(os.getenv("NOVA_EVIDENCE_CHARS", "8000"))
+EVIDENCE_CHARS = int(os.getenv("NOVA_EVIDENCE_CHARS", "8000"))             # Ollama (secours): petit contexte
+EVIDENCE_CHARS_GRAND = int(os.getenv("NOVA_EVIDENCE_CHARS_GRAND", "60000"))  # Gemini: on envoie le contexte du projet
+
+
+def evidence_chars() -> int:
+    return EVIDENCE_CHARS_GRAND if llm.grand_contexte() else EVIDENCE_CHARS
 MAX_EXPERTS = int(os.getenv("NOVA_MAX_EXPERTS", "3"))
 REGLES = prompts.REGLES  # rétro-compatibilité
 
@@ -90,19 +95,22 @@ def verify_batch(affs: list[dict], allowed: dict[str, dict]) -> tuple[list[dict]
     return [c for c in checked if not c["problemes"]], [c for c in checked if c["problemes"]]
 
 
-def pinned_evidence(fids: list[str], sujet: str, max_positions: int = 14) -> list[dict]:
-    """États actuels des fils choisis + positions datées des fils du domaine de l'expert, avec étiquette temporelle."""
-    if not fids:
+def pinned_evidence(fids: list[str], sujet: str, max_positions: int | None = None) -> list[dict]:
+    """États actuels des fils choisis + positions datées des fils du domaine de l'expert, avec étiquette temporelle.
+    Avec un grand contexte (Gemini), on envoie en plus l'état actuel de TOUS les fils et toutes les positions des fils choisis."""
+    grand = llm.grand_contexte()
+    max_positions = max_positions or (60 if grand else 14)
+    if not fids and not grand:
         return []
     choisis = [fils.get(f) for f in fids]
-    pcs = fils.pseudo_claims(choisis)
+    pcs = fils.pseudo_claims(fils.all_fils() if grand else choisis)
     labels, passe = fils.temporal_labels(choisis), fils.passe_ids(choisis)
     claims = kb.claims_by_id()
     domaine = {sujet, *kb.VOISINS.get(sujet, [])}
-    out = [pcs[f] for f in fids]
+    out = [pcs[f] for f in fids] + ([c for i, c in pcs.items() if i not in fids] if grand else [])
     pos = []
     for f in choisis:
-        if f["sujet"] not in domaine and len(choisis) > 1:
+        if f["sujet"] not in domaine and len(choisis) > 1 and not grand:
             continue
         for e in reversed(f["entrees"]):  # du plus récent au plus ancien: l'actuel d'abord si le budget coupe
             c = claims.get(e.get("claim") or "")
@@ -124,9 +132,10 @@ def _evidence(question: str, sujet: str, budget: int, fids: list[str]):
 def expert(p: dict):
     s, q = p["sujet"], p["question"]
     system = prompts.expert_system(s)
-    budget = min(EVIDENCE_CHARS, llm.prompt_budget_chars() - len(system) - 2500)
+    budget = evidence_chars()
     out = None
-    for _ in range(3):  # en cas de dépassement de contexte, on réduit les preuves au lieu de laisser Ollama tronquer
+    for _ in range(4):  # dépassement de contexte (ex.: repli sur Ollama): on réduit les preuves au lieu de laisser tronquer
+        budget = min(budget, llm.prompt_budget_chars() - len(system) - 2500)  # budget du fournisseur qui répondra
         evid, allowed, calculs = _evidence(q, s, budget, p.get("fils", []))
         faits = kb.render(evid)
         try:
