@@ -23,6 +23,7 @@ Variables:
 ## Architecture
 - `kb.py`: base de claims en ajout seulement (identifiants `C001`…), autorité, statut des tickets, calculs financiers en code.
 - `corpus.py` / `seed.py`: lisent les fichiers de `data/starter/Projet360_NOVA_ETUDIANTS` (courriel, texte, PDF, Excel, CSV) et en font des claims avec repère (ligne, page, cellule). Les tickets et le registre financier sont extraits de ces fichiers.
+- `fils.py`: 13 fils thématiques; état actuel tranché en code (date du fait + autorité, pas date du fichier) et évolution datée des sources (historique, proposition, décision, livraison, contredit), mises à jour comprises. Le chat s'appuie dessus.
 - `retrieval.py`: sélection des preuves par question (BM25 + identifiants + état courant), dans un budget.
 - `prompts.py`: tous les prompts (système / utilisateur séparés, exemple fictif, format JSON).
 - `verify.py`: vérification déterministe (citations, entités, garde-fous) + agent vérificateur LLM.
@@ -60,6 +61,7 @@ Chaque mesure répond à une cause observée dans la version de base.
 | Extraction: claims inventés | Chaque claim doit recopier sa phrase source; citation introuvable ou entité absente du document → rejeté (listé dans le rapport) | `ingest_graph.extract`, `verify.quote_in` |
 | Extraction: proposition classée « décision », « déployé » classé « validation » | Type corrigé par règles sur la citation; date inventée → « inconnue » | `ingest_graph.fix_type/fix_date` |
 | Injection d'instructions dans un document reçu | Document délimité et déclaré « donnée »; aucune instruction suivie; rien n'est fermé sans validateur | `prompts.EXTRACT_SYSTEM` |
+| « Vérité = plus récent » appliqué au premier fait de la liste, tous sujets confondus (ex. un statut de ticket marqué « vérité actuelle » pour une question d'hébergement); plan v3 et registre plus récents mais périmés | État actuel tranché par fil (date du fait + autorité); positions passées étiquetées HISTORIQUE / CONTREDIT; affirmation passée présentée comme actuelle rejetée; section « Évolution et sources contradictoires » assemblée par le code | `fils.py`, `chat_graph`, `verify.semantic_guards` |
 | Rapport d'impacts rédigé librement par un LLM | Rapport **assemblé par le code** à partir d'éléments vérifiés; « Ce qui n'a PAS changé » (conditions de go-live, budget) calculé en code; actions non documentées préfixées « Recommandation » | `ingest_graph.report` |
 
 ## Tests

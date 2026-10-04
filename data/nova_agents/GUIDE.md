@@ -26,7 +26,7 @@ Le chat demande en plus Ollama : `ollama pull llama3.1`.
 | Réponses Q01–Q10 | 3 | Réponse, nuance et preuves : fichier, repère humain (horodatage, cellule, page, étape de capture), repère calculé et extrait cité mot pour mot. |
 | Mise à jour | 4 | État actuel comparé à la baseline, changements, informations affectées, actions, ce qui n'a pas changé. La baseline reste intacte. |
 | Sources et recherche | : | Recherche plein texte sans IA dans tous les passages (fichier et repère), puis le catalogue des fichiers avec autorité, pertinence, doublons et avertissements. |
-| Chat / Ajouter | : | Serveur et Ollama seulement : questions libres vérifiées, aide à l'extraction d'un nouveau document. |
+| Chat / Ajouter | : | Serveur et Ollama seulement : questions libres. Le chat donne l'état actuel, puis l'évolution des décisions et les sources contradictoires, chacune avec son lien (voir section 4). Ajouter : aide à l'extraction d'un nouveau document. |
 
 **Retrouver une preuve** : chaque lien ouvre le fichier source au bon endroit (ligne surlignée, page, ligne Excel ou capture avec sa transcription). Exemples : Q10 → `OPS-601_runbook.png` (étapes 4 et 5) ; Q02 → `Registre_Risques_29sept.xlsx`, ligne 2 (R-01 encore « Ouvert »).
 
@@ -45,14 +45,23 @@ Le code applique trois garde-fous :
 
 `data/memory.json` et `data/answers_baseline.json` ne sont jamais réécrits, et le tag git `baseline-30sept-09h00` conserve la version initiale. Une démonstration avec un document **fictif** est disponible sur le serveur : `/mise-a-jour?exercice=1` (fichiers dans `tests/fixtures/`, jamais chargés dans `data/`).
 
-## 4. Outils utilisés
+## 4. Raisonnement du chat
+
+**État actuel = le fait documenté le plus récent, émanant d'une source compétente, daté par la date du fait.** La date du fichier ne fait pas foi : le plan v3 (12 sept) est plus récent que la décision du comité (10 sept), mais il n'a pas été corrigé ; le registre du 29 sept garde une ligne R-01 qui décrit l'état au 9 sept.
+
+1. **Fils thématiques (code, `app/fils.py`)** : 13 sujets (date, hébergement, responsable, budget, sécurité, accessibilité, runbook, intégration, conditions, communication, actions…). Chaque fil a un état actuel tranché et la liste datée de toutes les sources qui en parlent, avec leur rôle : historique (remplacé), proposition, décision, livraison (≠ validation), validation, contredit (écarté) avec la raison, signal non fiable, mise à jour reçue après la baseline.
+2. **Experts (LLM)** : ils reçoivent l'état actuel `[Fxx]` en tête, puis les positions étiquetées. Une affirmation qui présente une position passée comme actuelle est rejetée en code (sauf si elle dit « initialement », « auparavant »…), puis vérifiée par un agent vérificateur.
+3. **Réponse** : 2 à 5 phrases sur l'état actuel, puis une section **Évolution et sources contradictoires** assemblée par le code (du plus ancien au plus récent, chaque source cliquable), puis **Ce qu'on ne sait pas**.
+4. **Questions générales** : « Existe-t-il des contradictions? » liste les 9 contradictions et leur résolution ; « Qu'est-ce qui a changé depuis la semaine dernière? » (ou « depuis le 15 septembre ») donne les événements de la période ; « engagements », « risques », « reprendre le projet » sélectionnent les fils correspondants.
+
+## 5. Outils utilisés
 
 - **Python** : FastAPI (pages), pypdf (PDF, repère par page), openpyxl (Excel, repère par cellule), module `email` (courriels, repère par ligne de la vue normalisée).
 - **LangGraph et Ollama (llama3.1, local, gratuit)** : seulement pour le chat et l'aide à l'extraction. Les pages livrables n'utilisent aucun LLM.
 - **Claude Code (Anthropic)** : assistant de développement. Il a servi à écrire le code, à relire le dossier et à rédiger la première version des réponses, de la mémoire et des transcriptions de captures. Chaque fait a ensuite été vérifié contre le dossier, et les extraits cités sont contrôlés automatiquement (`tests/test_deliverables.py`).
 - Aucun service payant, aucune recherche externe pour les faits : tous les faits viennent du dossier.
 
-## 5. Traitements manuels
+## 6. Traitements manuels
 
 | Traitement | Où | Contrôle |
 |---|---|---|
@@ -62,15 +71,15 @@ Le code applique trois garde-fous :
 | Classement autorité et pertinence des sources | `app/corpus.py` | Règles codées par dossier et par nom de fichier |
 | Montants (autorisé, facturé, payé) | calculés par le code depuis les PDF | Test : 204 000 / 186 000 / 132 000 |
 
-## 6. Limites
+## 7. Limites
 
 - Les transcriptions de captures sont manuelles. Une erreur de lecture reste possible, mais l'image originale est affichée à côté.
 - Les repères « ligne N » des courriels renvoient à la vue normalisée (De, Date, Objet, corps), pas au fichier `.eml` brut.
 - La recherche est lexicale (termes exacts, accents ignorés), pas sémantique.
-- Le chat repose sur un modèle 8B local. Les affirmations sont vérifiées en code et par un agent vérificateur, mais il reste faillible : les réponses de référence sont dans **Réponses Q01–Q10**.
+- Le chat repose sur un modèle 8B local. L'état actuel et l'évolution sont tranchés par le code, et les affirmations du modèle sont vérifiées en code et par un agent vérificateur, mais la prose reste faillible : les réponses de référence sont dans **Réponses Q01–Q10**. Une question hors des 13 fils est traitée par recherche lexicale seulement.
 - Un document ajouté par `/ingest` reçoit une autorité « inconnue » et le statut « à valider ». Rien n'est validé sans humain.
 
-## 7. Informations incertaines ou manquantes (au 30 septembre)
+## 8. Informations incertaines ou manquantes (au 30 septembre)
 
 | Élément | Ce qu'on sait | Ce qui manque |
 |---|---|---|
@@ -85,10 +94,11 @@ Le code applique trois garde-fous :
 | Ajustements mobiles | Julien : « on a déjà commencé à regarder » (26 sept) | Ces travaux relèvent-ils de CR-04? |
 | Vote du 10 sept | Sophie, Marc et Olivier « Non » à l'opposition ; Nicolas « D'accord » | Position transcrite de Mélissa et de Camille |
 
-## 8. Vérifier
+## 9. Vérifier
 
 ```bash
 python tests/test_deliverables.py   # sans Ollama : extraits, montants, garde-fous, baseline intacte
+python tests/test_chat_reasoning.py # sans Ollama : état actuel, historique, contradictions, « ce qui a changé »
 python tests/smoke_test.py          # sans Ollama : garde-fous du chat (puis relancer python -m app.seed)
 python tests/eval_qa.py --quiet     # avec Ollama : qualité du chat sur Q01–Q10
 ```
