@@ -487,14 +487,15 @@ def chat_page():
 def api_chat(q: Q):
     from .chat_graph import ask  # importé ici: les pages statiques n'ont pas besoin de LangGraph/Ollama
     r = ask(q.question)
-    claims = kb.claims_by_id()
-    preuves = []
-    for p in r["preuves"]:
-        c = claims.get(p["id"], {})
-        rep = c.get("repere", "")
-        preuves.append({**p, "repere": rep, "lien": href("source/" + p["fichier"], evidence.anchor(rep) if rep else "") if p.get("fichier") else ""})
+    preuves = [{**p, "lien": href("source/" + p["fichier"], evidence.anchor(p["repere"]) if p.get("repere") else "") if p.get("fichier") else ""}
+               for p in r["preuves"]]
+    for sec in r["evolution"]:
+        for x in sec["entrees"]:
+            src = x["source"]
+            x["lien"] = href("mise-a-jour") if x["role"] == "mise à jour" else href("source/" + src["fichier"], src.get("anchor", ""))
     rejetees = [{"sujet": x["sujet"], "texte": a["texte"], "problemes": a["problemes"]} for x in r["experts"] for a in x["retirees"]]
-    return {"reponse": r["reponse"], "sujets": r["sujets"], "preuves": preuves, "confiance": r["confiance"], "rejetees": rejetees}
+    return {"reponse": r["reponse_courte"], "reponse_complete": r["reponse"], "evolution": r["evolution"], "fils": r["fils"],
+            "sujets": r["sujets"], "preuves": preuves, "confiance": r["confiance"], "rejetees": rejetees}
 
 
 @app.get("/ingest", response_class=HTMLResponse)

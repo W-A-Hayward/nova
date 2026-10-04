@@ -8,6 +8,10 @@ Pour les réponses de référence, voir <a href="/reponses">Réponses Q01–Q10<
 .me{align-self:flex-end;background:var(--head);color:#fff}
 .bot{align-self:flex-start;background:var(--bg);border:1px solid var(--line)}
 .meta{font-size:12px;margin-top:8px;padding-top:6px;border-top:1px solid var(--line);white-space:normal}
+.evo{white-space:normal;font-size:13px;margin-top:8px;padding-top:6px;border-top:1px solid var(--line)}
+.evo summary{cursor:pointer;font-weight:600}.evo .actuel{margin:4px 0 6px;padding:6px 8px;border-left:3px solid var(--ok)}
+.evo ol{margin:4px 0 8px;padding-left:18px}.evo li{margin:3px 0}.evo .note{color:var(--muted);font-size:12px}
+.evo li.passe{color:var(--muted)}
 #bar{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line)}
 #bar button{margin:0}
 </style>
@@ -19,6 +23,21 @@ function add(text, me, j) {
   const d = document.createElement('div');
   d.className = 'msg ' + (me ? 'me' : 'bot');
   let h = esc(text);
+  if (j && j.evolution && j.evolution.length) {
+    const cls = r => ({'historique':'n-signal','écarté':'n-signal','signal':'n-signal','proposition':'n-proposition','décision':'n-décision',
+                      'retenu':'n-décision','validation':'n-validation','livraison':'n-livraison'}[r] || 'n-fait');
+    h += '<div class=evo><b>Évolution et sources contradictoires</b> <span class="small muted">(du plus ancien au plus récent ; '
+       + 'l\'état actuel est tranché par la date du fait et l\'autorité de la source)</span>';
+    j.evolution.forEach(sec => {
+      h += `<details ${j.evolution.length < 3 ? 'open' : ''}><summary>${esc(sec.titre)}</summary>`
+         + (sec.actuel ? `<div class=actuel><b>État actuel :</b> ${esc(sec.actuel)}</div>` : '')
+         + '<ol>' + sec.entrees.map(e => `<li class="${['historique','écarté','signal'].includes(e.role) ? 'passe' : ''}">`
+           + `${esc(e.date)}${e.heure ? ' ' + esc(e.heure) : ''} <span class="tag ${cls(e.role)}">${esc(e.label)}</span> `
+           + `${e.qui ? esc(e.qui) + ' : ' : ''}${esc(e.texte)} <a href="${esc(e.lien)}">${esc(e.source.court)}</a>`
+           + (e.note ? `<div class=note>→ ${esc(e.note)}</div>` : '') + '</li>').join('') + '</ol></details>';
+    });
+    h += '</div>';
+  }
   if (j) {
     if (j.preuves && j.preuves.length)
       h += '<div class=meta><b>Preuves citées :</b><br>' + j.preuves.map(p =>
@@ -45,5 +64,5 @@ async function go() {
 }
 send.onclick = go;
 q.addEventListener('keydown', ev => { if (ev.key === 'Enter') { ev.preventDefault(); go(); } });
-add('Posez une question sur NOVA (état au 30 septembre 2026, 09 h).', false);
+add('Posez une question sur NOVA (état au 30 septembre 2026, 09 h). La réponse donne l\'état actuel, puis l\'évolution des décisions et les sources contradictoires, chacune avec son lien.', false);
 </script>
