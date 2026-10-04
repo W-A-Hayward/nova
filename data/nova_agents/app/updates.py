@@ -15,7 +15,6 @@ import json
 import re
 from pathlib import Path
 from . import corpus, evidence
-from .ingest_graph import APPROBATION, NEGATION
 
 DATA = Path(__file__).resolve().parent.parent / "data"
 UPDATES = DATA / "updates"
@@ -45,6 +44,7 @@ def _found(extrait: str, texte: str) -> bool:
 
 def check(u: dict) -> dict:
     """Vérifie une mise à jour; renvoie une copie annotée (statut retenu, avertissements)."""
+    from .ingest_graph import APPROBATION, NEGATION  # import tardif: ingest_graph -> chat_graph -> fils -> updates
     u = copy.deepcopy(u)
     path = Path(u["_base"]) / u["document"]["fichier"]
     texte = doc_text(path) if path.exists() else ""
