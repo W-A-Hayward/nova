@@ -25,8 +25,9 @@ def doc_text(path: Path) -> str:
     return corpus.read_bytes(path.name, path.read_bytes())
 
 
-def load(folder: Path = UPDATES) -> list[dict]:
+def load(folder: Path | None = None) -> list[dict]:
     """Fichiers Uxx_*.json triés; les fichiers commençant par « _ » (modèle) sont ignorés."""
+    folder = folder or UPDATES
     if not folder.is_dir():
         return []
     out = []
