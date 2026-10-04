@@ -102,7 +102,7 @@ assert r.status_code in (302, 307) and r.headers["location"].startswith("/source
 print("4) pages et brief OK")
 
 # ------------------------------------------------------------------ 5) mise à jour: garde-fous et baseline intacte
-assert not updates.load(), "aucune mise à jour réelle attendue dans data/updates/ pour ce test"
+updates.UPDATES = Path(tempfile.mkdtemp()) / "updates"  # isolé: les mises à jour réelles de data/updates/ ne comptent pas ici
 cur = updates.apply(memory.load_memory(), updates.load(ROOT / "tests" / "fixtures"))
 u = cur["mises_a_jour"][0]
 assert cur["date_approuvee"]["valeur"] == "22 octobre 2026", "une proposition du fournisseur ne remplace pas la décision"
