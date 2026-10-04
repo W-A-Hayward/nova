@@ -1,0 +1,32 @@
+<h1>Ajouter un document reçu</h1>
+<p class=muted>NOVA compare le document à l'état actuel de chaque sujet. Il signale ce qui change (nouvelle proposition, livraison ≠ validation,
+retard, validation par le validateur…), les informations et actions touchées, les actions à prendre et ce qui n'a pas changé.
+Rien n'est fermé ni approuvé : l'état actualisé n'est publié qu'après relecture et enregistrement du brouillon.</p>
+<form id=f><p><input type=file name=fichier></p><p>ou coller du texte :</p><textarea name=texte rows=6></textarea>
+<button type=submit>Analyser</button></form>
+<div id=out hidden>
+<h2>Rapport d'impacts</h2><pre id=r></pre>
+<h2>Brouillon de mise à jour (à relire)</h2>
+<p class="small muted">Corrigez au besoin (statuts, responsables, échéances). Chaque « preuve » doit rester un extrait exact du document.
+À l'enregistrement, le code rétrograde en « proposé » tout « approuvé »/« validé » non démontré, et aucune condition de go-live n'est levée sans son validateur.</p>
+<textarea id=b rows=18 style="font:12px ui-monospace,monospace"></textarea>
+<button id=save>Enregistrer comme mise à jour</button> <span id=s class=small></span>
+</div>
+<script>
+f.onsubmit = async ev => {
+  ev.preventDefault(); out.hidden = false; r.textContent = 'Analyse en cours…'; b.value = ''; s.textContent = '';
+  const x = await fetch('/api/ingest', {method: 'POST', body: new FormData(f)});
+  if (!x.ok) { r.textContent = 'Erreur ' + x.status; return; }
+  const j = await x.json();
+  r.textContent = j.rapport + '\n\n— ' + j.nouveaux.length + ' fait(s) ajouté(s) « à valider », ' + j.rejetes.length + ' écarté(s), source ' + j.source;
+  b.value = JSON.stringify(j.brouillon, null, 2);
+};
+save.onclick = async () => {
+  let br; try { br = JSON.parse(b.value); } catch (e) { s.textContent = 'JSON invalide : ' + e.message; return; }
+  const x = await fetch('/api/updates', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({brouillon: br})});
+  const j = await x.json();
+  if (!x.ok) { s.textContent = 'Refusé : ' + (j.detail || x.status); return; }
+  s.innerHTML = 'Enregistré : ' + j.enregistre + ' (' + j.changements_retenus + ' changement(s) retenu(s)'
+    + (j.avertissements.length ? ' ; contrôles : ' + j.avertissements.join(' / ') : '') + '). <a href="' + j.lien + '">Voir la mise à jour →</a>';
+};
+</script>

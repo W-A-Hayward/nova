@@ -500,19 +500,51 @@ def api_chat(q: Q):
 
 @app.get("/ingest", response_class=HTMLResponse)
 def ingest_page():
-    return page("""<h1>Ajouter un document (aide à l'extraction)</h1>
-<p class=muted>L'extraction (Ollama) propose des faits ancrés et un rapport d'impacts. Ces faits sont ajoutés « à valider » et rien n'est fermé.
-Pour publier l'état actualisé, consigner ensuite la mise à jour dans <code>data/updates/Uxx_*.json</code> (voir <a href="/mise-a-jour">Mise à jour</a>).</p>
-<form id=f><p><input type=file name=fichier></p><p>ou coller du texte :</p><textarea name=texte rows=8></textarea>
-<button type=submit>Analyser et ajouter</button></form><h2>Rapport d'impacts</h2><pre id=r></pre>
-<script>f.onsubmit=async ev=>{ev.preventDefault();r.textContent='Analyse en cours...';const x=await fetch('/api/ingest',{method:'POST',body:new FormData(f)});const j=await x.json();r.textContent=j.rapport+'\\n\\n— '+j.nouveaux.length+' claim(s) ajouté(s) (statut: à valider), '+j.rejetes.length+' écarté(s), source '+j.source}</script>""", "Ajouter NOVA")
+    return page((APP_DIR / "ingest_page.html").read_text(encoding="utf-8"), "Ajouter NOVA")
+
+
+def _safe_name(nom: str) -> str:
+    return re.sub(r"[^A-Za-z0-9._-]+", "_", Path(nom).name).strip("._") or "document.txt"
 
 
 @app.post("/api/ingest")
 async def api_ingest(fichier: UploadFile | None = File(None), texte: str = Form("")):
+    """Analyse un document reçu. Le document est conservé dans data/updates/docs/ (preuve de la future mise à jour);
+    rien n'est publié tant que le brouillon n'est pas enregistré par /api/updates."""
     from .ingest_graph import ingest
-    nom, contenu = "texte_colle", texte
+    docs = updates.UPDATES / "docs"
+    docs.mkdir(parents=True, exist_ok=True)
     if fichier is not None and fichier.filename:
-        nom, data = fichier.filename, await fichier.read()
-        contenu = corpus.read_bytes(nom, data)
-    return ingest(contenu, nom)
+        nom, data = _safe_name(fichier.filename), await fichier.read()
+    else:
+        nom, data = f"texte_colle_{len(list(docs.glob('texte_colle_*'))) + 1}.txt", texte.encode("utf-8")
+    dest = docs / nom
+    if dest.exists() and dest.read_bytes() != data:
+        dest = docs / f"{dest.stem}_{len(list(docs.glob(dest.stem + '*'))) + 1}{dest.suffix}"
+    dest.write_bytes(data)
+    return ingest(corpus.read_bytes(dest.name, data), dest.name, fichier_doc=f"docs/{dest.name}")
+
+
+class Brouillon(BaseModel):
+    brouillon: dict
+
+
+@app.post("/api/updates")
+def api_updates(b: Brouillon):
+    """Enregistre un brouillon relu comme mise à jour data/updates/Uxx_*.json, après les garde-fous de updates.check."""
+    u = dict(b.brouillon)
+    if not re.fullmatch(r"U\d{2}", str(u.get("id", ""))) or not str(u.get("document", {}).get("fichier", "")).startswith("docs/"):
+        raise HTTPException(400, "brouillon invalide (id Uxx et document dans docs/ requis)")
+    if any(updates.UPDATES.glob(f"{u['id']}_*.json")):
+        raise HTTPException(409, f"{u['id']} existe déjà")
+    controle = updates.check({**u, "_base": str(updates.UPDATES), "_fichier": ""})
+    slug = re.sub(r"[^a-z0-9]+", "_", verify_norm(u["document"].get("titre", "maj")))[:40].strip("_") or "maj"
+    path = updates.UPDATES / f"{u['id']}_{slug}.json"
+    path.write_text(json.dumps(u, ensure_ascii=False, indent=2), encoding="utf-8")
+    return {"enregistre": f"data/updates/{path.name}", "avertissements": controle["_avertissements"],
+            "changements_retenus": len(controle["changements"]), "lien": href("mise-a-jour")}
+
+
+def verify_norm(s: str) -> str:
+    from .verify import norm
+    return norm(s)
