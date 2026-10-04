@@ -11,6 +11,9 @@ from .ingest_graph import ingest
 
 app = FastAPI(title="NOVA")
 
+class Q(BaseModel):
+    question: str
+
 def load_answers():
     """Load frozen Q01-Q10 answers."""
     answers_file = Path(__file__).resolve().parent.parent / "data" / "answers_baseline.json"
