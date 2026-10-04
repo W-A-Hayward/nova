@@ -6,7 +6,9 @@ Vous reprenez NOVA, un projet fictif dont les informations sont dispersées. En 
 Le dossier initial représente les informations disponibles le 30 septembre 2026 à 09 h 00, heure de Montréal (UTC−04:00). Répondez selon cette date fictive, et non selon la date réelle de l'épreuve. Une nouvelle information sera fournie pendant le défi.
 
 FORMAT ET OUTILS
-
+- Aucune technologie imposée. Un dossier documentaire navigable, un site, un outil de recherche ou une application sont acceptés. Un chatbot et une ingestion entièrement automatique ne sont pas obligatoires.
+- La solution doit permettre de retrouver une preuve, de répondre à une question et de mettre à jour l'état du projet sans effacer son historique.
+- Outils d'IA, bibliothèques et services externes autorisés. Indiquez les outils utilisés et les étapes manuelles. Aucun abonnement payant ne doit être nécessaire au jury pour consulter le rendu; fournissez un export autonome si nécessaire.
 - Les faits concernant NOVA doivent provenir du corpus remis. Une recherche externe peut aider à utiliser un outil, mais ne remplace pas une preuve du projet.
 
 LIVRABLES

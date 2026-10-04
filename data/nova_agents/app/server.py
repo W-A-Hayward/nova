@@ -37,36 +37,13 @@ button:hover{background:#0d1f3c}
 
 def page(body: str) -> str:
     return f"""<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>NOVA</title><style>{CSS}</style>
-<header><a href="/">Rapport</a><a href="/brief">Brief</a><a href="/memoire">Mémoire</a><a href="/reponses">Réponses Q</a><a href="/chat">Chat</a><a href="/ingest">Ajouter</a></header><main>{body}</main>"""
+<header><a href="/brief">Brief</a><a href="/memoire">Mémoire</a><a href="/reponses">Réponses Q</a><a href="/chat">Chat</a><a href="/ingest">Ajouter</a></header><main>{body}</main>"""
 
 
 def table(head, rows):
     return "<table><tr>" + "".join(f"<th>{e(h)}</th>" for h in head) + "</tr>" + "".join("<tr>" + "".join(f"<td>{e(str(c))}</td>" for c in r) + "</tr>" for r in rows) + "</table>"
 
 
-@app.get("/", response_class=HTMLResponse)
-def rapport():
-    ledger = kb.ledger()
-    claims = kb.load_claims()
-    docs = [d for d in corpus.documents() if d["pertinence"] not in kb.EXCLUS and not d.get("doublon_de")]
-    b = ("<h2>Rapport du projet NOVA</h2><p>Dossier lu dans Projet360_NOVA_ETUDIANTS, référence "
-         + e(kb.ref_date()) + ". Les lignes « à valider » viennent de fichiers ajoutés ensuite.</p>")
-    b += "<h3>Décisions</h3>" + table(["Date", "Décision", "Source", "Fichier", "Statut", "Avertissement"],
-                                      [(c["date"], c["texte"], c["source"], c.get("fichier", ""), c.get("statut"), c.get("perime", ""))
-                                       for c in claims if c["type"] == "décision" and c.get("origine") in ("decision", "ingestion")])
-    b += "<h3>Budget (calculé par le code, à partir des PDF)</h3><pre>" + e(kb.finance_summary()) + "</pre>"
-    b += "<h3>Factures</h3>" + table(["Facture", "Date", "Statut", "Total", "Lignes"],
-                                     [(f["id"], f["date"], f["statut"], sum(l["montant"] for l in f["lignes"]),
-                                       " | ".join(f"{l['desc']} {l['montant']}" for l in f["lignes"])) for f in ledger["factures"]])
-    b += "<h3>Statut des tickets (au " + e(kb.ref_date()) + ")</h3>" + table(
-        ["Ticket", "Statut", "Source"], [(t, v["statut"], v["source"]) for t, v in sorted(kb.ticket_status().items())])
-    b += "<h3>Sources du dossier</h3>" + table(
-        ["ID", "Fichier", "Date", "Autorité", "Avertissement"],
-        [(d["id"], d["fichier"], d["date"], kb.AUTORITE.get(d["autorite"], ""), d.get("perime", "")) for d in docs])
-    b += "<h3>Ajouts depuis l'ingestion</h3>" + table(
-        ["Date", "Type", "Texte", "Source", "Fichier"],
-        [(c["date"], c["type"], c["texte"], c["source"], c.get("fichier", "")) for c in claims if c.get("origine") == "ingestion"])
-    return page(b)
 
 
 @app.get("/chat", response_class=HTMLResponse)
@@ -140,6 +117,26 @@ Baseline 30 sept 09:00 Montréal (UTC-04:00). Pour détails: /memoire (timeline/
 def memoire_page():
     """Structured memory with timeline, decisions, contradictions, actions."""
     memory_data = memory.load_memory()
+
+    # Build contradictions HTML with resolution status
+    contradictions_html = ""
+    for c in memory_data['contradictions']:
+        resolved = bool(c.get('resolution'))
+        status_label = "✓ RÉSOLUE" if resolved else "⚠ NON RÉSOLUE"
+        status_color = "ok" if resolved else "warn"
+
+        sources_html = "<strong>Sources en conflit:</strong><ul>"
+        for src in c.get('sources', []):
+            sources_html += f"<li><strong>{e(src.get('date', ''))}</strong> — {e(src.get('texte', ''))} <br><em>Source:</em> {e(src.get('source', ''))}, Autorité: {e(src.get('autorité', ''))}</li>"
+        sources_html += "</ul>"
+
+        contradictions_html += f"""<div class='card' style='border-left-color: var(--{status_color})'>
+<strong style='color: var(--{status_color})'>{status_label}: {e(c['domaine'])}</strong><br>
+{sources_html}
+<strong>Analyse:</strong> {e(c.get('resolution', 'Contradiction non résolue'))}<br>
+<em>Note:</em> {e(c.get('note', ''))}
+</div>"""
+
     return page(f"""<h2>Mémoire opérationnelle NOVA</h2>
 <p><strong>Baseline:</strong> {e(memory_data['ref_date'])}</p>
 
@@ -150,21 +147,25 @@ def memoire_page():
 </table>
 
 <h3>Décisions documentées (5)</h3>
-{chr(10).join(f"<div class='card'><strong>{d['field']}</strong><br>
-<em>Ancien:</em> {d['ancien']['valeur']} ({d['ancien']['source']})<br>
-<em>Nouveau:</em> {d['nouveau']['valeur']} ({d['nouveau']['source']})<br>
-<em>Résolution:</em> {d['resolution']}</div>" for d in memory_data['decisions'][:5])}
+{chr(10).join(f"<div class='card'><strong>🔄 {d['field']}</strong><br><em>État antérieur:</em> <strong>{d['ancien']['valeur']}</strong> ({d['ancien']['source']})<br><em>État nouveau:</em> <strong>{d['nouveau']['valeur']}</strong> ({d['nouveau']['source']})<br><em>Résolution:</em> {d['resolution']}</div>" for d in memory_data['decisions'][:5])}
 
-<h3>Contradictions résolues (2)</h3>
-{chr(10).join(f"<div class='card'><strong>{c['domaine']}</strong><br>{c['resolution']}<br><em>Note:</em> {c['note']}</div>" for c in memory_data['contradictions'])}
+<h3>Contradictions (résolues et non résolues)</h3>
+{contradictions_html}
 
 <h3>Actions en cours (4)</h3>
 <table>
 <tr><th>Action</th><th>Responsable</th><th>Échéance</th><th>Statut</th></tr>
-{chr(10).join(f"<tr><td>{e(a['action'][:40])}</td><td>{e(a['responsable'])}</td><td>{a['echéance']}</td><td><span class='todo'>{a['statut_courant']}</span></td></tr>" for a in memory_data['actions'][:4])}
+{chr(10).join(f"<tr><td>{e(a['action'][:40])}</td><td>{e(a['responsable'])}</td><td>{a.get('echéance', 'à confirmer')}</td><td><span class='todo'>{a['statut_courant']}</span></td></tr>" for a in memory_data['actions'][:4])}
 </table>
 
-<p style="font-size:12px;margin-top:20px"><em>Tous les éléments sont sourcés. Les recommandations de l'équipe sont clairement distinguées des engagements documentés.</em></p>""")
+<style>
+:root {{
+  --ok: #007a1f;
+  --warn: #d97706;
+}}
+</style>
+
+<p style="font-size:12px;margin-top:20px"><em>Tous les éléments sont sourcés avec date et autorité. Les contradictions sont tagées: ✓ RÉSOLUE (raisonnement documenté) ou ⚠ NON RÉSOLUE (en attente). Les recommandations de l'équipe sont clairement séparées des engagements documentés.</em></p>""")
 
 
 @app.get("/reponses", response_class=HTMLResponse)
